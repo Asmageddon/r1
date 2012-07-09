@@ -1,0 +1,11 @@
+id = floor_simple
+name = %m floor
+desc = simple floor made of %m
+type = floor
+materials = stone wood metal
+
+[appearance]
+    tileset = tiles1.png
+    image = 1
+    opacity = 100
+    reflectivity = 0

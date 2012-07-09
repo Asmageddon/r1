@@ -1,0 +1,5 @@
+[display]
+resolution = 640 480
+fullscreen = false
+#Shouldn't impact performance. 0 to disable limit.
+max_fps = 60

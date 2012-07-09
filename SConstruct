@@ -1,0 +1,10 @@
+#env = Environment()
+env = Environment( CXX = 'ccache g++')
+VariantDir('build', 'src', duplicate=0)
+env.Append(LIBS = ["sfml-graphics", "sfml-window", "sfml-system"] )
+env.Append(LIBS = ["boost_system", "boost_filesystem"] )
+env.Append(CXXFLAGS =[ "-Wall",
+                       "-pedantic"])
+env.Program("r1", Glob("./build/*.cpp"))
+
+# EOF #

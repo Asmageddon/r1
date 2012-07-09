@@ -1,0 +1,11 @@
+id = wall_simple
+name = %m wall
+desc = plain wall made of %m
+type = wall
+materials = stone wood metal
+
+[appearance]
+    tileset = tiles1.png
+    image = 2
+    opacity = 100
+    reflectivity = 5

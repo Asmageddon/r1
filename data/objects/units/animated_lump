@@ -1,0 +1,14 @@
+id = animated_lump
+name = Animated lump of %m
+desc = A disgusting organic-looking mass of %m
+categories = magical primitive
+
+[appearance]
+    tileset = creatures1.png
+    image = 2
+
+[stats]
+    max_hp = 5
+    strength = 1
+    dexterity = 1
+    speed = 1

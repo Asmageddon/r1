@@ -1,0 +1,14 @@
+id = golem
+name = %m golem
+desc = Humanoidal animated mass of %m
+categories = artificial magical
+
+[appearance]
+    tileset = creatures1.png
+    image = 1
+
+[stats]
+    max_hp = 40
+    strength = 20
+    dexterity = 7
+    speed = 6

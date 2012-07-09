@@ -1,0 +1,9 @@
+id = generic_stone
+name = stone
+desc = generic stone
+
+type = stone
+
+[appearance]
+    color = 170 160 145
+    opacity = 100
