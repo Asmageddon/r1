@@ -1,17 +1,17 @@
 #include "utils.hpp"
 
-ostream& std::operator<<(ostream& cout, sf::Color color) {
+std::ostream& std::operator<<(std::ostream& cout, sf::Color color) {
     cout << "sf::Color(" << color.r << ", " << color.g << ", " << color.b << ", " << color.a << ")";
     return cout;
 }
-ostream& std::operator<<(ostream& cout, sf::IntRect rect) {
+std::ostream& std::operator<<(std::ostream& cout, sf::IntRect rect) {
     cout << "sf::IntRect(" << rect.left << ", " << rect.top << ", " << rect.width << ", " << rect.height << ")";
     return cout;
 }
 
-vector<string> split(const string& str, const char& chr) {
-    vector<string> result;
-    string current = "";
+std::vector<std::string> split(const std::string& str, const char& chr) {
+    std::vector<std::string> result;
+    std::string current = "";
     for(unsigned int i = 0; i < str.size(); i++) {
         char c = str[i];
         if (c == chr){
@@ -30,8 +30,8 @@ vector<string> split(const string& str, const char& chr) {
     return result;
 }
 
-vector<string> list_dir(string dir) {
-    vector<string> result;
+std::vector<std::string> list_dir(std::string dir) {
+    std::vector<std::string> result;
     if (!fs::exists(dir)) {
         return result;
     }
@@ -41,7 +41,7 @@ vector<string> list_dir(string dir) {
     else {
         fs::directory_iterator end_iter;
         for ( fs::directory_iterator dir_itr( dir ); dir_itr != end_iter; ++dir_itr ) {
-            string filename = dir_itr->path().filename().string();
+            std::string filename = dir_itr->path().filename().string();
             result.push_back(filename);
         }
     }

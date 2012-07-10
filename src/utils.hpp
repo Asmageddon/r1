@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 #include <sstream>
-using namespace std;
 
 #include <SFML/Graphics.hpp>
 
@@ -14,27 +13,27 @@ using namespace std;
 namespace fs = boost::filesystem;
 
 namespace std {
-    ostream& operator<<(ostream& cout, sf::Color color);
-    ostream& operator<<(ostream& cout, sf::IntRect rect);
+    std::ostream& operator<<(std::ostream& cout, sf::Color color);
+    std::ostream& operator<<(std::ostream& cout, sf::IntRect rect);
     template<class T>
-    ostream& operator<<(ostream& cout, sf::Vector2<T> vec)  {
+    std::ostream& operator<<(std::ostream& cout, sf::Vector2<T> vec)  {
         cout << "sf::Vector2" << typeid(T).name() << "(" << vec.x << ", " << vec.y << ")";
         return cout;
     }
     template<class T>
-    ostream& operator<<(ostream& cout, sf::Vector3<T> vec)  {
+    std::ostream& operator<<(std::ostream& cout, sf::Vector3<T> vec)  {
         cout << "sf::Vector3" << typeid(T).name() << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
         return cout;
     }
 }
 
 template<class K, class V>
-bool contains(map<K, V> m, K key) {
-    typename map<K, V>::iterator it = m.find(key);
+bool contains(std::map<K, V> m, K key) {
+    typename std::map<K, V>::iterator it = m.find(key);
     return it != m.end();
 }
-vector<string> split(const string& str, const char& chr);
+std::vector<std::string> split(const std::string& str, const char& chr);
 
-vector<string> list_dir(string dir);
+std::vector<std::string> list_dir(std::string dir);
 
 #endif

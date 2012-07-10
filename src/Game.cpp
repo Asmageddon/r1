@@ -1,36 +1,29 @@
 #include <iostream>
-#include <fstream>
 
 #include <string>
-
-#include <sstream>
 
 #include <vector>
 #include <map>
 
 #include <cstring>
 #include <iostream>
-#include <stdint.h>
-
-using namespace std;
 
 #include <SFML/Graphics.hpp>
-using namespace sf;
 
-#include "Data.hpp"
 #include "ConfigManager.hpp"
-#include "Object.hpp"
-#include "Displayable.hpp"
-#include "TileSprite.hpp"
 #include "TileType.hpp"
 #include "Material.hpp"
 #include "UnitType.hpp"
 #include "ResourceManager.hpp"
 #include "utils.hpp"
 
-static string base_path = ".";
+#include <cmath>
 
-string get_base_path(char* argv0) {
+#define PI 3.14159265
+
+static std::string base_path = ".";
+
+std::string get_base_path(char* argv0) {
     unsigned int last_slash = 0;
     for (unsigned int i=0; i < strlen(argv0); i++) {
         if (argv0[i] == '/')
@@ -42,7 +35,6 @@ string get_base_path(char* argv0) {
 
 class Unit {
     public:
-        Level* world;
         u_int16_t type;
         u_int16_t material;
         u_int16_t integrity;
@@ -50,9 +42,9 @@ class Unit {
 
         u_int32_t hp;
 
-        Vector2i pos;
+        sf::Vector2i pos;
 
-        //vector<Object> contents;
+        //std::vector<Object> contents;
 
     public:
         Unit(const UnitType& prototype) { }
@@ -63,20 +55,19 @@ class Unit {
             temperature = 0;
 
             hp = 1;
-            pos = Vector2i(0,0);
+            pos = sf::Vector2i(0,0);
 
-            world = NULL;
         }
 
-        //void Move(const Vector2i& vec) {
+        //void Move(const sf::Vector2i& vec) {
             //if (world == NULL) return;
 
-            //Vector2i new_pos = pos + vec;
+            //sf::Vector2i new_pos = pos + vec;
 
             //if (!world->in_bounds(new_pos)) return;
 
             //Unit* tmp = NULL;
-            //Vector2i old_pos = pos;
+            //sf::Vector2i old_pos = pos;
             //if (world->data[new_pos.x + width * new_pos.y].unit != NULL) {
                 //tmp = world->data[new_pos.x + width * new_pos.y].unit;
                 //tmp->pos = pos;
@@ -118,7 +109,7 @@ class Level {
         Tile default_tile;
     public:
         int width, height;
-        map<Unit*, Vector2i> units;
+        std::map<Unit*, sf::Vector2i> units;
         Unit *player;
     public:
         Level(ResourceManager* resman, int width, int height) {
@@ -129,36 +120,36 @@ class Level {
             Generate();
             default_tile = Tile();
         }
-        bool in_bounds(const Vector2i& pos) {
+        bool in_bounds(const sf::Vector2i& pos) const {
             if      (pos.x < 0) return false;
             else if (pos.x >= width) return false;
             else if (pos.y < 0) return false;
             else if (pos.y >= height) return false;
             return true;
         }
-        const Tile& get_tile(const Vector2i& pos) {
+        const Tile& get_tile(const sf::Vector2i& pos) const {
             if (!in_bounds(pos))
                 return default_tile;
             return data[pos.x + width * pos.y];
         }
-        const Tile& get_tile(const int& x, const int& y) {
-            return get_tile(Vector2i(x, y));
+        const Tile& get_tile(const int& x, const int& y) const {
+            return get_tile(sf::Vector2i(x, y));
         }
-        void set_tile(const Vector2i& pos, const Tile& new_tile) {
+        void set_tile(const sf::Vector2i& pos, const Tile& new_tile) {
             data[pos.x + width * pos.y] = new_tile;
         }
 
-        bool is_wall(const Vector2i& pos) {
+        bool is_wall(const sf::Vector2i& pos) const {
             const Tile& t = get_tile(pos);
             return (t.type == TILE_WALL);
         }
-        bool is_wall(const int& x, const int& y) { return is_wall(Vector2i(x, y));  }
+        bool is_wall(const int& x, const int& y) const { return is_wall(sf::Vector2i(x, y));  }
 
-        bool is_floor(const Vector2i& pos) {
+        bool is_floor(const sf::Vector2i& pos) const {
             const Tile& t = get_tile(pos);
             return (t.type == TILE_FLOOR);
         }
-        bool is_floor(const int& x, const int& y) { return is_floor(Vector2i(x, y)); }
+        bool is_floor(const int& x, const int& y) const { return is_floor(sf::Vector2i(x, y)); }
 
         void set_default_tile(const Tile& tile) {
             default_tile = tile;
@@ -185,17 +176,17 @@ class Level {
 
                 Unit *u = new Unit();
                 u->type = 1;
-                placeUnit(Vector2i(12,5), u);
+                placeUnit(sf::Vector2i(12,5), u);
                 player = u;
 
                 u = new Unit();
                 u->type = 2;
                 u->material = 1;
-                placeUnit(Vector2i(12,3), u);
+                placeUnit(sf::Vector2i(12,3), u);
 
             }
         }
-        void placeUnit(const Vector2i& pos, Unit* unit) {
+        void placeUnit(const sf::Vector2i& pos, Unit* unit) {
             if (data[pos.x + width * pos.y].unit != NULL) {
                 units.erase(data[pos.x + width * pos.y].unit);
                 delete data[pos.x + width * pos.y].unit;
@@ -203,16 +194,14 @@ class Level {
             data[pos.x + width * pos.y].unit = unit;
             units[unit] = pos;
             unit->pos = pos;
-            unit->world = this;
         }
-        void moveUnit(Unit* unit, const Vector2i& vec) {
-            unit->Move(vec);
-            Vector2i new_pos = unit->pos + vec;
+        void moveUnit(Unit* unit, const sf::Vector2i& vec) {
+            sf::Vector2i new_pos = unit->pos + vec;
 
             if (!in_bounds(new_pos)) return;
 
             Unit* tmp = NULL;
-            Vector2i old_pos = unit->pos;
+            sf::Vector2i old_pos = unit->pos;
             if (data[new_pos.x + width * new_pos.y].unit != NULL) {
                 tmp = data[new_pos.x + width * new_pos.y].unit;
                 tmp->pos = unit->pos;
@@ -229,22 +218,98 @@ class Level {
         }
 
         void print_state() {
-            map<Unit*, Vector2i>::iterator iter;
+            std::map<Unit*, sf::Vector2i>::iterator iter;
 
             for (iter = units.begin(); iter != units.end(); ++iter) {
-                cout << iter->first << " => " << iter->second << endl;
+                std::cout << iter->first << " => " << iter->second << std::endl;
             }
+        }
+};
+
+class FieldOfView {
+    private:
+        bool *visibility;
+        short radius;
+        short width;
+        Vector2i origin;
+    public:
+        FieldOfView() {
+            radius = 1;
+            visibility = new bool[3*3];
+            origin = Vector2i(1,1);
+        }
+        void SetRadius(const short& radius) {
+            this->radius = radius;
+            this->width = 1 + radius * 2;
+            this->origin = Vector2i(radius, radius);
+            delete[] visibility;
+            visibility = new bool[width * width];
+        }
+        const short& GetRadius() const {
+            return this->radius;
+        }
+        void Calculate(const Level* level, const Vector2i& caster_pos) {
+            /*
+             * Simple raycasting
+             */
+            for(int x = 0; x < width; x++)
+            for(int y = 0; y < width; y++) {
+                visibility[x + width * y] = false;
+            }
+            visibility[origin.x + width * origin.y] = true;
+            //int rays = PI * 2 * radius * 2;
+            int rays = 360;
+            for(int a = 0; a < rays; a++) {
+                float ax = sin(a * PI * 2 / rays);
+                float ay = cos(a * PI * 2 / rays);
+                float x = origin.x;
+                float y = origin.y;
+                for(int z = 0; z < this->radius; z++) {
+                    x += ax;
+                    y += ay;
+                    Vector2i pos = Vector2i(
+                        (int)round(x),
+                        (int)round(y)
+                    );
+                    if (z == radius) {
+                        if (sqrt((pos.x - origin.x) * (pos.x - origin.x) + (pos.y - origin.y) * (pos.y - origin.y)) > radius) {
+                            break;
+                        }
+                    }
+
+                    visibility[pos.x + width * pos.y] = true;
+
+                    Vector2i map_pos = pos + caster_pos - origin;
+
+                    if (level->is_wall(map_pos))
+                        break;
+                }
+            }
+        }
+        inline bool IsVisible(const Vector2i& pos) const {
+            if (pos.x < -radius) return false;
+            if (pos.x > radius) return false;
+            if (pos.y < -radius) return false;
+            if (pos.y > radius) return false;
+
+            Vector2i _pos = pos + origin;
+            return visibility[_pos.x + width * _pos.y];
+        }
+        inline bool IsVisible(const int& x, const int& y) const {
+            return IsVisible(Vector2i(x, y));
         }
 };
 
 class Game {
     private:
-        RenderWindow window;
+        sf::RenderWindow window;
         Level* level;
         ResourceManager resman;
         ConfigManager confman;
 
         bool view_changed;
+
+        FieldOfView *fov;
 
     private:
 
@@ -260,6 +325,9 @@ class Game {
             level = new Level(&resman, 32,32);
 
             view_changed = true;
+
+            fov = new FieldOfView();
+            fov->SetRadius(12);
         }
 
         void end() {
@@ -442,14 +510,19 @@ class Game {
                 int current_tiletype = -1;
                 TileSprite current_sprite;
 
+                fov->Calculate(level, level->player->pos);
+
                 for (int x=0; x < level->width ; x++)
                 for (int y=0; y < level->height; y++) {
+                    Vector2i pos = Vector2i(x, y) - level->player->pos;
+                    if (!fov->IsVisible(pos))
+                        continue;
                     const Tile& tile = level->get_tile(x, y);
                     if (current_tiletype != tile.type) {
                         current_tiletype = tile.type;
                         current_sprite = resman.get_tile_sprite(current_tiletype);
                     }
-                    Color color = resman.get_color(tile.material);
+                    sf::Color color = resman.get_color(tile.material);
                     current_sprite.setColor(color);
                     current_sprite.setPosition(Vector2f(x*16.0f, y*16.0f));
                     window.draw(current_sprite);
@@ -458,7 +531,7 @@ class Game {
 
                     if (tile.unit != NULL) {
                         TileSprite unit_sprite = resman.get_unit_sprite(tile.unit->type);
-                        Color color = resman.get_color(tile.unit->material);
+                        sf::Color color = resman.get_color(tile.unit->material);
                         unit_sprite.setColor(color);
                         unit_sprite.setPosition(Vector2f(x*16.0f, y*16.0f));
                         window.draw(unit_sprite);
@@ -473,58 +546,66 @@ class Game {
         }
 
         void handle_input() {
-            Event event;
+            sf::Event event;
             while (window.pollEvent(event)) {
-                if (event.type == Event::Closed)
+                if (event.type == sf::Event::Closed)
                     window.close();
-                if (event.type == Event::KeyPressed) {
+                if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::F12) {
-                        string dir = base_path + "user/screenshots/";
+                        std::string dir = base_path + "user/screenshots/";
                         int n = list_dir(dir).size() + 1;
                         stringstream out;
                         out << n;
-                        string fname = out.str();
+                        std::string fname = out.str();
                         fname.insert(fname.begin(), 5 - fname.size(), '0');
-                        fname = (string)"screenshot" + fname + ".png";
+                        fname = (std::string)"screenshot" + fname + ".png";
                         Image Screen = window.capture();
                         Screen.saveToFile(dir + fname);
 
-                        cout << "Saved screenshot to user/screenshots/" + fname << endl;
+                        std::cout << "Saved screenshot to user/screenshots/" + fname << std::endl;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad7) {
-                        level->moveUnit(level->player, Vector2i(-1, -1));
+                        level->moveUnit(level->player, sf::Vector2i(-1, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad8) {
-                        level->moveUnit(level->player, Vector2i(0, -1));
+                        level->moveUnit(level->player, sf::Vector2i(0, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad9) {
-                        level->moveUnit(level->player, Vector2i(1, -1));
+                        level->moveUnit(level->player, sf::Vector2i(1, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad4) {
-                        level->moveUnit(level->player, Vector2i(-1, 0));
+                        level->moveUnit(level->player, sf::Vector2i(-1, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad5) {
-                        level->moveUnit(level->player, Vector2i(0, 0));
+                        level->moveUnit(level->player, sf::Vector2i(0, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad6) {
-                        level->moveUnit(level->player, Vector2i(1, 0));
+                        level->moveUnit(level->player, sf::Vector2i(1, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad1) {
-                        level->moveUnit(level->player, Vector2i(-1, 1));
+                        level->moveUnit(level->player, sf::Vector2i(-1, 1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad2) {
-                        level->moveUnit(level->player, Vector2i(0, 1));
+                        level->moveUnit(level->player, sf::Vector2i(0, 1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad3) {
-                        level->moveUnit(level->player, Vector2i(1, 1));
+                        level->moveUnit(level->player, sf::Vector2i(1, 1));
+                        view_changed = true;
+                    }
+                    else if (event.key.code == sf::Keyboard::Add) {
+                        fov->SetRadius(fov->GetRadius() + 1);
+                        view_changed = true;
+                    }
+                    else if (event.key.code == sf::Keyboard::Subtract) {
+                        fov->SetRadius(fov->GetRadius() - 1);
                         view_changed = true;
                     }
                 }
@@ -544,7 +625,7 @@ class Game {
 
 int main(int argc, char** argv) {
     base_path = get_base_path(argv[0]);
-    cout << base_path << endl;
+    std::cout << base_path << std::endl;
     Game g;
     g.run();
     return 0;

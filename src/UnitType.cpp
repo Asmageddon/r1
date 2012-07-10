@@ -11,11 +11,11 @@ UnitType::UnitType() : Object(), Displayable() {
     tileset = "units1.png";
     image = 0;
 
-    cout << " * Loaded unit type: missingno" << endl;
+    std::cout << " * Loaded unit type: missingno" << std::endl;
 }
 
 UnitType::UnitType(Data data) : Object(data), Displayable(data) {
     categories = data.as_str_vector("", "categories");
     max_hp = data.as_int("stats", "max_hp");
-    cout << " * Loaded unit type: " << id << endl;
+    std::cout << " * Loaded unit type: " << id << std::endl;
 }
