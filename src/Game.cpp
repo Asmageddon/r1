@@ -64,7 +64,7 @@ class Unit {
 
             //sf::Vector2i new_pos = pos + vec;
 
-            //if (!world->in_bounds(new_pos)) return;
+            //if (!world->InBounds(new_pos)) return;
 
             //Unit* tmp = NULL;
             //sf::Vector2i old_pos = pos;
@@ -91,6 +91,8 @@ class Tile {
         u_int8_t integrity;
         u_int8_t temperature;
 
+        bool known;
+
         Unit *unit;
     public:
         Tile() {
@@ -99,6 +101,8 @@ class Tile {
             integrity = 0;
             temperature = 0;
             unit = NULL;
+
+            known = false;
         }
 };
 
@@ -120,38 +124,49 @@ class Level {
             Generate();
             default_tile = Tile();
         }
-        bool in_bounds(const sf::Vector2i& pos) const {
+        bool InBounds(const sf::Vector2i& pos) const {
             if      (pos.x < 0) return false;
             else if (pos.x >= width) return false;
             else if (pos.y < 0) return false;
             else if (pos.y >= height) return false;
             return true;
         }
-        const Tile& get_tile(const sf::Vector2i& pos) const {
-            if (!in_bounds(pos))
+
+        void SetKnown(const sf::Vector2i& pos, const bool& state) {
+            if (InBounds(pos))
+                data[pos.x + width * pos.y].known = state;
+        }
+
+        const Tile& GetTile(const sf::Vector2i& pos) const {
+            if (!InBounds(pos))
                 return default_tile;
             return data[pos.x + width * pos.y];
         }
-        const Tile& get_tile(const int& x, const int& y) const {
-            return get_tile(sf::Vector2i(x, y));
+        const Tile& GetTile(const int& x, const int& y) const {
+            return GetTile(sf::Vector2i(x, y));
         }
-        void set_tile(const sf::Vector2i& pos, const Tile& new_tile) {
+        void SetTile(const sf::Vector2i& pos, const Tile& new_tile) {
             data[pos.x + width * pos.y] = new_tile;
         }
 
-        bool is_wall(const sf::Vector2i& pos) const {
-            const Tile& t = get_tile(pos);
+        bool IsWall(const sf::Vector2i& pos) const {
+            const Tile& t = GetTile(pos);
             return (t.type == TILE_WALL);
         }
-        bool is_wall(const int& x, const int& y) const { return is_wall(sf::Vector2i(x, y));  }
+        bool IsWall(const int& x, const int& y) const { return IsWall(sf::Vector2i(x, y));  }
 
-        bool is_floor(const sf::Vector2i& pos) const {
-            const Tile& t = get_tile(pos);
+        bool IsFloor(const sf::Vector2i& pos) const {
+            const Tile& t = GetTile(pos);
             return (t.type == TILE_FLOOR);
         }
-        bool is_floor(const int& x, const int& y) const { return is_floor(sf::Vector2i(x, y)); }
+        bool IsFloor(const int& x, const int& y) const { return IsFloor(sf::Vector2i(x, y)); }
 
-        void set_default_tile(const Tile& tile) {
+        bool IsKnown(const sf::Vector2i& pos) const {
+            const Tile& t = GetTile(pos);
+            return t.known;
+        }
+
+        void SetDefaultTile(const Tile& tile) {
             default_tile = tile;
         }
         void Generate() {
@@ -176,17 +191,17 @@ class Level {
 
                 Unit *u = new Unit();
                 u->type = 1;
-                placeUnit(sf::Vector2i(12,5), u);
+                PlaceUnit(sf::Vector2i(12,5), u);
                 player = u;
 
                 u = new Unit();
                 u->type = 2;
                 u->material = 1;
-                placeUnit(sf::Vector2i(12,3), u);
+                PlaceUnit(sf::Vector2i(12,3), u);
 
             }
         }
-        void placeUnit(const sf::Vector2i& pos, Unit* unit) {
+        void PlaceUnit(const sf::Vector2i& pos, Unit* unit) {
             if (data[pos.x + width * pos.y].unit != NULL) {
                 units.erase(data[pos.x + width * pos.y].unit);
                 delete data[pos.x + width * pos.y].unit;
@@ -195,10 +210,10 @@ class Level {
             units[unit] = pos;
             unit->pos = pos;
         }
-        void moveUnit(Unit* unit, const sf::Vector2i& vec) {
+        void MoveUnit(Unit* unit, const sf::Vector2i& vec) {
             sf::Vector2i new_pos = unit->pos + vec;
 
-            if (!in_bounds(new_pos)) return;
+            if (!InBounds(new_pos)) return;
 
             Unit* tmp = NULL;
             sf::Vector2i old_pos = unit->pos;
@@ -217,7 +232,7 @@ class Level {
             }
         }
 
-        void print_state() {
+        void PrintState() {
             std::map<Unit*, sf::Vector2i>::iterator iter;
 
             for (iter = units.begin(); iter != units.end(); ++iter) {
@@ -281,9 +296,20 @@ class FieldOfView {
 
                     Vector2i map_pos = pos + caster_pos - origin;
 
-                    if (level->is_wall(map_pos))
+                    if (level->IsWall(map_pos))
                         break;
                 }
+            }
+        }
+        void CalculateAndMark(Level* level, const Vector2i& caster_pos) {
+            Calculate(level, caster_pos);
+            for(int x = 0; x < width; x++)
+            for(int y = 0; y < width; y++) {
+                int mx = x + caster_pos.x - origin.x;
+                int my = y + caster_pos.y - origin.y;
+
+                if (visibility[x + width * y])
+                    level->SetKnown(Vector2i(mx, my), true);
             }
         }
         inline bool IsVisible(const Vector2i& pos) const {
@@ -336,11 +362,11 @@ class Game {
 
         void render_shadow(const int& x, const int& y, ShadowSprite* shadow) {
             shadow->setPosition(Vector2f(x*16.0f, y*16.0f));
-                if (level->is_floor(x, y)) {
-                    if (level->is_wall(x - 1, y)) {
-                        if (level->is_wall(x, y - 1)) {
-                            if (level->is_wall(x, y + 1)) {
-                                if (level->is_wall(x + 1, y)) {
+                if (level->IsFloor(x, y)) {
+                    if (level->IsWall(x - 1, y)) {
+                        if (level->IsWall(x, y - 1)) {
+                            if (level->IsWall(x, y + 1)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_ALL);
                                     window.draw(*shadow);
                                 }
@@ -350,14 +376,14 @@ class Game {
                                 }
                             }
                             else {
-                                if (level->is_wall(x + 1, y)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_ALL_BUT_BOTTOM);
                                     window.draw(*shadow);
                                 }
                                 else {
                                     shadow->setSprite(SHADOW_TOP_LEFT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x + 1, y + 1)) {
+                                    if (level->IsWall(x + 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                         window.draw(*shadow);
                                     }
@@ -365,33 +391,33 @@ class Game {
                             }
                         }
                         else {
-                            if (level->is_wall(x, y + 1)) {
-                                if (level->is_wall(x + 1, y)) {
+                            if (level->IsWall(x, y + 1)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_ALL_BUT_TOP);
                                     window.draw(*shadow);
                                 }
                                 else {
                                     shadow->setSprite(SHADOW_BOTTOM_LEFT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x + 1, y - 1)) {
+                                    if (level->IsWall(x + 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                         window.draw(*shadow);
                                     }
                                 }
                             }
                             else {
-                                if (level->is_wall(x + 1, y)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_SIDES_VERT);
                                     window.draw(*shadow);
                                 }
                                 else {
                                     shadow->setSprite(SHADOW_LEFT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x + 1, y - 1)) {
+                                    if (level->IsWall(x + 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x + 1, y + 1)) {
+                                    if (level->IsWall(x + 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                         window.draw(*shadow);
                                     }
@@ -400,30 +426,30 @@ class Game {
                         }
                     }
                     else {
-                        if (level->is_wall(x, y - 1)) {
-                            if (level->is_wall(x, y + 1)) {
-                                if (level->is_wall(x + 1, y)) {
+                        if (level->IsWall(x, y - 1)) {
+                            if (level->IsWall(x, y + 1)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_ALL_BUT_LEFT);
                                     window.draw(*shadow);
                                 }
                                 else {
                                     shadow->setSprite(SHADOW_RIGHT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y - 1)) {
+                                    if (level->IsWall(x - 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                         window.draw(*shadow);
                                     }
                                 }
                             }
                             else {
-                                if (level->is_wall(x + 1, y)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_TOP_RIGHT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                         window.draw(*shadow);
                                     }
@@ -431,11 +457,11 @@ class Game {
                                 else {
                                     shadow->setSprite(SHADOW_TOP);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x + 1, y + 1)) {
+                                    if (level->IsWall(x + 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                         window.draw(*shadow);
                                     }
@@ -443,11 +469,11 @@ class Game {
                             }
                         }
                         else {
-                            if (level->is_wall(x, y + 1)) {
-                                if (level->is_wall(x + 1, y)) {
+                            if (level->IsWall(x, y + 1)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_BOTTOM_RIGHT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y - 1)) {
+                                    if (level->IsWall(x - 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                         window.draw(*shadow);
                                     }
@@ -455,43 +481,43 @@ class Game {
                                 else {
                                     shadow->setSprite(SHADOW_BOTTOM);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x + 1, y + 1)) {
+                                    if (level->IsWall(x + 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                         window.draw(*shadow);
                                     }
                                 }
                             }
                             else {
-                                if (level->is_wall(x + 1, y)) {
+                                if (level->IsWall(x + 1, y)) {
                                     shadow->setSprite(SHADOW_RIGHT);
                                     window.draw(*shadow);
-                                    if (level->is_wall(x - 1, y - 1)) {
+                                    if (level->IsWall(x - 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                         window.draw(*shadow);
                                     }
                                 }
                                 else {
-                                    if (level->is_wall(x - 1, y - 1)) {
+                                    if (level->IsWall(x - 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x + 1, y - 1)) {
+                                    if (level->IsWall(x + 1, y - 1)) {
                                         shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x - 1, y + 1)) {
+                                    if (level->IsWall(x - 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                         window.draw(*shadow);
                                     }
-                                    if (level->is_wall(x + 1, y + 1)) {
+                                    if (level->IsWall(x + 1, y + 1)) {
                                         shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                         window.draw(*shadow);
                                     }
@@ -499,7 +525,7 @@ class Game {
                             }
                         }
                     }
-                } // is_floor(x, y)
+                } // IsFloor(x, y)
         }
 
         void render() {
@@ -510,26 +536,37 @@ class Game {
                 int current_tiletype = -1;
                 TileSprite current_sprite;
 
-                fov->Calculate(level, level->player->pos);
+                fov->CalculateAndMark(level, level->player->pos);
 
                 for (int x=0; x < level->width ; x++)
                 for (int y=0; y < level->height; y++) {
                     Vector2i pos = Vector2i(x, y) - level->player->pos;
-                    if (!fov->IsVisible(pos))
-                        continue;
-                    const Tile& tile = level->get_tile(x, y);
+                    bool shade = false;
+                    if (!fov->IsVisible(pos)) {
+                        if (!level->IsKnown(Vector2i(x,y)))
+                            continue;
+                        else
+                            shade = true;
+                    }
+                    const Tile& tile = level->GetTile(x, y);
                     if (current_tiletype != tile.type) {
                         current_tiletype = tile.type;
                         current_sprite = resman.get_tile_sprite(current_tiletype);
                     }
                     sf::Color color = resman.get_color(tile.material);
+                    if (shade) {
+                        int c = (color.r + color.g + color.b) / 3 * 0.75;
+                        color.r = c;
+                        color.g = c;
+                        color.b = c;
+                    }
                     current_sprite.setColor(color);
                     current_sprite.setPosition(Vector2f(x*16.0f, y*16.0f));
                     window.draw(current_sprite);
 
                     render_shadow(x, y, &resman.shadow);
 
-                    if (tile.unit != NULL) {
+                    if (!shade && (tile.unit != NULL)) {
                         TileSprite unit_sprite = resman.get_unit_sprite(tile.unit->type);
                         sf::Color color = resman.get_color(tile.unit->material);
                         unit_sprite.setColor(color);
@@ -565,39 +602,39 @@ class Game {
                         std::cout << "Saved screenshot to user/screenshots/" + fname << std::endl;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad7) {
-                        level->moveUnit(level->player, sf::Vector2i(-1, -1));
+                        level->MoveUnit(level->player, sf::Vector2i(-1, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad8) {
-                        level->moveUnit(level->player, sf::Vector2i(0, -1));
+                        level->MoveUnit(level->player, sf::Vector2i(0, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad9) {
-                        level->moveUnit(level->player, sf::Vector2i(1, -1));
+                        level->MoveUnit(level->player, sf::Vector2i(1, -1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad4) {
-                        level->moveUnit(level->player, sf::Vector2i(-1, 0));
+                        level->MoveUnit(level->player, sf::Vector2i(-1, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad5) {
-                        level->moveUnit(level->player, sf::Vector2i(0, 0));
+                        level->MoveUnit(level->player, sf::Vector2i(0, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad6) {
-                        level->moveUnit(level->player, sf::Vector2i(1, 0));
+                        level->MoveUnit(level->player, sf::Vector2i(1, 0));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad1) {
-                        level->moveUnit(level->player, sf::Vector2i(-1, 1));
+                        level->MoveUnit(level->player, sf::Vector2i(-1, 1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad2) {
-                        level->moveUnit(level->player, sf::Vector2i(0, 1));
+                        level->MoveUnit(level->player, sf::Vector2i(0, 1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Numpad3) {
-                        level->moveUnit(level->player, sf::Vector2i(1, 1));
+                        level->MoveUnit(level->player, sf::Vector2i(1, 1));
                         view_changed = true;
                     }
                     else if (event.key.code == sf::Keyboard::Add) {
