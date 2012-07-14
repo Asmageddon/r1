@@ -1,25 +1,25 @@
 #include "ResourceManager.hpp"
 
-void ResourceManager::LoadConfiguration(string dir) {
+void ResourceManager::LoadConfiguration(std::string dir) {
     Data d(base_path + "data/config");
 
-    vector<string> s = split(d["data"]["tile_size"], ' ');
-    stringstream( s[0] ) >> tile_size.x;
-    stringstream( s[1] ) >> tile_size.y;
+    std::vector<std::string> s = split(d["data"]["tile_size"], ' ');
+    std::stringstream( s[0] ) >> tile_size.x;
+    std::stringstream( s[1] ) >> tile_size.y;
 }
-void ResourceManager::LoadTilesets(string dir) {
+void ResourceManager::LoadTilesets(std::string dir) {
     if (dir == "")
         dir = base_path + "data/images/tilesets/";
 
-    vector<string> files = list_dir(dir);
+    std::vector<std::string> files = list_dir(dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        string filename = files[i];
+        std::string filename = files[i];
         tilesets[filename].loadFromFile(dir + filename);
         cout << " * Loaded tileset: " << filename << endl;
     }
 }
-void ResourceManager::LoadTiletypes(string dir) {
+void ResourceManager::LoadTiletypes(std::string dir) {
     //Create the void tiletype
     TileType t;
     tiletypes.push_back(t);
@@ -32,15 +32,15 @@ void ResourceManager::LoadTiletypes(string dir) {
     if (dir == "")
         dir = base_path + "data/tiletypes/";
 
-    vector<string> files = list_dir(dir);
+    std::vector<std::string> files = list_dir(dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        string filename = files[i];
+        std::string filename = files[i];
         Data d(dir + filename);
         this->AddTiletype(d);
     }
 }
-void ResourceManager::LoadMaterials(string dir) {
+void ResourceManager::LoadMaterials(std::string dir) {
     //Create the void tiletype
     Material m;
     materials.push_back(m);
@@ -49,15 +49,15 @@ void ResourceManager::LoadMaterials(string dir) {
     if (dir == "")
         dir = base_path + "data/materials/";
 
-    vector<string> files = list_dir(dir);
+    std::vector<std::string> files = list_dir(dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        string filename = files[i];
+        std::string filename = files[i];
         Data d(dir + filename);
         this->AddMaterial(d);
     }
 }
-void ResourceManager::LoadUnits(string dir) {
+void ResourceManager::LoadUnits(std::string dir) {
     //Create the MISSINGNO unit
     UnitType u;
     units.push_back(u);
@@ -70,10 +70,10 @@ void ResourceManager::LoadUnits(string dir) {
     if (dir == "")
         dir = base_path + "data/objects/units/";
 
-    vector<string> files = list_dir(dir);
+    std::vector<std::string> files = list_dir(dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        string filename = files[i];
+        std::string filename = files[i];
         Data d(dir + filename);
         this->AddUnit(d);
     }
@@ -109,7 +109,7 @@ void ResourceManager::AddUnit(Data data) {
 }
 
 ResourceManager::ResourceManager() {}
-ResourceManager::ResourceManager(string base_path) : base_path(base_path) {}
+ResourceManager::ResourceManager(std::string base_path) : base_path(base_path) {}
 void ResourceManager::Load() {
     LoadConfiguration("");
     cout << "Loaded data configuration configuration" << endl;
@@ -126,34 +126,38 @@ void ResourceManager::Load() {
     LoadUnits("");
     cout << "Loaded " << units.size() << " unit definitions" << endl;
 
-    Texture tex;
+    sf::Texture tex;
     shadow_texture.loadFromFile(base_path + "data/images/shadows.png");
     shadow = ShadowSprite(shadow_texture, tile_size);
     cout << "Shadow sprite loaded" << endl;
 }
-int ResourceManager::find_tiletype(string id) {
+int ResourceManager::FindTiletype(std::string id) {
     if (contains(tiletype_map, id))
         return tiletype_map[id];
     return 0;
 }
-int ResourceManager::find_material(string id) {
+int ResourceManager::FindMaterial(std::string id) {
     if (contains(material_map, id))
         return material_map[id];
     return 0;
 }
-int ResourceManager::find_unit(string id) {
+int ResourceManager::FindUnit(std::string id) {
     if (contains(unit_map, id))
         return unit_map[id];
     return 0;
 }
 
-const TileSprite& ResourceManager::get_tile_sprite(const int& tiletype_n) {
+const TileSprite& ResourceManager::GetTileSprite(const int& tiletype_n) const {
     return tile_sprites[tiletype_n];
 }
-const TileSprite& ResourceManager::get_unit_sprite(const int& unit_n) {
+const TileSprite& ResourceManager::GetUnitSprite(const int& unit_n) const {
     return unit_sprites[unit_n];
 }
 
-const Color& ResourceManager::get_color(const int& material_n) {
+const sf::Color& ResourceManager::GetMaterialColor(const int& material_n) const {
     return materials[material_n].color;
+}
+
+const sf::Vector2i& ResourceManager::GetTileSize() const {
+    return this->tile_size;
 }

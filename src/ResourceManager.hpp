@@ -6,10 +6,8 @@
 #include <vector>
 
 #include <sstream>
-using namespace std;
 
 #include <SFML/Graphics.hpp>
-using namespace sf;
 
 #include "Data.hpp"
 #include "Material.hpp"
@@ -23,42 +21,44 @@ using namespace sf;
 
 class ResourceManager {
     private:
-        map<string, int> tiletype_map;
-        map<string, int> material_map;
-        map<string, int> unit_map;
+        std::map<std::string, int> tiletype_map;
+        std::map<std::string, int> material_map;
+        std::map<std::string, int> unit_map;
 
-        Vector2i tile_size;
-        vector<TileSprite> tile_sprites;
-        vector<TileSprite> unit_sprites;
-        Texture shadow_texture;
+        sf::Vector2i tile_size;
+        std::vector<TileSprite> tile_sprites;
+        std::vector<TileSprite> unit_sprites;
+        sf::Texture shadow_texture;
 
-        string base_path;
+        std::string base_path;
     public:
-        map<string, Texture> tilesets;
-        vector<TileType> tiletypes;
-        vector<Material> materials;
-        vector<UnitType> units;
+        std::map<std::string, sf::Texture> tilesets;
+        std::vector<TileType> tiletypes;
+        std::vector<Material> materials;
+        std::vector<UnitType> units;
         ShadowSprite shadow;
     private:
-        void LoadConfiguration(string dir);
-        void LoadTilesets(string dir);
-        void LoadTiletypes(string dir);
-        void LoadMaterials(string dir);
-        void LoadUnits(string dir);
+        void LoadConfiguration(std::string dir);
+        void LoadTilesets(std::string dir);
+        void LoadTiletypes(std::string dir);
+        void LoadMaterials(std::string dir);
+        void LoadUnits(std::string dir);
         void AddTiletype(Data data);
         void AddMaterial(Data data);
         void AddUnit(Data data);
 
     public:
         ResourceManager();
-        ResourceManager(string base_path);
+        ResourceManager(std::string base_path);
         void Load();
-        int find_tiletype(string id);
-        int find_material(string id);
-        int find_unit(string id);
-        const TileSprite& get_tile_sprite(const int& tiletype_n);
-        const TileSprite& get_unit_sprite(const int& unit_n);
-        const Color& get_color(const int& material_n);
+        int FindTiletype(std::string id);
+        int FindMaterial(std::string id);
+        int FindUnit(std::string id);
+        const TileSprite& GetTileSprite(const int& tiletype_n) const;
+        const TileSprite& GetUnitSprite(const int& unit_n) const;
+        const sf::Color& GetMaterialColor(const int& material_n) const;
+
+        const sf::Vector2i& GetTileSize() const;
 };
 
 #endif
