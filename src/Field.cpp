@@ -41,7 +41,7 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
         intensity[x + width * y] = 0.0f;
     }
     intensity[center.x + width * center.y] = 1.0f;
-    //int rays = PI * 2 * radius * 2;
+    //int rays = M_PI * 2 * radius * 2.0;
     int rays = 360;
     for(int a = 0; a < rays; a++) {
         float ax = sin(a * M_PI * 2 / rays);
@@ -82,6 +82,11 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
         }
     }
 }
+
+void Field::Calculate(const Level* level) {
+    Calculate(level, origin);
+}
+
 float Field::GetIntensityAt(const sf::Vector2i& pos) const {
     sf::Vector2i _pos = pos - origin + center;
     if (_pos.x < 0) return 0.0f;
@@ -91,4 +96,14 @@ float Field::GetIntensityAt(const sf::Vector2i& pos) const {
 
     const float& i = intensity[_pos.x + width * _pos.y];
     return i;
+}
+
+bool Field::InBounds(const sf::Vector2i& pos) const {
+    sf::Vector2i _pos = pos - origin + center;
+    if (_pos.x < 0) return false;
+    if (_pos.x >= width) return false;
+    if (_pos.y < 0) return false;
+    if (_pos.y >= width) return false;
+
+    return true;
 }

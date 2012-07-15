@@ -30,7 +30,11 @@ class Field {
         const FALLOFF& GetFalloff() const;
 
         void Calculate(const Level* level, const sf::Vector2i& caster_pos);
+        void Calculate(const Level* level);
+
         float GetIntensityAt(const sf::Vector2i& pos) const;
+
+        bool InBounds(const sf::Vector2i& pos) const;
 };
 
 #endif

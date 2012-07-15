@@ -1,6 +1,6 @@
 #include "Level.hpp"
 
-#include <map>
+#include <set>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -43,7 +43,10 @@ const Tile& Level::GetTile(const sf::Vector2i& pos) const {
 }
 
 void Level::SetTile(const sf::Vector2i& pos, const Tile& new_tile) {
-    data[pos.x + size.x * pos.y] = new_tile;
+    unsigned int i = pos.x + size.x * pos.y;
+    Unit* tmp = data[i].unit;
+    data[i] = new_tile;
+    data[i].unit = tmp;
 }
 
 bool Level::IsWall(const sf::Vector2i& pos) const {
@@ -94,33 +97,16 @@ void Level::Generate() {
 }
 
 void Level::PlaceUnit(const sf::Vector2i& pos, Unit* unit) {
-    if (data[pos.x + size.x * pos.y].unit != NULL) {
-        units.erase(data[pos.x + size.x * pos.y].unit);
-        delete data[pos.x + size.x * pos.y].unit;
+    long i = pos.x + size.x * pos.y;
+
+    if (data[i].unit != NULL) {
+        units.erase(data[i].unit);
+        delete data[i].unit;
     }
-    data[pos.x + size.x * pos.y].unit = unit;
-    units[unit] = pos;
+
+    data[i].unit = unit;
+    units.insert(unit);
+
+    unit->location = this;
     unit->pos = pos;
-}
-
-void Level::MoveUnit(Unit* unit, const sf::Vector2i& vec) {
-    sf::Vector2i new_pos = unit->pos + vec;
-
-    if (!InBounds(new_pos)) return;
-
-    Unit* tmp = NULL;
-    sf::Vector2i old_pos = unit->pos;
-    if (data[new_pos.x + size.x * new_pos.y].unit != NULL) {
-        tmp = data[new_pos.x + size.x * new_pos.y].unit;
-        tmp->pos = unit->pos;
-    }
-    unit->pos = new_pos;
-    data[new_pos.x + size.x * new_pos.y].unit = unit;
-    units[unit] = new_pos;
-
-    data[old_pos.x + size.x * old_pos.y].unit = NULL;
-    if (tmp != NULL) {
-        data[old_pos.x + size.x * old_pos.y].unit = tmp;
-        units[tmp] = old_pos;
-    }
 }

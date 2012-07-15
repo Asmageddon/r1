@@ -1,7 +1,7 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
-#include <map>
+#include <set>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -11,13 +11,14 @@
 #include "Unit.hpp"
 
 class Level {
+    friend class Unit;
     private:
         ResourceManager* resman;
         Tile *data;
         Tile default_tile;
         Vector2u size;
     public:
-        std::map<Unit*, sf::Vector2i> units;
+        std::set<Unit*> units;
         Unit *player;
         Color ambient;
     public:
@@ -43,6 +44,5 @@ class Level {
 
         void Generate();
         void PlaceUnit(const sf::Vector2i& pos, Unit* unit);
-        void MoveUnit(Unit* unit, const sf::Vector2i& vec);
 };
 #endif
