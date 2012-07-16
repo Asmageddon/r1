@@ -1,11 +1,15 @@
 #ifndef UNIT_HPP_
 #define UNIT_HPP_
 
+#include <set>
+
 #include <SFML/Graphics.hpp>
 
 #include "UnitType.hpp"
 
 class Level;
+class LightField;
+class ResourceManager;
 
 class Unit {
     public:
@@ -17,21 +21,17 @@ class Unit {
         u_int32_t hp;
 
         Level *location;
+        std::set<LightField*> lights;
+        ResourceManager *resman;
+
         sf::Vector2i pos;
 
     public:
-        Unit(const UnitType& prototype) { }
-        Unit() {
-            type = 0;
-            material = 0;
-            integrity = 0;
-            temperature = 0;
-
-            hp = 1;
-            pos = sf::Vector2i(0,0);
-
-        }
+        Unit(Level* location, const UnitType& prototype);
 
         void Move(const sf::Vector2i& vec);
+
+        void AttachLight(LightField *light);
+        void DetachLight(LightField *light);
 };
 #endif

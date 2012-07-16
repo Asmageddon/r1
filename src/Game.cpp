@@ -100,6 +100,8 @@ class Game {
             confman = ConfigManager(base_path);
             confman.Load();
 
+            std::cout << confman.resolution << std::endl;
+
             window.create(VideoMode(confman.resolution.x, confman.resolution.y), "r1");
             window.setFramerateLimit(confman.max_fps);
 
@@ -458,7 +460,7 @@ class Game {
                     if (event.key.code == sf::Keyboard::F12) {
                         std::string dir = base_path + "user/screenshots/";
                         int n = list_dir(dir).size() + 1;
-                        stringstream out;
+                        std::stringstream out;
                         out << n;
                         std::string fname = out.str();
                         fname.insert(fname.begin(), 5 - fname.size(), '0');

@@ -11,6 +11,8 @@
 #include "Tile.hpp"
 #include "Unit.hpp"
 
+#include "LightField.hpp"
+
 Level::Level(ResourceManager* resman, const Vector2u& size) {
     this->resman = resman;
     data = new Tile[size.x * size.y];
@@ -85,12 +87,12 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y].type = 1;
     }
-    Unit *u = new Unit();
+    Unit *u = new Unit(this, resman->units[1]);
     u->type = 1;
     PlaceUnit(sf::Vector2i(12,5), u);
     player = u;
 
-    u = new Unit();
+    u = new Unit(this, resman->units[2]);
     u->type = 2;
     u->material = 1;
     PlaceUnit(sf::Vector2i(12,3), u);
@@ -109,4 +111,20 @@ void Level::PlaceUnit(const sf::Vector2i& pos, Unit* unit) {
 
     unit->location = this;
     unit->pos = pos;
+}
+
+void Level::AttachLight(LightField *light) {
+    lights.insert(light);
+    light->Calculate(this, light->GetPosition());
+}
+
+void Level::DetachLight(LightField *light) {
+    lights.erase(light);
+}
+
+void Level::UpdateLightFields() {
+    std::set<LightField*>::iterator it = lights.begin();
+    for(; it != lights.end(); it++) {
+        (*it)->Calculate(this);
+    }
 }

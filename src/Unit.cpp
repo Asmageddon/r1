@@ -1,6 +1,26 @@
 #include "Unit.hpp"
 
+#include <set>
+
 #include "Level.hpp"
+#include "LightField.hpp"
+
+#include "ResourceManager.hpp"
+
+Unit::Unit(Level *location, const UnitType& type) {
+    //FIXME: Come up with a better way to create units
+    this->type = 0;
+    material = 0;
+    integrity = 0;
+    temperature = 0;
+
+    hp = 1;
+    pos = sf::Vector2i(0,0);
+
+    this->location = location;
+
+    //TODO: Create material light
+}
 
 void Unit::Move(const sf::Vector2i& vec) {
     if (location == NULL) return;
@@ -21,4 +41,13 @@ void Unit::Move(const sf::Vector2i& vec) {
     this->pos = new_pos;
     location->data[new_i].unit = this;
     location->data[old_i].unit = tmp;
+    //TODO: Update light fields
+}
+
+void Unit::AttachLight(LightField *light) {
+    //TODO: Attach them to the level as well
+    this->lights.insert(light);
+}
+void Unit::DetachLight(LightField *light) {
+    this->lights.insert(light);
 }

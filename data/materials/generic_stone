@@ -6,4 +6,3 @@ type = stone
 
 [appearance]
     color = 170 160 145
-    opacity = 100

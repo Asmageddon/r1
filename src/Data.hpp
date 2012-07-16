@@ -8,38 +8,31 @@
 #include <map>
 #include <vector>
 #include <sstream>
-using namespace std;
 
 #include "utils.hpp"
 
 #include <SFML/Graphics.hpp>
-using namespace sf;
 
 class Data {
     private:
-        map<string, map<string, string> > values;
-        string current_category;
+        std::map<std::string, std::map<std::string, std::string> > values;
+        std::string current_category;
     private:
-        void parse_line(string line);
+        void parse_line(std::string line);
     public:
-        Data(string file_path);
+        Data(std::string file_path);
 
-        map<string, string> operator[] (const string& idx);
+        std::string              as_string     (const std::string& category, const std::string& field, bool allow_empty=false);
+        int                      as_int        (const std::string& category, const std::string& field, bool allow_empty=false);
+        sf::Color                as_Color      (const std::string& category, const std::string& field, bool allow_empty=false);
+        sf::Vector2i             as_Vector2i   (const std::string& category, const std::string& field, bool allow_empty=false);
+        std::vector<std::string> as_str_vector (const std::string& category, const std::string& field, bool allow_empty=false);
+        std::vector<int>         as_int_vector (const std::string& category, const std::string& field, bool allow_empty=false);
 
-        string as_string(const string& category, const string& field, bool allow_empty=false);
+        bool HasCategory(const std::string& category);
+        bool HasField(const std::string& category, const std::string& field);
 
-        int as_int(const string& category, const string& field, bool allow_empty=false);
-
-        Color as_Color(const string& category, const string& field, bool allow_empty=false);
-
-        Vector2i as_Vector2i(const string& category, const string& field, bool allow_empty=false);
-
-        vector<string> as_str_vector(const string& category, const string& field, bool allow_empty=false);
-
-        vector<int> as_int_vector(const string& category, const string& field, bool allow_empty=false);
-
-
-        void print();
+        void Print();
 };
 
 #endif

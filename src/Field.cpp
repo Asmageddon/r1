@@ -42,7 +42,7 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
     }
     intensity[center.x + width * center.y] = 1.0f;
     //int rays = M_PI * 2 * radius * 2.0;
-    int rays = 360;
+    int rays = 360; //TODO: Decrease amount of rays to only as much as is necessary
     for(int a = 0; a < rays; a++) {
         float ax = sin(a * M_PI * 2 / rays);
         float ay = cos(a * M_PI * 2 / rays);
@@ -106,4 +106,8 @@ bool Field::InBounds(const sf::Vector2i& pos) const {
     if (_pos.y >= width) return false;
 
     return true;
+}
+
+const Vector2i& Field::GetPosition() const {
+    return origin;
 }

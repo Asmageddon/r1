@@ -7,6 +7,9 @@ categories = magical primitive
     tileset = creatures1.png
     image = 2
 
+[body]
+    material = generic_metal
+
 [stats]
     max_hp = 5
     strength = 1

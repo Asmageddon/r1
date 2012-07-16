@@ -1,9 +1,12 @@
 #include "ResourceManager.hpp"
 
+//TODO: Make dir argument const correct
+//TODO: Replace data dir with module name
+
 void ResourceManager::LoadConfiguration(std::string dir) {
     Data d(base_path + "data/config");
 
-    std::vector<std::string> s = split(d["data"]["tile_size"], ' ');
+    std::vector<std::string> s = d.as_str_vector("data", "tile_size");
     std::stringstream( s[0] ) >> tile_size.x;
     std::stringstream( s[1] ) >> tile_size.y;
 }
@@ -16,7 +19,7 @@ void ResourceManager::LoadTilesets(std::string dir) {
     for ( unsigned int i = 0; i < files.size(); i++ ) {
         std::string filename = files[i];
         tilesets[filename].loadFromFile(dir + filename);
-        cout << " * Loaded tileset: " << filename << endl;
+        std::cout << " * Loaded tileset: " << filename << std::endl;
     }
 }
 void ResourceManager::LoadTiletypes(std::string dir) {
@@ -112,24 +115,24 @@ ResourceManager::ResourceManager() {}
 ResourceManager::ResourceManager(std::string base_path) : base_path(base_path) {}
 void ResourceManager::Load() {
     LoadConfiguration("");
-    cout << "Loaded data configuration configuration" << endl;
+    std::cout << "Loaded data configuration configuration" << std::endl;
 
     LoadTilesets("");
-    cout << "Loaded " << tilesets.size() << " tilesets" << endl;
+    std::cout << "Loaded " << tilesets.size() << " tilesets" << std::endl;
 
     LoadTiletypes("");
-    cout << "Loaded " << tiletypes.size() << " tile type definitions" << endl;
+    std::cout << "Loaded " << tiletypes.size() << " tile type definitions" << std::endl;
 
     LoadMaterials("");
-    cout << "Loaded " << materials.size() << " material definitions" << endl;
+    std::cout << "Loaded " << materials.size() << " material definitions" << std::endl;
 
     LoadUnits("");
-    cout << "Loaded " << units.size() << " unit definitions" << endl;
+    std::cout << "Loaded " << units.size() << " unit definitions" << std::endl;
 
     sf::Texture tex;
     shadow_texture.loadFromFile(base_path + "data/images/shadows.png");
     shadow = ShadowSprite(shadow_texture, tile_size);
-    cout << "Shadow sprite loaded" << endl;
+    std::cout << "Shadow sprite loaded" << std::endl;
 }
 int ResourceManager::FindTiletype(std::string id) {
     if (contains(tiletype_map, id))

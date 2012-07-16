@@ -1,0 +1,10 @@
+id = glowstone
+name = glowstone
+desc = faintly glowing stone
+
+type = stone
+
+[appearance]
+    color = 220 210 125
+    glow.color = 155 150 85
+    glow.radius = 4

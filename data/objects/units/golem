@@ -7,6 +7,9 @@ categories = artificial magical
     tileset = creatures1.png
     image = 1
 
+[body]
+    material = generic_stone
+
 [stats]
     max_hp = 40
     strength = 20

@@ -12,8 +12,8 @@ class Material : public Object {
     public:
         std::string type;
         sf::Color color;
-        float opacity;
-        float reflectivity;
+        sf::Color glow_color;
+        int glow_radius;
     public:
         Material();
         Material(Data data);

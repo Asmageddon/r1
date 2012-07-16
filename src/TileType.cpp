@@ -1,6 +1,6 @@
 #include "TileType.hpp"
 
-TILE_CLASS TileType::get_tile_class(string type) {
+TILE_CLASS TileType::get_tile_class(const std::string& type) {
     if (type == "wall")
         return TILE_WALL;
     if (type == "floor")
@@ -21,6 +21,6 @@ TileType::TileType() {
     cout << " * Loaded tiletype: void" << endl;
 }
 TileType::TileType(Data data) : Object(data) , Displayable(data) {
-    type = get_tile_class(data[""]["type"]);
-    cout << " * Loaded tiletype: " << id << endl;
+    type = get_tile_class(data.as_string("", "type"));
+    std::cout << " * Loaded tiletype: " << id << std::endl;
 }

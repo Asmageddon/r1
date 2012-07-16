@@ -10,6 +10,8 @@
 #include "Tile.hpp"
 #include "Unit.hpp"
 
+class LightField;
+
 class Level {
     friend class Unit;
     private:
@@ -19,6 +21,7 @@ class Level {
         Vector2u size;
     public:
         std::set<Unit*> units;
+        std::set<LightField*> lights;
         Unit *player;
         Color ambient;
     public:
@@ -44,5 +47,9 @@ class Level {
 
         void Generate();
         void PlaceUnit(const sf::Vector2i& pos, Unit* unit);
+
+        void AttachLight(LightField *light);
+        void DetachLight(LightField *light);
+        void UpdateLightFields();
 };
 #endif

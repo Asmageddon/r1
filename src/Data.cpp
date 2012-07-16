@@ -1,12 +1,12 @@
 #include "Data.hpp"
 
-void Data::parse_line(string line) {
+void Data::parse_line(std::string line) {
     if (line.length() == 0) return;
 
     int stage = 0;
-    string field;
-    string value;
-    string category;
+    std::string field;
+    std::string value;
+    std::string category;
 
     for (unsigned int i = 0; i < line.length(); i++) {
         char c = line[i];
@@ -45,81 +45,115 @@ void Data::parse_line(string line) {
     this->values[current_category][field] = value;
 }
 
-Data::Data(string file_path) {
+Data::Data(std::string file_path) {
     current_category = "default";
 
-    ifstream f (file_path.c_str());
+    std::ifstream f (file_path.c_str());
     while (f.good()) {
-        string line;
+        std::string line;
         getline(f, line);
         this->parse_line(line);
     }
 }
-map<string, string> Data::operator[] (const string& idx) {
-    if (idx == "")
-        return this->values["default"];
-    return this->values[idx];
-}
-string Data::as_string(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+
+std::string Data::as_string(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return "";
+
     return values[_category][field];
 }
-int Data::as_int(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+int Data::as_int(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
-    string v = values[_category][field];
+
+    if (! HasField(_category, field) )
+        return 0;
+
+    std::string v = values[_category][field];
     if (v == "") return 0;
     int i;
-    stringstream(v) >> i;
+    std::stringstream(v) >> i;
     return i;
 }
-Color Data::as_Color(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+sf::Color Data::as_Color(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
-    string v = values[_category][field];
-    stringstream ss(v);
+
+    if (! HasField(_category, field) )
+        return sf::Color(0,0,0);
+
+    std::string v = values[_category][field];
+    std::stringstream ss(v);
     unsigned int r, g, b;
     ss >> r >> g >> b;
-    return Color(r, g, b);
+    return sf::Color(r, g, b);
 }
-Vector2i Data::as_Vector2i(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
-    string v = values[_category][field];
-    stringstream ss(v);
-    Vector2i vec;
+
+    if (! HasField(_category, field) )
+        return sf::Vector2i(0, 0);
+
+    std::string v = values[_category][field];
+    std::stringstream ss(v);
+    sf::Vector2i vec;
     ss >> vec.x >> vec.y;
     return vec;
 }
 
-vector<string> Data::as_str_vector(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+std::vector<std::string> Data::as_str_vector(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return std::vector<std::string>();
+
     return split(values[_category][field], ' ');
 }
 
-vector<int> Data::as_int_vector(const string& category, const string& field, bool allow_empty) {
-    string _category = category;
+std::vector<int> Data::as_int_vector(const std::string& category, const std::string& field, bool allow_empty) {
+    std::string _category = category;
     if (category == "") _category = "default";
-    vector<string> s = split(values[_category][field], ' ');
-    vector<int> result;
+
+    if (! HasField(_category, field) )
+        return std::vector<int>();
+
+    std::vector<std::string> s = split(values[_category][field], ' ');
+    std::vector<int> result;
+
     for (unsigned int i=0; i < s.size(); i++) {
         int value;
-        stringstream ss(s[i]);
+        std::stringstream ss(s[i]);
         ss >> value;
         result.push_back(value);
     }
     return result;
 }
 
-void Data::print() {
-    map<string, map<string, string> >::iterator it;
+void Data::Print() {
+    std::map<std::string, std::map<std::string, std::string> >::iterator it;
     for ( it=values.begin() ; it != values.end(); it++ ) {
-        cout << "[" << (*it).first << "]" << endl;
-        map<string, string>::iterator it2;
+        std::cout << "[" << (*it).first << "]" << std::endl;
+        std::map<std::string, std::string>::iterator it2;
         for ( it2=(*it).second.begin() ; it2 != (*it).second.end(); it2++ ) {
-            cout << "    " << (*it2).first << " = " << (*it2).second << endl;
+            std::cout << "    " << (*it2).first << " = " << (*it2).second << std::endl;
         }
+    }
+}
+
+bool Data::HasCategory(const std::string& category) {
+    return contains(values, category);
+}
+
+bool Data::HasField(const std::string& category, const std::string& field) {
+    if ( contains(values, category) ) {
+        return contains(values[category], field);
+    }
+    else {
+        return false;
     }
 }

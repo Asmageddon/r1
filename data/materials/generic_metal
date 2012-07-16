@@ -1,0 +1,8 @@
+id = generic_metal
+name = metal
+desc = generic metal
+
+type = metal
+
+[appearance]
+    color = 170 210 230

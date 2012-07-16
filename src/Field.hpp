@@ -35,6 +35,8 @@ class Field {
         float GetIntensityAt(const sf::Vector2i& pos) const;
 
         bool InBounds(const sf::Vector2i& pos) const;
+
+        const Vector2i& GetPosition() const;
 };
 
 #endif
