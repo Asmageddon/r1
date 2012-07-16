@@ -1,4 +1,4 @@
-id = wall_simple
+id = generic_wall
 name = %m wall
 desc = plain wall made of %m
 type = wall

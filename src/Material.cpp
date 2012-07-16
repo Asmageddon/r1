@@ -1,13 +1,5 @@
 #include "Material.hpp"
 
-Material::Material() {
-    id = "void";
-    name = "void";
-    desc = "";
-    type = "void";
-    color = sf::Color(255,0,255);
-    std::cout << " * Loaded material: void" << std::endl;
-}
 Material::Material(Data data) : Object(data) {
     type = data.as_string("", "type");
 

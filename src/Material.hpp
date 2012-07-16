@@ -15,7 +15,7 @@ class Material : public Object {
         sf::Color glow_color;
         int glow_radius;
     public:
-        Material();
+        Material() { /* WARNING: This does not initialize anything */};
         Material(Data data);
 };
 

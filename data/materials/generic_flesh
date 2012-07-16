@@ -1,0 +1,8 @@
+id = generic_flesh
+name = generic flesh
+desc = Generic flesh of a generic creature. Tastes like a generic meal
+
+type = flesh
+
+[appearance]
+    color = 236 197 150

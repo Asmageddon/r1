@@ -108,6 +108,6 @@ bool Field::InBounds(const sf::Vector2i& pos) const {
     return true;
 }
 
-const Vector2i& Field::GetPosition() const {
+const sf::Vector2i& Field::GetPosition() const {
     return origin;
 }

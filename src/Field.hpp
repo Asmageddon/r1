@@ -36,7 +36,7 @@ class Field {
 
         bool InBounds(const sf::Vector2i& pos) const;
 
-        const Vector2i& GetPosition() const;
+        const sf::Vector2i& GetPosition() const;
 };
 
 #endif

@@ -7,18 +7,15 @@
 
 #include "ResourceManager.hpp"
 
-//TODO: Pass World* to Unit::Unit and use it for setting location
 Unit::Unit(ResourceManager *resman, const std::string& type_id) {
     type = &(resman->GetUnitType(type_id));
     material = &(resman->GetMaterial(type->material));
-
-    integrity = 0;
-    temperature = 0;
 
     this->pos = sf::Vector2i(0,0);
 
     this->location = NULL;
 
+    //Add material glow
     if (material->glow_radius > 0) {
         LightField *field = new LightField();
 
@@ -26,6 +23,18 @@ Unit::Unit(ResourceManager *resman, const std::string& type_id) {
 
         field->SetRadius(material->glow_radius);
         field->SetColor(material->glow_color);
+
+        AttachLight(field);
+    }
+
+    //Add unit type glow
+    if (type->glow_radius > 0) {
+        LightField *field = new LightField();
+
+        field->SetFalloff(FALLOFF_LINEAR_SMOOTH);
+
+        field->SetRadius(type->glow_radius);
+        field->SetColor(type->glow_color);
 
         AttachLight(field);
     }
@@ -61,7 +70,7 @@ void Unit::Move(const sf::Vector2i& vec) {
     if (tmp != NULL) {
         it = tmp->lights.begin();
         for (; it != tmp->lights.end(); it++) {
-            (*it)->Calculate(location, pos);
+            (*it)->Calculate(location, tmp->pos);
         }
     }
 }

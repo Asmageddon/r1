@@ -1,0 +1,9 @@
+id = void
+name = void
+desc = nothingness
+type = void
+materials = void
+
+[appearance]
+    tileset = tiles1.png
+    image = 0

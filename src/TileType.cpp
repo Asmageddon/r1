@@ -1,5 +1,8 @@
 #include "TileType.hpp"
 
+#include "Data.hpp"
+#include "ResourceManager.hpp"
+
 TILE_CLASS TileType::get_tile_class(const std::string& type) {
     if (type == "wall")
         return TILE_WALL;
@@ -11,16 +14,12 @@ TILE_CLASS TileType::get_tile_class(const std::string& type) {
     return TILE_UNKNOWN;
 }
 
-TileType::TileType() {
-    id = "void";
-    name = "void";
-    desc = "";
-    type = TILE_VOID;
-    tileset = "tiles1.png";
-    image = 0;
-    cout << " * Loaded tiletype: void" << endl;
-}
-TileType::TileType(Data data) : Object(data) , Displayable(data) {
+TileType::TileType(ResourceManager *resman, Data data) : Object(data) , Displayable(data) {
+    this->resman = resman;
+
     type = get_tile_class(data.as_string("", "type"));
-    std::cout << " * Loaded tiletype: " << id << std::endl;
+
+    sprite = resman->GetSprite(tileset, image);
+
+    std::cout << " * Loaded tiletype: " << id << " " << glow_color << std::endl;
 }

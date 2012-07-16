@@ -6,7 +6,9 @@
 
 #include "Object.hpp"
 #include "Displayable.hpp"
-#include "Data.hpp"
+
+class Data;
+class ResourceManager;
 
 enum TILE_CLASS {
     TILE_UNKNOWN = 0,
@@ -17,11 +19,13 @@ enum TILE_CLASS {
 
 class TileType: public Object, public Displayable {
     public:
+        ResourceManager *resman;
         TILE_CLASS type;
     public:
         static TILE_CLASS get_tile_class(const std::string& type);
-        TileType();
-        TileType(Data data);
+        TileType() { /* WARNING: This does not initialize anything */ };
+        //TODO: Make TileType and UnitType constructors const-correct, if possible
+        TileType(ResourceManager *resman, Data data);
 };
 
 #endif

@@ -57,11 +57,11 @@ class World {
                 this->seed = seed;
             }
         }
-        void AddLevel(const string& name, Level *level) {
+        void AddLevel(const std::string& name, Level *level) {
             if (!contains(maps, name))
                 maps[name] = level;
         }
-        void DeleteLevel(const string& name) {
+        void DeleteLevel(const std::string& name) {
             if (contains(maps, name)) {
                 Level *map = maps[name];
                 std::set<Unit*>::iterator i = map->units.begin();
@@ -71,7 +71,7 @@ class World {
                 delete map;
             }
         }
-        Level* GetLevel(const string& name) {
+        Level* GetLevel(const std::string& name) {
             if (contains(maps, name)) {
                 return maps[name];
             }
@@ -109,7 +109,7 @@ class Game {
 
             world = new World();
 
-            current_level = new Level(&resman, Vector2u(64, 64));
+            current_level = new Level(&resman, sf::Vector2u(64, 64));
             world->AddLevel("test1", current_level);
 
             world->player = current_level->player;
@@ -126,16 +126,16 @@ class Game {
             light->SetColor(sf::Color(255, 200, 170));
             light->Calculate(current_level, sf::Vector2i(6, 17));
 
-            camera_pos = Vector2i(5,5);
+            camera_pos = sf::Vector2i(5,5);
 
-            current_level->ambient = Color(15, 5, 20);
+            current_level->ambient = sf::Color(15, 5, 20);
         }
 
         void end() {
 
         }
 
-        void render_shadow(const Vector2i& map_pos, ShadowSprite* shadow) {
+        void render_shadow(const sf::Vector2i& map_pos, ShadowSprite* shadow) {
 
             sf::Vector2f screen_pos;
             screen_pos.x = map_pos.x - camera_pos.x;
@@ -148,11 +148,11 @@ class Game {
             int y = map_pos.y;
 
             shadow->setPosition(screen_pos);
-            if (current_level->IsFloor(Vector2i(x, y))) {
-                if (current_level->IsWall(Vector2i(x - 1, y))) {
-                    if (current_level->IsWall(Vector2i(x, y - 1))) {
-                        if (current_level->IsWall(Vector2i(x, y + 1))) {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+            if (current_level->IsFloor(sf::Vector2i(x, y))) {
+                if (current_level->IsWall(sf::Vector2i(x - 1, y))) {
+                    if (current_level->IsWall(sf::Vector2i(x, y - 1))) {
+                        if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_ALL);
                                 window.draw(*shadow);
                             }
@@ -162,14 +162,14 @@ class Game {
                             }
                         }
                         else {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_ALL_BUT_BOTTOM);
                                 window.draw(*shadow);
                             }
                             else {
                                 shadow->setSprite(SHADOW_TOP_LEFT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x + 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                     window.draw(*shadow);
                                 }
@@ -177,33 +177,33 @@ class Game {
                         }
                     }
                     else {
-                        if (current_level->IsWall(Vector2i(x, y + 1))) {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                        if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_ALL_BUT_TOP);
                                 window.draw(*shadow);
                             }
                             else {
                                 shadow->setSprite(SHADOW_BOTTOM_LEFT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x + 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                     window.draw(*shadow);
                                 }
                             }
                         }
                         else {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_SIDES_HORIZ);
                                 window.draw(*shadow);
                             }
                             else {
                                 shadow->setSprite(SHADOW_LEFT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x + 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x + 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                     window.draw(*shadow);
                                 }
@@ -212,9 +212,9 @@ class Game {
                     }
                 }
                 else {
-                    if (current_level->IsWall(Vector2i(x, y - 1))) {
-                        if (current_level->IsWall(Vector2i(x, y + 1))) {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                    if (current_level->IsWall(sf::Vector2i(x, y - 1))) {
+                        if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_ALL_BUT_LEFT);
                                 window.draw(*shadow);
                             }
@@ -224,10 +224,10 @@ class Game {
                             }
                         }
                         else {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_TOP_RIGHT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x - 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                     window.draw(*shadow);
                                 }
@@ -235,11 +235,11 @@ class Game {
                             else {
                                 shadow->setSprite(SHADOW_TOP);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x - 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x + 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                     window.draw(*shadow);
                                 }
@@ -247,11 +247,11 @@ class Game {
                         }
                     }
                     else {
-                        if (current_level->IsWall(Vector2i(x, y + 1))) {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                        if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_BOTTOM_RIGHT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x - 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                     window.draw(*shadow);
                                 }
@@ -259,43 +259,43 @@ class Game {
                             else {
                                 shadow->setSprite(SHADOW_BOTTOM);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x - 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x + 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                     window.draw(*shadow);
                                 }
                             }
                         }
                         else {
-                            if (current_level->IsWall(Vector2i(x + 1, y))) {
+                            if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
                                 shadow->setSprite(SHADOW_RIGHT);
                                 window.draw(*shadow);
-                                if (current_level->IsWall(Vector2i(x - 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x - 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                     window.draw(*shadow);
                                 }
                             }
                             else {
-                                if (current_level->IsWall(Vector2i(x - 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x + 1, y - 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
                                     shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x - 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
                                     window.draw(*shadow);
                                 }
-                                if (current_level->IsWall(Vector2i(x + 1, y + 1))) {
+                                if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
                                     shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
                                     window.draw(*shadow);
                                 }
@@ -303,14 +303,15 @@ class Game {
                         }
                     }
                 }
-            } // IsFloor(Vector2i(x, y))
+            } // IsFloor(sf::Vector2i(x, y))
         }
 
         void render() {
             if (view_changed) {
                 window.clear();
 
-                int current_tiletype = -1;
+                //TODO: Update tile rendering
+                const TileType *current_tiletype = NULL;
                 TileSprite current_sprite;
 
                 camera_pos = world->player->pos;
@@ -371,10 +372,10 @@ class Game {
 
                     if (current_tiletype != tile.type) {
                         current_tiletype = tile.type;
-                        current_sprite = resman.GetTileSprite(current_tiletype);
+                        current_sprite = current_tiletype->sprite;
                     }
 
-                    sf::Color tile_color = resman.materials[tile.type].color;
+                    sf::Color tile_color = tile.material->color;
                     if (shade) {
                         int c = (tile_color.r + tile_color.g + tile_color.b) / 3 * fow_brightness;
                         tile_color = sf::Color(c, c, c);
@@ -393,9 +394,7 @@ class Game {
                         TileSprite unit_sprite = tile.unit->type->sprite;
                         sf::Color color = tile.unit->material->color;
 
-                        if (tile.unit != world->player) {
-                            color = blend(color, color * light_color, 0.75);
-                        }
+                        color = blend(color, color * light_color, 0.75);
 
                         unit_sprite.setColor(color);
                         unit_sprite.setPosition(screen_pos);
@@ -436,7 +435,6 @@ class Game {
                     if (event.mouseButton.button == sf::Mouse::Right) {
                         light->Calculate(current_level, map_pos);
                     }
-                    //TODO: Make changing terrain work again
                     //else if (event.mouseButton.button == sf::Mouse::Left) {
                         //Tile t = Tile();
                         //t.type = 2;

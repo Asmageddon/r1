@@ -1,0 +1,17 @@
+id = sun_sentry
+name = sun sentry
+desc = A magical sentry made of glowstone
+categories = magical primitive
+
+[appearance]
+    tileset = creatures1.png
+    image = 3
+
+[body]
+    material = glowstone
+
+[stats]
+    max_hp = 5
+    strength = 1
+    dexterity = 1
+    speed = 1

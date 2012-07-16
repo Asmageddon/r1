@@ -1,0 +1,10 @@
+id = missingno
+name = MissingNo
+categories = invalid
+
+[appearance]
+    tileset = creatures1.png
+    image = 0
+
+[body]
+    material = void

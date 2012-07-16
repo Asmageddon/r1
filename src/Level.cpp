@@ -15,10 +15,12 @@
 
 Level::Level(ResourceManager* resman, const sf::Vector2u& size) {
     this->resman = resman;
+
     data = new Tile[size.x * size.y];
     this->size = size;
+
+    SetDefaultTile(Tile(resman, "void", "void"));
     Generate();
-    default_tile = Tile();
 }
 
 const sf::Vector2u& Level::GetSize() const {
@@ -44,21 +46,14 @@ const Tile& Level::GetTile(const sf::Vector2i& pos) const {
     return data[pos.x + size.x * pos.y];
 }
 
-void Level::SetTile(const sf::Vector2i& pos, const Tile& new_tile) {
-    unsigned int i = pos.x + size.x * pos.y;
-    Unit* tmp = data[i].unit;
-    data[i] = new_tile;
-    data[i].unit = tmp;
-}
-
 bool Level::IsWall(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return (t.type == TILE_WALL);
+    return (t.type->type == TILE_WALL);
 }
 
 bool Level::IsFloor(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return (t.type == TILE_FLOOR);
+    return (t.type->type == TILE_FLOOR);
 }
 
 bool Level::IsKnown(const sf::Vector2i& pos) const {
@@ -75,19 +70,21 @@ void Level::Generate() {
     perlin.SetOctaveCount (2);
     perlin.SetFrequency (1.0);
 
+    Tile stone_wall  = Tile(resman, "generic_wall", "generic_stone");
+    Tile stone_floor = Tile(resman, "generic_floor", "generic_stone");
+
     for(int x=0; x < (int)size.x; x++)
     for(int y=0; y < (int)size.y; y++) {
         double value = perlin.GetValue (0.14 * x, 0.14 * y, 0.5);
 
-        data[x + size.x*y].type = 2;
-        data[x + size.x*y].material = 1;
+        data[x + size.x*y] = stone_floor;
         data[x + size.x*y].integrity = 255;
         data[x + size.x*y].temperature = 127;
 
         if (value > 0.0)
-            data[x + size.x*y].type = 1;
+            data[x + size.x*y] = stone_wall;
     }
-    Unit *u = new Unit(resman, "sun_sentry");
+    Unit *u = new Unit(resman, "test_player");
     u->SetLocation(this);
     u->SetPosition(sf::Vector2i(12,5));
     player = u;
@@ -95,6 +92,10 @@ void Level::Generate() {
     u = new Unit(resman, "golem");
     u->SetLocation(this);
     u->SetPosition(sf::Vector2i(12,3));
+
+    u = new Unit(resman, "sun_sentry");
+    u->SetLocation(this);
+    u->SetPosition(sf::Vector2i(26, 25));
 }
 
 void Level::AttachLight(LightField *light) {

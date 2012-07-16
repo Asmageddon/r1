@@ -18,7 +18,7 @@ class UnitType : public Object, public Displayable {
 
         ResourceManager *resman;
     public:
-        UnitType(ResourceManager *resman);
+        UnitType() { /* WARNING: This does not initialize anything */ };
         UnitType(ResourceManager *resman, Data data);
 };
 

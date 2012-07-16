@@ -35,7 +35,7 @@ class Level {
 
         const Tile& GetTile(const sf::Vector2i& pos) const;
 
-        void SetTile(const sf::Vector2i& pos, const Tile& new_tile);
+        //TODO: Add functions for manipulating the map
 
         bool IsWall(const sf::Vector2i& pos) const;
 

@@ -1,0 +1,13 @@
+id = test_player
+name = test player unit
+desc = Playorr
+categories = unnatural
+
+[appearance]
+    tileset = creatures1.png
+    image = 1
+    glow.color = 180 180 180
+    glow.radius = 9
+
+[body]
+    material = generic_flesh

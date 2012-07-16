@@ -1,4 +1,4 @@
-id = floor_simple
+id = generic_floor
 name = %m floor
 desc = simple floor made of %m
 type = floor

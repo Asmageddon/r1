@@ -11,6 +11,7 @@ class LightField;
 class ResourceManager;
 class Material;
 
+//TODO: Pass World* to Unit::Unit and use it for setting location
 class Unit {
     public:
         const UnitType *type;
@@ -26,6 +27,8 @@ class Unit {
 
     public:
         Unit(ResourceManager* resman, const std::string& type_id);
+
+        //TODO: Setting and getting material and type
 
         void Move(const sf::Vector2i& vec);
 
