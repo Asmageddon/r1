@@ -91,7 +91,6 @@ class Game {
 
         Field *fov;
         LightField *light;
-        LightField *light2;
 
         sf::Vector2i camera_pos;
     private:
@@ -126,11 +125,6 @@ class Game {
             light->SetFalloff(FALLOFF_LINEAR_SMOOTH);
             light->SetColor(sf::Color(255, 200, 170));
             light->Calculate(current_level, sf::Vector2i(6, 17));
-
-            light2 = new LightField();
-            light2->SetRadius(8);
-            light2->SetFalloff(FALLOFF_LINEAR_SMOOTH);
-            light2->SetColor(sf::Color(150, 210, 230));
 
             camera_pos = Vector2i(5,5);
 
@@ -324,7 +318,6 @@ class Game {
                 camera_pos.y -= window.getView().getSize().y / resman.GetTileSize().y / 2;
 
                 fov->Calculate(current_level, world->player->pos);
-                light2->Calculate(current_level, world->player->pos);
 
                 int start_x = max(camera_pos.x, 0);
                 int start_y = max(camera_pos.y, 0);
@@ -347,9 +340,8 @@ class Game {
 
                     bool tile_visible = fov->GetIntensityAt(map_pos) >= 0.1f;
 
-                    sf::Color light_color = current_level->ambient;
+                    sf::Color light_color = current_level->GetLightColorAt(map_pos);
                     light_color += light->GetColorAt(map_pos);
-                    light_color += light2->GetColorAt(map_pos);
 
                     float i = max(light_color.r, max(light_color.g, light_color.b)) / 255.0;
 
@@ -367,7 +359,6 @@ class Game {
                             shade = true;
                         }
                     }
-
 
                     //Handle revealing and hiding tiles behind Fog of War
                     if (tile_visible) {
@@ -445,14 +436,15 @@ class Game {
                     if (event.mouseButton.button == sf::Mouse::Right) {
                         light->Calculate(current_level, map_pos);
                     }
-                    else if (event.mouseButton.button == sf::Mouse::Left) {
-                        Tile t = Tile();
-                        t.type = 2;
-                        t.material = 1;
-                        current_level->SetTile(map_pos, t);
-                        if (light->InBounds(map_pos) && (light->GetIntensityAt(map_pos) > 0.0f))
-                            light->Calculate(current_level);
-                    }
+                    //TODO: Make changing terrain work again
+                    //else if (event.mouseButton.button == sf::Mouse::Left) {
+                        //Tile t = Tile();
+                        //t.type = 2;
+                        //t.material = 1;
+                        //current_level->SetTile(map_pos, t);
+                        //if (light->InBounds(map_pos) && (light->GetIntensityAt(map_pos) > 0.0f))
+                            //light->Calculate(current_level);
+                    //}
 
                     view_changed = true;
                 }

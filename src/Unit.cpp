@@ -7,21 +7,31 @@
 
 #include "ResourceManager.hpp"
 
-Unit::Unit(Level *location, const UnitType *type) : type(type) {
-    //FIXME: Come up with a better way to create units
-
-    //FIXME: ResourceManager API regarding types and materials
+Unit::Unit(Level *location, const std::string& type_id) {
+    //TODO: Stats
+    //TODO: Other useful properties
+    type = &location->resman->GetUnitType(type_id);
     material = &location->resman->GetMaterial(type->material);
 
     integrity = 0;
     temperature = 0;
 
     hp = 1;
-    pos = sf::Vector2i(0,0);
+    this->pos = sf::Vector2i(0,0);
 
     this->location = location;
 
-    //TODO: Create material light
+    LightField *field = NULL;
+    if (material->glow_radius > 0) {
+        field = new LightField();
+
+        field->SetFalloff(FALLOFF_LINEAR_SMOOTH);
+
+        field->SetRadius(material->glow_radius);
+        field->SetColor(material->glow_color);
+
+        AttachLight(field);
+    }
 }
 
 void Unit::Move(const sf::Vector2i& vec) {
@@ -43,19 +53,41 @@ void Unit::Move(const sf::Vector2i& vec) {
     this->pos = new_pos;
     location->data[new_i].unit = this;
     location->data[old_i].unit = tmp;
-    //TODO: Update light fields
+
+    //Recalculate light fields
+    std::set<LightField*>::iterator it = lights.begin();
+    for (; it != lights.end(); it++) {
+        (*it)->Calculate(location, pos);
+    }
+
+    //Do the same for the other unit
+    if (tmp != NULL) {
+        it = tmp->lights.begin();
+        for (; it != tmp->lights.end(); it++) {
+            (*it)->Calculate(location, pos);
+        }
+    }
 }
 
-//void SetLocation(const std::string& loc) {
-    //location->world
-//}
 
-//const std::string& GetLocation() const;
+void Unit::SetPosition(const sf::Vector2i& new_pos) {
+    Move(new_pos - pos);
+}
+const sf::Vector2i& Unit::GetPosition() const {
+    return pos;
+}
+
+//void Unit::SetLocation(const std::string& loc) {
+
+//}
+//const std::string& Unit::GetLocation() const;
 
 void Unit::AttachLight(LightField *light) {
-    //TODO: Attach them to the level as well
+    light->Calculate(location, pos);
     this->lights.insert(light);
+    location->lights.insert(light);
 }
 void Unit::DetachLight(LightField *light) {
-    this->lights.insert(light);
+    this->lights.erase(light);
+    location->lights.erase(light);
 }

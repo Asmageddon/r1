@@ -13,7 +13,7 @@
 
 #include "LightField.hpp"
 
-Level::Level(ResourceManager* resman, const Vector2u& size) {
+Level::Level(ResourceManager* resman, const sf::Vector2u& size) {
     this->resman = resman;
     data = new Tile[size.x * size.y];
     this->size = size;
@@ -21,7 +21,7 @@ Level::Level(ResourceManager* resman, const Vector2u& size) {
     default_tile = Tile();
 }
 
-const Vector2u& Level::GetSize() const {
+const sf::Vector2u& Level::GetSize() const {
     return size;
 }
 
@@ -87,27 +87,12 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y].type = 1;
     }
-    Unit *u = new Unit(this, &resman->units[1]);
-    PlaceUnit(sf::Vector2i(12,5), u);
+    Unit *u = new Unit(this, "sun_sentry");
+    u->SetPosition(sf::Vector2i(12,5));
     player = u;
 
-    u = new Unit(this, &resman->units[2]);
-    PlaceUnit(sf::Vector2i(12,3), u);
-}
-
-void Level::PlaceUnit(const sf::Vector2i& pos, Unit* unit) {
-    long i = pos.x + size.x * pos.y;
-
-    if (data[i].unit != NULL) {
-        units.erase(data[i].unit);
-        delete data[i].unit;
-    }
-
-    data[i].unit = unit;
-    units.insert(unit);
-
-    unit->location = this;
-    unit->pos = pos;
+    u = new Unit(this, "golem");
+    u->SetPosition(sf::Vector2i(12,3));
 }
 
 void Level::AttachLight(LightField *light) {
@@ -124,4 +109,15 @@ void Level::UpdateLightFields() {
     for(; it != lights.end(); it++) {
         (*it)->Calculate(this);
     }
+}
+
+sf::Color Level::GetLightColorAt(const sf::Vector2i& pos) const {
+    sf::Color result = ambient;
+
+    std::set<LightField*>::iterator it = lights.begin();
+    for (; it != lights.end(); it++) {
+        result += (*it)->GetColorAt(pos);
+    }
+
+    return result;
 }

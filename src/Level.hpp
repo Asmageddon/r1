@@ -18,16 +18,16 @@ class Level {
         ResourceManager* resman;
         Tile *data;
         Tile default_tile;
-        Vector2u size;
+        sf::Vector2u size;
     public:
         std::set<Unit*> units;
         std::set<LightField*> lights;
         Unit *player;
-        Color ambient;
+        sf::Color ambient;
     public:
-        Level(ResourceManager* resman, const Vector2u& size);
+        Level(ResourceManager* resman, const sf::Vector2u& size);
 
-        const Vector2u& GetSize() const;
+        const sf::Vector2u& GetSize() const;
 
         bool InBounds(const sf::Vector2i& pos) const;
 
@@ -46,10 +46,11 @@ class Level {
         void SetDefaultTile(const Tile& tile);
 
         void Generate();
-        void PlaceUnit(const sf::Vector2i& pos, Unit* unit);
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);
         void UpdateLightFields();
+
+        sf::Color GetLightColorAt(const sf::Vector2i& pos) const;
 };
 #endif

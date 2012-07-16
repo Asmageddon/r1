@@ -5,8 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "UnitType.hpp"
-
+class UnitType;
 class Level;
 class LightField;
 class ResourceManager;
@@ -29,10 +28,13 @@ class Unit {
         sf::Vector2i pos;
 
     public:
-        Unit(Level* location, const UnitType *type);
+        Unit(Level* location, const std::string& type_id);
 
         void Move(const sf::Vector2i& vec);
-        //TODO: This v
+
+        void SetPosition(const sf::Vector2i& pos);
+        const sf::Vector2i& GetPosition() const;
+
         //void SetLocation(const std::string& loc);
         //const std::string& GetLocation() const;
 
