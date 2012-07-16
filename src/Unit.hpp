@@ -10,11 +10,13 @@
 class Level;
 class LightField;
 class ResourceManager;
+class Material;
 
 class Unit {
     public:
-        u_int16_t type;
-        u_int16_t material;
+        const UnitType *type;
+        const Material *material;
+
         u_int16_t integrity;
         u_int16_t temperature;
 
@@ -27,9 +29,12 @@ class Unit {
         sf::Vector2i pos;
 
     public:
-        Unit(Level* location, const UnitType& prototype);
+        Unit(Level* location, const UnitType *type);
 
         void Move(const sf::Vector2i& vec);
+        //TODO: This v
+        //void SetLocation(const std::string& loc);
+        //const std::string& GetLocation() const;
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);

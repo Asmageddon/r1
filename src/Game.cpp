@@ -383,7 +383,7 @@ class Game {
                         current_sprite = resman.GetTileSprite(current_tiletype);
                     }
 
-                    sf::Color tile_color = resman.GetMaterialColor(tile.material);
+                    sf::Color tile_color = resman.materials[tile.type].color;
                     if (shade) {
                         int c = (tile_color.r + tile_color.g + tile_color.b) / 3 * fow_brightness;
                         tile_color = sf::Color(c, c, c);
@@ -399,8 +399,8 @@ class Game {
                     render_shadow(map_pos, &resman.shadow);
 
                     if (!shade && (tile.unit != NULL)) {
-                        TileSprite unit_sprite = resman.GetUnitSprite(tile.unit->type);
-                        sf::Color color = resman.GetMaterialColor(tile.unit->material);
+                        TileSprite unit_sprite = tile.unit->type->sprite;
+                        sf::Color color = tile.unit->material->color;
 
                         if (tile.unit != world->player) {
                             color = blend(color, color * light_color, 0.75);

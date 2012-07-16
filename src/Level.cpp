@@ -87,14 +87,11 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y].type = 1;
     }
-    Unit *u = new Unit(this, resman->units[1]);
-    u->type = 1;
+    Unit *u = new Unit(this, &resman->units[1]);
     PlaceUnit(sf::Vector2i(12,5), u);
     player = u;
 
-    u = new Unit(this, resman->units[2]);
-    u->type = 2;
-    u->material = 1;
+    u = new Unit(this, &resman->units[2]);
     PlaceUnit(sf::Vector2i(12,3), u);
 }
 

@@ -27,7 +27,6 @@ class ResourceManager {
 
         sf::Vector2i tile_size;
         std::vector<TileSprite> tile_sprites;
-        std::vector<TileSprite> unit_sprites;
         sf::Texture shadow_texture;
 
         std::string base_path;
@@ -43,20 +42,24 @@ class ResourceManager {
         void LoadTiletypes(std::string dir);
         void LoadMaterials(std::string dir);
         void LoadUnits(std::string dir);
-        void AddTiletype(Data data);
+        void AddTileType(Data data);
         void AddMaterial(Data data);
-        void AddUnit(Data data);
+        void AddUnitType(Data data);
 
     public:
         ResourceManager();
         ResourceManager(std::string base_path);
         void Load();
+        //WIP: Get rid of these, Unit/Tile should hold references to their Material and UnitType/TileType
+        //As for now, I leave tiles as they are to have less to rollback if it turns out to be a bad idea
         int FindTiletype(std::string id);
-        int FindMaterial(std::string id);
-        int FindUnit(std::string id);
         const TileSprite& GetTileSprite(const int& tiletype_n) const;
-        const TileSprite& GetUnitSprite(const int& unit_n) const;
-        const sf::Color& GetMaterialColor(const int& material_n) const;
+
+        const UnitType& GetUnitType(const string& id);
+        const TileType& GetTileType(const string& id);
+        const Material& GetMaterial(const string& id);
+
+        TileSprite GetSprite(const string& tileset, const int& n);
 
         const sf::Vector2i& GetTileSize() const;
 };

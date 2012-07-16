@@ -40,7 +40,7 @@ void ResourceManager::LoadTiletypes(std::string dir) {
     for ( unsigned int i = 0; i < files.size(); i++ ) {
         std::string filename = files[i];
         Data d(dir + filename);
-        this->AddTiletype(d);
+        this->AddTileType(d);
     }
 }
 void ResourceManager::LoadMaterials(std::string dir) {
@@ -62,11 +62,9 @@ void ResourceManager::LoadMaterials(std::string dir) {
 }
 void ResourceManager::LoadUnits(std::string dir) {
     //Create the MISSINGNO unit
-    UnitType u;
+    UnitType u(this);
     units.push_back(u);
     unit_map[u.id] = units.size() - 1;
-    TileSprite s(tilesets[u.tileset], tile_size, u.image);
-    unit_sprites.push_back(s);
 
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
@@ -78,10 +76,10 @@ void ResourceManager::LoadUnits(std::string dir) {
     for ( unsigned int i = 0; i < files.size(); i++ ) {
         std::string filename = files[i];
         Data d(dir + filename);
-        this->AddUnit(d);
+        this->AddUnitType(d);
     }
 }
-void ResourceManager::AddTiletype(Data data) {
+void ResourceManager::AddTileType(Data data) {
     TileType t(data);
     if (!contains(tiletype_map, t.id)) {
         tiletypes.push_back(t);
@@ -99,15 +97,11 @@ void ResourceManager::AddMaterial(Data data) {
         material_map[m.id] = materials.size() - 1;
     }
 }
-void ResourceManager::AddUnit(Data data) {
-    UnitType u(data);
+void ResourceManager::AddUnitType(Data data) {
+    UnitType u(this, data);
     if (!contains(unit_map, u.id)) {
         units.push_back(u);
         unit_map[u.id] = units.size() - 1;
-
-        TileSprite s(tilesets[u.tileset], tile_size, u.image);
-
-        unit_sprites.push_back(s);
     }
 }
 
@@ -134,31 +128,41 @@ void ResourceManager::Load() {
     shadow = ShadowSprite(shadow_texture, tile_size);
     std::cout << "Shadow sprite loaded" << std::endl;
 }
+
 int ResourceManager::FindTiletype(std::string id) {
     if (contains(tiletype_map, id))
         return tiletype_map[id];
     return 0;
 }
-int ResourceManager::FindMaterial(std::string id) {
-    if (contains(material_map, id))
-        return material_map[id];
-    return 0;
-}
-int ResourceManager::FindUnit(std::string id) {
-    if (contains(unit_map, id))
-        return unit_map[id];
-    return 0;
-}
-
 const TileSprite& ResourceManager::GetTileSprite(const int& tiletype_n) const {
     return tile_sprites[tiletype_n];
 }
-const TileSprite& ResourceManager::GetUnitSprite(const int& unit_n) const {
-    return unit_sprites[unit_n];
+
+const UnitType& ResourceManager::GetUnitType(const string& id) {
+    //FIXME: Make maps directly store types rather than go around
+    if (contains(unit_map, id)) {
+        return units[unit_map[id]];
+    }
+    return units[0];
 }
 
-const sf::Color& ResourceManager::GetMaterialColor(const int& material_n) const {
-    return materials[material_n].color;
+const TileType& ResourceManager::GetTileType(const string& id) {
+    if (contains(tiletype_map, id)) {
+        return tiletypes[tiletype_map[id]];
+    }
+    return tiletypes[0];
+}
+
+const Material& ResourceManager::GetMaterial(const string& id) {
+    if (contains(material_map, id)) {
+        return materials[material_map[id]];
+    }
+    return materials[0];
+}
+
+TileSprite ResourceManager::GetSprite(const string& tileset, const int& n) {
+    TileSprite result = TileSprite(tilesets[tileset], tile_size, n);
+    return result;
 }
 
 const sf::Vector2i& ResourceManager::GetTileSize() const {

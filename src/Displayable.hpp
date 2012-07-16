@@ -7,11 +7,16 @@ using namespace std;
 
 #include "Data.hpp"
 
+#include "TileSprite.hpp"
+
 class Displayable {
     public:
         string tileset;
         int image;
         vector<int> variants;
+
+        TileSprite sprite;
+        //TODO: Make Displayable constructor take a ResourceManager as an argument and store the ref
 
         string border;
     public:

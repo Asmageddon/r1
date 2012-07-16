@@ -7,10 +7,12 @@
 
 #include "ResourceManager.hpp"
 
-Unit::Unit(Level *location, const UnitType& type) {
+Unit::Unit(Level *location, const UnitType *type) : type(type) {
     //FIXME: Come up with a better way to create units
-    this->type = 0;
-    material = 0;
+
+    //FIXME: ResourceManager API regarding types and materials
+    material = &location->resman->GetMaterial(type->material);
+
     integrity = 0;
     temperature = 0;
 
@@ -43,6 +45,12 @@ void Unit::Move(const sf::Vector2i& vec) {
     location->data[old_i].unit = tmp;
     //TODO: Update light fields
 }
+
+//void SetLocation(const std::string& loc) {
+    //location->world
+//}
+
+//const std::string& GetLocation() const;
 
 void Unit::AttachLight(LightField *light) {
     //TODO: Attach them to the level as well
