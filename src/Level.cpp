@@ -87,11 +87,13 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y].type = 1;
     }
-    Unit *u = new Unit(this, "sun_sentry");
+    Unit *u = new Unit(resman, "sun_sentry");
+    u->SetLocation(this);
     u->SetPosition(sf::Vector2i(12,5));
     player = u;
 
-    u = new Unit(this, "golem");
+    u = new Unit(resman, "golem");
+    u->SetLocation(this);
     u->SetPosition(sf::Vector2i(12,3));
 }
 

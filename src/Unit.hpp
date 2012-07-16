@@ -16,10 +16,7 @@ class Unit {
         const UnitType *type;
         const Material *material;
 
-        u_int16_t integrity;
-        u_int16_t temperature;
-
-        u_int32_t hp;
+        //TODO: hp, integrity, temperature, etc.
 
         Level *location;
         std::set<LightField*> lights;
@@ -28,13 +25,14 @@ class Unit {
         sf::Vector2i pos;
 
     public:
-        Unit(Level* location, const std::string& type_id);
+        Unit(ResourceManager* resman, const std::string& type_id);
 
         void Move(const sf::Vector2i& vec);
 
         void SetPosition(const sf::Vector2i& pos);
         const sf::Vector2i& GetPosition() const;
 
+        void SetLocation(Level *location);
         //void SetLocation(const std::string& loc);
         //const std::string& GetLocation() const;
 

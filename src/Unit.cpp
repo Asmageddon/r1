@@ -7,23 +7,20 @@
 
 #include "ResourceManager.hpp"
 
-Unit::Unit(Level *location, const std::string& type_id) {
-    //TODO: Stats
-    //TODO: Other useful properties
-    type = &location->resman->GetUnitType(type_id);
-    material = &location->resman->GetMaterial(type->material);
+//TODO: Pass World* to Unit::Unit and use it for setting location
+Unit::Unit(ResourceManager *resman, const std::string& type_id) {
+    type = &(resman->GetUnitType(type_id));
+    material = &(resman->GetMaterial(type->material));
 
     integrity = 0;
     temperature = 0;
 
-    hp = 1;
     this->pos = sf::Vector2i(0,0);
 
-    this->location = location;
+    this->location = NULL;
 
-    LightField *field = NULL;
     if (material->glow_radius > 0) {
-        field = new LightField();
+        LightField *field = new LightField();
 
         field->SetFalloff(FALLOFF_LINEAR_SMOOTH);
 
@@ -77,17 +74,33 @@ const sf::Vector2i& Unit::GetPosition() const {
     return pos;
 }
 
+void Unit::SetLocation(Level *new_location) {
+    std::set<LightField*>::iterator it = lights.begin();
+
+    for (; it != lights.end(); it++) {
+        if (this->location != NULL) {
+            this->location->DetachLight(*it);
+        }
+        new_location->AttachLight(*it);
+    }
+
+    this->location = new_location;
+}
 //void Unit::SetLocation(const std::string& loc) {
 
 //}
 //const std::string& Unit::GetLocation() const;
 
 void Unit::AttachLight(LightField *light) {
-    light->Calculate(location, pos);
     this->lights.insert(light);
+    if (this->location == NULL) return;
+
+    light->Calculate(location, pos);
     location->lights.insert(light);
 }
 void Unit::DetachLight(LightField *light) {
     this->lights.erase(light);
+
+    if (this->location == NULL) return;
     location->lights.erase(light);
 }
