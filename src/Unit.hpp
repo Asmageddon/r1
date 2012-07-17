@@ -7,6 +7,7 @@
 
 class UnitType;
 class Level;
+class SightField;
 class LightField;
 class ResourceManager;
 class Material;
@@ -21,14 +22,17 @@ class Unit {
 
         Level *location;
         std::set<LightField*> lights;
+        SightField *fov;
         ResourceManager *resman;
 
         sf::Vector2i pos;
 
     public:
         Unit(ResourceManager* resman, const std::string& type_id);
+        ~Unit();
 
         //TODO: Setting and getting material and type
+        //TODO: Setting and getting rest of stuff
 
         void Move(const sf::Vector2i& vec);
 
@@ -41,5 +45,8 @@ class Unit {
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);
+
+        bool CanSee(const sf::Vector2i& pos);
+        float GetLightThreshold() const;
 };
 #endif

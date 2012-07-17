@@ -11,7 +11,4 @@ categories = magical primitive
     material = generic_metal
 
 [stats]
-    max_hp = 5
-    strength = 1
-    dexterity = 1
-    speed = 1
+    sight.radius = 3

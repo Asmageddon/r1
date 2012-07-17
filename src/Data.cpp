@@ -56,7 +56,7 @@ Data::Data(std::string file_path) {
     }
 }
 
-std::string Data::as_string(const std::string& category, const std::string& field, bool allow_empty) {
+std::string Data::as_string(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 
@@ -65,7 +65,8 @@ std::string Data::as_string(const std::string& category, const std::string& fiel
 
     return values[_category][field];
 }
-int Data::as_int(const std::string& category, const std::string& field, bool allow_empty) {
+
+int Data::as_int(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 
@@ -74,11 +75,28 @@ int Data::as_int(const std::string& category, const std::string& field, bool all
 
     std::string v = values[_category][field];
     if (v == "") return 0;
+
     int i;
     std::stringstream(v) >> i;
     return i;
 }
-sf::Color Data::as_Color(const std::string& category, const std::string& field, bool allow_empty) {
+
+float Data::as_float(const std::string& category, const std::string& field) {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return 0;
+
+    std::string v = values[_category][field];
+    if (v == "") return 0.0f;
+
+    float i;
+    std::stringstream(v) >> i;
+    return i;
+}
+
+sf::Color Data::as_Color(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 
@@ -87,11 +105,17 @@ sf::Color Data::as_Color(const std::string& category, const std::string& field, 
 
     std::string v = values[_category][field];
     std::stringstream ss(v);
-    unsigned int r, g, b;
+    unsigned int r, g, b, a;
     ss >> r >> g >> b;
-    return sf::Color(r, g, b);
+
+    if (!ss.eof())
+        ss >> a;
+    else
+        a = 255;
+
+    return sf::Color(r, g, b, a);
 }
-sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& field, bool allow_empty) {
+sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 
@@ -105,7 +129,7 @@ sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& f
     return vec;
 }
 
-std::vector<std::string> Data::as_str_vector(const std::string& category, const std::string& field, bool allow_empty) {
+std::vector<std::string> Data::as_str_vector(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 
@@ -115,7 +139,7 @@ std::vector<std::string> Data::as_str_vector(const std::string& category, const 
     return split(values[_category][field], ' ');
 }
 
-std::vector<int> Data::as_int_vector(const std::string& category, const std::string& field, bool allow_empty) {
+std::vector<int> Data::as_int_vector(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
 

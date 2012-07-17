@@ -16,9 +16,10 @@ class Field {
         short radius;
         short width;
         sf::Vector2i center;
-        sf::Vector2i origin;
         FALLOFF falloff;
     protected:
+        sf::Vector2i origin;
+        const Level *current_level;
         float *intensity;
     public:
         Field();
@@ -30,7 +31,7 @@ class Field {
         const FALLOFF& GetFalloff() const;
 
         void Calculate(const Level* level, const sf::Vector2i& caster_pos);
-        void Calculate(const Level* level);
+        void Recalculate();
 
         float GetIntensityAt(const sf::Vector2i& pos) const;
 

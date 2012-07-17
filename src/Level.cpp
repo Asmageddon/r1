@@ -110,7 +110,7 @@ void Level::DetachLight(LightField *light) {
 void Level::UpdateLightFields() {
     std::set<LightField*>::iterator it = lights.begin();
     for(; it != lights.end(); it++) {
-        (*it)->Calculate(this);
+        (*it)->Recalculate();
     }
 }
 

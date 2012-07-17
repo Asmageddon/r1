@@ -9,8 +9,11 @@
 
 Field::Field() {
     radius = 1;
+    width = 3;
     intensity = new float[3*3];
     center = sf::Vector2i(1,1);
+
+    current_level = NULL;
 }
 
 void Field::SetRadius(const short& radius) {
@@ -26,6 +29,8 @@ const short& Field::GetRadius() const {
 
 void Field::SetFalloff(const FALLOFF& falloff) {
     this->falloff = falloff;
+    if (current_level != NULL)
+        Recalculate();
 }
 const FALLOFF& Field::GetFalloff() const {
     return this->falloff;
@@ -35,6 +40,7 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
     /*
      * Simple raycasting
      */
+    current_level = level;
     origin = caster_pos;
     for(int x = 0; x < width; x++)
     for(int y = 0; y < width; y++) {
@@ -83,8 +89,8 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
     }
 }
 
-void Field::Calculate(const Level* level) {
-    Calculate(level, origin);
+void Field::Recalculate() {
+    Calculate(current_level, origin);
 }
 
 float Field::GetIntensityAt(const sf::Vector2i& pos) const {

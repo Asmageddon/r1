@@ -6,8 +6,13 @@ categories = unnatural
 [appearance]
     tileset = creatures1.png
     image = 1
-    glow.color = 180 180 180
-    glow.radius = 9
+    glow.color = 160 170 170
+    glow.radius = 7
 
 [body]
     material = generic_flesh
+
+[stats]
+    sight.radius = 12
+    sight.threshold = 0.25
+    sight.vision_tint = 0 10 25

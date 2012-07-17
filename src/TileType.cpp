@@ -21,5 +21,5 @@ TileType::TileType(ResourceManager *resman, Data data) : Object(data) , Displaya
 
     sprite = resman->GetSprite(tileset, image);
 
-    std::cout << " * Loaded tiletype: " << id << " " << glow_color << std::endl;
+    std::cout << " * Loaded tiletype: " << id << " " << std::endl;
 }

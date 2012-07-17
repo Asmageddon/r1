@@ -9,12 +9,17 @@
 
 class ResourceManager;
 
+//TODO: Write getters for all these properties. I don't want unit types mutable unless under special circumstances
+
 class UnitType : public Object, public Displayable {
     public:
         std::string type;
         std::vector<std::string> categories;
         std::string material;
-        u_int32_t max_hp;
+
+        int sight_radius;
+        float sight_threshold;
+        sf::Color vision_tint;
 
         ResourceManager *resman;
     public:

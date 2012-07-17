@@ -8,3 +8,8 @@ categories = invalid
 
 [body]
     material = void
+
+[stats]
+    sight.radius = 7
+    sight.threshold = 0.1
+    sight.vision_tint = 0 0 25

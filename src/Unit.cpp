@@ -3,6 +3,7 @@
 #include <set>
 
 #include "Level.hpp"
+#include "SightField.hpp"
 #include "LightField.hpp"
 
 #include "ResourceManager.hpp"
@@ -11,9 +12,13 @@ Unit::Unit(ResourceManager *resman, const std::string& type_id) {
     type = &(resman->GetUnitType(type_id));
     material = &(resman->GetMaterial(type->material));
 
-    this->pos = sf::Vector2i(0,0);
+    pos = sf::Vector2i(0,0);
 
-    this->location = NULL;
+    location = NULL;
+
+    fov = new SightField();
+    fov->SetLightThreshold(type->sight_threshold);
+    fov->SetRadius(type->sight_radius);
 
     //Add material glow
     if (material->glow_radius > 0) {
@@ -38,6 +43,20 @@ Unit::Unit(ResourceManager *resman, const std::string& type_id) {
 
         AttachLight(field);
     }
+}
+
+Unit::~Unit() {
+    //Note to self: Delete any items that glow before this
+    std::set<LightField*>::iterator it = lights.begin();
+
+    for (; it != lights.end(); it++) {
+        if (this->location != NULL) {
+            this->location->DetachLight(*it);
+        }
+        delete (*it);
+    }
+
+    delete fov;
 }
 
 void Unit::Move(const sf::Vector2i& vec) {
@@ -65,6 +84,7 @@ void Unit::Move(const sf::Vector2i& vec) {
     for (; it != lights.end(); it++) {
         (*it)->Calculate(location, pos);
     }
+    fov->Calculate(location, pos);
 
     //Do the same for the other unit
     if (tmp != NULL) {
@@ -72,6 +92,8 @@ void Unit::Move(const sf::Vector2i& vec) {
         for (; it != tmp->lights.end(); it++) {
             (*it)->Calculate(location, tmp->pos);
         }
+
+        tmp->fov->Calculate(location, tmp->pos);
     }
 }
 
@@ -94,6 +116,8 @@ void Unit::SetLocation(Level *new_location) {
     }
 
     this->location = new_location;
+
+    fov->Calculate(new_location, pos);
 }
 //void Unit::SetLocation(const std::string& loc) {
 
@@ -107,9 +131,21 @@ void Unit::AttachLight(LightField *light) {
     light->Calculate(location, pos);
     location->lights.insert(light);
 }
+
 void Unit::DetachLight(LightField *light) {
     this->lights.erase(light);
 
     if (this->location == NULL) return;
     location->lights.erase(light);
+}
+
+bool Unit::CanSee(const sf::Vector2i& pos) {
+    if (location == NULL) return false;
+
+    return fov->GetVisibilityAt(pos);
+}
+
+//TODO: Expose entirety of fov, perhaps as a const ref
+float Unit::GetLightThreshold() const {
+    return fov->GetLightThreshold();
 }
