@@ -1,0 +1,13 @@
+id = start
+
+[atmosphere]
+    ambient = 20 20 20
+
+[terrain]
+    size = 12 12
+    generator = flat
+    seed = -1
+    default_tile = void void
+
+[terrain.empty]
+    tile = generic_floor generic_stone

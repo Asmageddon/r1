@@ -84,18 +84,21 @@ void ResourceManager::AddTileType(Data data) {
     TileType t(this, data);
     if (!contains(tiletypes, t.id)) {
         tiletypes[t.id] = t;
+        std::cout << " * Loaded tiletype: " << t.id << " " << std::endl;
     }
 }
 void ResourceManager::AddMaterial(Data data) {
     Material m(data);
     if (!contains(materials, m.id)) {
         materials[m.id] = m;
+        std::cout << " * Loaded material: " << m.id << std::endl;
     }
 }
 void ResourceManager::AddUnitType(Data data) {
     UnitType u(this, data);
     if (!contains(unittypes, u.id)) {
         unittypes[u.id] = u;
+        std::cout << " * Loaded unit type: " << u.id << std::endl;
     }
 }
 

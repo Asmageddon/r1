@@ -10,6 +10,4 @@ Material::Material(Data data) : Object(data), Glowable(data) {
 
     glow_color = data.as_Color("appearance", "glow.color");
     glow_radius = data.as_int("appearance", "glow.radius");
-
-    std::cout << " * Loaded material: " << id << std::endl;
 }

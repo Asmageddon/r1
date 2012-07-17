@@ -13,14 +13,48 @@
 
 #include "LightField.hpp"
 
-Level::Level(ResourceManager* resman, const sf::Vector2u& size) {
+#include "Data.hpp"
+
+Level::Level(ResourceManager *resman, Data data) {
     this->resman = resman;
 
-    data = new Tile[size.x * size.y];
-    this->size = size;
+    id = data.as_string("", "id");
+    ambient = data.as_Color("atmosphere", "ambient");
 
-    SetDefaultTile(Tile(resman, "void", "void"));
-    Generate();
+    size = data.as_Vector2u("terrain", "size");
+
+    //TODO: Generator class, different types, seed, default_tile
+    //generator = data.as_Vector2u("terrain", "generator");
+
+    default_tile = Tile(resman, "void", "void");
+
+    seed = data.as_int("terrain", "seed");
+    if (seed == -1) {
+        srand(time(NULL));
+        seed = rand();
+    }
+
+    ready = false;
+}
+
+void Level::Create() {
+    if (ready) {
+        delete[] data;
+    }
+
+    data = new Tile[size.x * size.y];
+
+    for(unsigned int x=0; x < size.x; x++)
+    for(unsigned int y=0; y < size.y; y++) {
+        data[x + size.x*y] = default_tile;
+        data[x + size.x*y].integrity = 255;
+        data[x + size.x*y].temperature = 127;
+    }
+    ready = true;
+}
+
+bool Level::IsReady() const {
+    return ready;
 }
 
 const sf::Vector2u& Level::GetSize() const {
@@ -61,10 +95,6 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
     return t.known;
 }
 
-void Level::SetDefaultTile(const Tile& tile) {
-    default_tile = tile;
-}
-
 void Level::Generate() {
     noise::module::Perlin perlin;
     perlin.SetOctaveCount (2);
@@ -75,7 +105,7 @@ void Level::Generate() {
 
     for(int x=0; x < (int)size.x; x++)
     for(int y=0; y < (int)size.y; y++) {
-        double value = perlin.GetValue (0.14 * x, 0.14 * y, 0.5);
+        double value = perlin.GetValue (0.14 * x, 0.14 * y, seed * 11.973);
 
         data[x + size.x*y] = stone_floor;
         data[x + size.x*y].integrity = 255;
@@ -84,18 +114,21 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y] = stone_wall;
     }
-    Unit *u = new Unit(resman, "test_player");
-    u->SetLocation(this);
-    u->SetPosition(sf::Vector2i(12,5));
-    player = u;
+}
 
-    u = new Unit(resman, "golem");
+Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos) {
+    if (!InBounds(pos)) return NULL;
+    if (GetTile(pos).unit != NULL) {
+        Unit *tmp = GetTile(pos).unit;
+        data[pos.x + size.x * pos.y].unit = NULL;
+        units.erase(tmp);
+        delete tmp;
+    }
+    Unit *u = new Unit(resman, unit_type);
     u->SetLocation(this);
-    u->SetPosition(sf::Vector2i(12,3));
+    u->SetPosition(pos);
 
-    u = new Unit(resman, "sun_sentry");
-    u->SetLocation(this);
-    u->SetPosition(sf::Vector2i(26, 25));
+    return u;
 }
 
 void Level::AttachLight(LightField *light) {

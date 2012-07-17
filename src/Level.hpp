@@ -6,26 +6,38 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "ResourceManager.hpp"
+#include "Object.hpp"
+
+class ResourceManager;
 #include "Tile.hpp"
-#include "Unit.hpp"
+class Unit;
+class Data;
+
+class World;
 
 class LightField;
 
-class Level {
+class Level{
     friend class Unit;
+    friend class World;
     private:
-        ResourceManager* resman;
+        World *world;
+        ResourceManager *resman;
         Tile *data;
         Tile default_tile;
         sf::Vector2u size;
+        std::string id;
+        int seed;
+        bool ready;
     public:
         std::set<Unit*> units;
         std::set<LightField*> lights;
-        Unit *player;
         sf::Color ambient;
     public:
-        Level(ResourceManager* resman, const sf::Vector2u& size);
+        Level(ResourceManager* resman, Data data);
+
+        void Create();
+        bool IsReady() const;
 
         const sf::Vector2u& GetSize() const;
 
@@ -43,9 +55,11 @@ class Level {
 
         bool IsKnown(const sf::Vector2i& pos) const;
 
-        void SetDefaultTile(const Tile& tile);
-
         void Generate();
+
+        //TODO: GetUnitAt
+
+        Unit* PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos);
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);

@@ -115,6 +115,7 @@ sf::Color Data::as_Color(const std::string& category, const std::string& field) 
 
     return sf::Color(r, g, b, a);
 }
+
 sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";
@@ -125,6 +126,34 @@ sf::Vector2i Data::as_Vector2i(const std::string& category, const std::string& f
     std::string v = values[_category][field];
     std::stringstream ss(v);
     sf::Vector2i vec;
+    ss >> vec.x >> vec.y;
+    return vec;
+}
+
+sf::Vector2u Data::as_Vector2u(const std::string& category, const std::string& field) {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return sf::Vector2u(0, 0);
+
+    std::string v = values[_category][field];
+    std::stringstream ss(v);
+    sf::Vector2u vec;
+    ss >> vec.x >> vec.y;
+    return vec;
+}
+
+sf::Vector2f Data::as_Vector2f(const std::string& category, const std::string& field) {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return sf::Vector2f(0, 0);
+
+    std::string v = values[_category][field];
+    std::stringstream ss(v);
+    sf::Vector2f vec;
     ss >> vec.x >> vec.y;
     return vec;
 }
@@ -151,6 +180,25 @@ std::vector<int> Data::as_int_vector(const std::string& category, const std::str
 
     for (unsigned int i=0; i < s.size(); i++) {
         int value;
+        std::stringstream ss(s[i]);
+        ss >> value;
+        result.push_back(value);
+    }
+    return result;
+}
+
+std::vector<float> Data::as_float_vector(const std::string& category, const std::string& field) {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return std::vector<float>();
+
+    std::vector<std::string> s = split(values[_category][field], ' ');
+    std::vector<float> result;
+
+    for (unsigned int i=0; i < s.size(); i++) {
+        float value;
         std::stringstream ss(s[i]);
         ss >> value;
         result.push_back(value);

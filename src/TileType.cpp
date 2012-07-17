@@ -20,6 +20,4 @@ TileType::TileType(ResourceManager *resman, Data data) : Object(data) , Displaya
     type = get_tile_class(data.as_string("", "type"));
 
     sprite = resman->GetSprite(tileset, image);
-
-    std::cout << " * Loaded tiletype: " << id << " " << std::endl;
 }

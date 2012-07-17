@@ -16,6 +16,7 @@
 #include "ConfigManager.hpp"
 #include "ResourceManager.hpp"
 
+#include "World.hpp"
 #include "Level.hpp"
 #include "Field.hpp"
 #include "LightField.hpp"
@@ -41,51 +42,13 @@ std::string get_base_path(char* argv0) {
     return argv0;
 }
 
-class World {
-    private:
-        int seed;
-        std::map<std::string, Level*> maps;
-    public:
-        Unit *player;
-    public:
-        World(int seed = 0) {
-            if (seed == 0) {
-                srand(time(NULL));
-                this->seed = rand();
-            }
-            else {
-                this->seed = seed;
-            }
-        }
-        void AddLevel(const std::string& name, Level *level) {
-            if (!contains(maps, name))
-                maps[name] = level;
-        }
-        void DeleteLevel(const std::string& name) {
-            if (contains(maps, name)) {
-                Level *map = maps[name];
-                std::set<Unit*>::iterator i = map->units.begin();
-                for (; i != map->units.end(); i++) {
-                    delete *i;
-                }
-                delete map;
-            }
-        }
-        Level* GetLevel(const std::string& name) {
-            if (contains(maps, name)) {
-                return maps[name];
-            }
-            return NULL;
-        }
-};
-
 class Game {
     private:
         sf::RenderWindow window;
         World *world;
         Level *current_level;
-        ResourceManager resman;
-        ConfigManager confman;
+        ResourceManager *resman;
+        ConfigManager *confman;
 
         LightField *light;
 
@@ -93,23 +56,21 @@ class Game {
     private:
 
         void start() {
-            confman = ConfigManager(base_path);
-            confman.Load();
+            confman = new ConfigManager(base_path);
+            confman->Load();
 
-            std::cout << confman.resolution << std::endl;
+            window.create(VideoMode(confman->resolution.x, confman->resolution.y), "r1");
+            window.setFramerateLimit(confman->max_fps);
 
-            window.create(VideoMode(confman.resolution.x, confman.resolution.y), "r1");
-            window.setFramerateLimit(confman.max_fps);
+            resman = new ResourceManager(base_path);
+            resman->Load();
 
-            resman = ResourceManager(base_path);
-            resman.Load();
+            world = new World(resman, base_path);
+            world->Load();
 
-            world = new World();
+            current_level = world->GetLevel("start");
 
-            current_level = new Level(&resman, sf::Vector2u(64, 64));
-            world->AddLevel("test1", current_level);
-
-            world->player = current_level->player;
+            world->player = current_level->PlaceUnit("test_player", sf::Vector2i(12, 5));
 
             light = new LightField();
             light->SetRadius(12);
@@ -133,8 +94,8 @@ class Game {
             screen_pos.x = map_pos.x - camera_pos.x;
             screen_pos.y = map_pos.y - camera_pos.y;
 
-            screen_pos.x *= resman.GetTileSize().x;
-            screen_pos.y *= resman.GetTileSize().y;
+            screen_pos.x *= resman->GetTileSize().x;
+            screen_pos.y *= resman->GetTileSize().y;
 
             int x = map_pos.x;
             int y = map_pos.y;
@@ -305,13 +266,13 @@ class Game {
             TileSprite current_sprite;
 
             camera_pos = world->player->pos;
-            camera_pos.x -= window.getView().getSize().x / resman.GetTileSize().x / 2;
-            camera_pos.y -= window.getView().getSize().y / resman.GetTileSize().y / 2;
+            camera_pos.x -= window.getView().getSize().x / resman->GetTileSize().x / 2;
+            camera_pos.y -= window.getView().getSize().y / resman->GetTileSize().y / 2;
 
             int start_x = max(camera_pos.x, 0);
             int start_y = max(camera_pos.y, 0);
-            int end_x = min((float)current_level->GetSize().x, camera_pos.x + window.getView().getSize().x / resman.GetTileSize().x);
-            int end_y = min((float)current_level->GetSize().y, camera_pos.y + window.getView().getSize().y / resman.GetTileSize().y);
+            int end_x = min((float)current_level->GetSize().x, camera_pos.x + window.getView().getSize().x / resman->GetTileSize().x);
+            int end_y = min((float)current_level->GetSize().y, camera_pos.y + window.getView().getSize().y / resman->GetTileSize().y);
 
             for (int x=start_x; x < end_x; x++)
             for (int y=start_y; y < end_y; y++) {
@@ -322,8 +283,8 @@ class Game {
                 screen_pos.x -= camera_pos.x;
                 screen_pos.y -= camera_pos.y;
 
-                screen_pos.x *= resman.GetTileSize().x;
-                screen_pos.y *= resman.GetTileSize().y;
+                screen_pos.x *= resman->GetTileSize().x;
+                screen_pos.y *= resman->GetTileSize().y;
 
                 sf::Vector2i map_pos = sf::Vector2i(x, y);
 
@@ -373,7 +334,7 @@ class Game {
                 current_sprite.setPosition(screen_pos);
                 window.draw(current_sprite);
 
-                render_shadow(map_pos, &resman.shadow);
+                render_shadow(map_pos, &resman->shadow);
 
                 if (!shade && (tile.unit != NULL)) {
                     TileSprite unit_sprite = tile.unit->type->sprite;
@@ -406,8 +367,8 @@ class Game {
                     map_pos.y *= window.getView().getSize().y * 1.0 / window.getSize().y;
 
                     //View space to map space
-                    map_pos.x /= resman.GetTileSize().x;
-                    map_pos.y /= resman.GetTileSize().y;
+                    map_pos.x /= resman->GetTileSize().x;
+                    map_pos.y /= resman->GetTileSize().y;
                     map_pos.x += camera_pos.x;
                     map_pos.y += camera_pos.y;
 

@@ -1,0 +1,15 @@
+id = start
+
+[atmosphere]
+    ambient = 20 20 20
+
+[terrain]
+    size = 64 64
+    generator = default
+    seed = -1
+    default_tile = generic_floor generic_stone
+
+[terrain.default]
+    floor = generic_floor generic_stone
+    wall  = generic_wall generic_stone
+    #border

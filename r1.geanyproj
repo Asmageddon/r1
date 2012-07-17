@@ -1,0 +1,75 @@
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=true
+strip_trailing_spaces=true
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=0
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=r1
+base_path=/media/You will die/p/games/r1
+description=
+file_patterns=*.cpp;*.hpp;
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=19
+FILE_NAME_0=84640;None;0;16;0;1;0;%2Fhome%2Fasmageddon%2Flog.asma;0;4
+FILE_NAME_1=1526;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FGame.cpp;0;4
+FILE_NAME_2=175;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FTile.hpp;0;4
+FILE_NAME_3=360;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FTile.cpp;0;4
+FILE_NAME_4=3474;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FUnit.cpp;0;4
+FILE_NAME_5=1173;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FUnit.hpp;0;4
+FILE_NAME_6=306;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FLevel.hpp;0;4
+FILE_NAME_7=398;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FLevel.cpp;0;4
+FILE_NAME_8=284;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FTileType.cpp;0;4
+FILE_NAME_9=380;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FTileType.hpp;0;4
+FILE_NAME_10=717;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FUnitType.cpp;0;4
+FILE_NAME_11=21;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FUnitType.hpp;0;4
+FILE_NAME_12=327;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FSightField.hpp;0;4
+FILE_NAME_13=303;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FSightField.cpp;0;4
+FILE_NAME_14=226;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fobjects%2Funits%2Fanimated_lump;0;4
+FILE_NAME_15=219;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fobjects%2Funits%2Fgolem;0;4
+FILE_NAME_16=166;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fobjects%2Funits%2Fmissingno;0;4
+FILE_NAME_17=205;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fobjects%2Funits%2Fsun_sentry;0;4
+FILE_NAME_18=305;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fobjects%2Funits%2Ftest_player;0;4
+FILE_NAME_19=248;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FWorld.hpp;0;4
+FILE_NAME_20=102;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FWorld.cpp;0;4
+FILE_NAME_21=75;None;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fdata%2Fworld%2Fmaps%2Fstart;0;4
+FILE_NAME_22=484;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FResourceManager.cpp;0;4
+FILE_NAME_23=1061;C++;0;16;0;1;0;%2Fmedia%2FYou%20will%20die%2Fp%2Fgames%2Fr1%2Fsrc%2FResourceManager.hpp;0;4
+
+[VTE]
+last_dir=/media/You will die/p/games/r1/src
+
+[build-menu]
+EX_00_LB=_Execute
+EX_00_CM=../r1
+EX_00_WD=
+EX_01_LB=
+EX_01_CM=
+EX_01_WD=
+NoneFT_00_LB=
+NoneFT_00_CM=
+NoneFT_00_WD=
+filetypes=None;C++;
+C++FT_00_LB=_Compile
+C++FT_00_CM=g++ -Wall -c "%f"
+C++FT_00_WD=
+C++FT_01_LB=_Build
+C++FT_01_CM=time scons -C ..
+C++FT_01_WD=
+C++FT_02_LB=SCons
+C++FT_02_CM=time scons -C ..
+C++FT_02_WD=

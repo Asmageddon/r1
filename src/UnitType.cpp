@@ -30,6 +30,4 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayab
     }
 
     vision_tint = data.as_Color("stats", "sight.vision_tint");
-
-    std::cout << " * Loaded unit type: " << id << std::endl;
 }
