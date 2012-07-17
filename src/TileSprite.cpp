@@ -27,9 +27,6 @@ void TileSprite::setSprite(const unsigned int& pos) {
     if (pos >= size.x * size.y) {
         x = y = 0;
     }
-    else if (pos < 0) {
-        x = y = 0;
-    }
 
     rect = IntRect(
         x * m_tile_size.x,

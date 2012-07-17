@@ -47,9 +47,9 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
         intensity[x + width * y] = 0.0f;
     }
     intensity[center.x + width * center.y] = 1.0f;
-    //int rays = M_PI * 2 * radius * 2.0;
-    int rays = 360; //TODO: Decrease amount of rays to only as much as is necessary
+    int rays = M_PI * 2 * radius * 1.6;
     for(int a = 0; a < rays; a++) {
+        //TODO: Precalculate these values for various ray counts and/or angles
         float ax = sin(a * M_PI * 2 / rays);
         float ay = cos(a * M_PI * 2 / rays);
         float x = center.x;
@@ -61,7 +61,7 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
                 (int)round(x),
                 (int)round(y)
             );
-            if (z == radius) {
+            if (z == radius - 1) {
                 if (sqrt((pos.x - center.x) * (pos.x - center.x) + (pos.y - center.y) * (pos.y - center.y)) > radius) {
                     break;
                 }

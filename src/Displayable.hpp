@@ -3,27 +3,23 @@
 
 #include <vector>
 #include <string>
-using namespace std;
 
 #include <SFML/Graphics.hpp>
 
-#include "Data.hpp"
+class Data;
 
 #include "TileSprite.hpp"
 
 class Displayable {
     public:
-        string tileset;
+        std::string tileset;
         int image;
-        vector<int> variants;
-
-        sf::Color glow_color; //TODO: Move glowing to a separate class
-        int glow_radius;
+        std::vector<int> variants;
 
         TileSprite sprite;
         //TODO: Make Displayable constructor take a ResourceManager as an argument and store the ref
 
-        string border;
+        std::string border;
     public:
         Displayable() {};
         Displayable(Data data);

@@ -15,4 +15,4 @@ categories = unnatural
 [stats]
     sight.radius = 12
     sight.threshold = 0.25
-    sight.vision_tint = 0 10 25
+    sight.vision_tint = 3 7 20

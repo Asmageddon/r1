@@ -5,12 +5,13 @@
 
 #include "Object.hpp"
 #include "Displayable.hpp"
+#include "Glowable.hpp"
 
 #include "TileSprite.hpp"
 
 #include "ResourceManager.hpp"
 
-UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayable(data) {
+UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayable(data), Glowable(data) {
     this->resman = resman;
 
     categories = data.as_str_vector("", "categories");
@@ -20,7 +21,13 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayab
     sprite = resman->GetSprite(tileset, image);
 
     sight_radius = data.as_int("stats", "sight.radius");
-    sight_threshold = data.as_float("stats", "sight.threshold");
+
+    if (data.HasField("stats", "sight.vision_tint")) {
+        sight_threshold = data.as_float("stats", "sight.threshold");
+    }
+    else {
+        sight_threshold = 0.33;
+    }
 
     vision_tint = data.as_Color("stats", "sight.vision_tint");
 
