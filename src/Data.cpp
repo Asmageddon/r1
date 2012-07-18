@@ -1,5 +1,7 @@
 #include "Data.hpp"
 
+#include "utils.hpp"
+
 void Data::parse_line(std::string line) {
     if (line.length() == 0) return;
 
@@ -223,6 +225,29 @@ std::vector<float> Data::as_float_vector(const std::string& category, const std:
     return result;
 }
 
+std::set<std::string> Data::GetKeys(const std::string& category, const std::string& field_pattern) const {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if(!HasCategory(_category))
+        return std::set<std::string>();
+
+    std::set<std::string> result;
+
+    std::map<std::string, std::string>::const_iterator it;
+
+    const std::map<std::string, std::string>& submap = const_access(values, _category);
+
+    for ( it=submap.begin() ; it != submap.end(); it++ ) {
+
+        if (it->first.compare(0, field_pattern.length(), field_pattern) == 0) {
+            result.insert(it->first);
+        }
+    }
+
+    return result;
+}
+
 void Data::Print() {
     std::map<std::string, std::map<std::string, std::string> >::iterator it;
     for ( it=values.begin() ; it != values.end(); it++ ) {
@@ -234,13 +259,13 @@ void Data::Print() {
     }
 }
 
-bool Data::HasCategory(const std::string& category) {
+bool Data::HasCategory(const std::string& category) const {
     return contains(values, category);
 }
 
-bool Data::HasField(const std::string& category, const std::string& field) {
+bool Data::HasField(const std::string& category, const std::string& field) const {
     if ( contains(values, category) ) {
-        return contains(values[category], field);
+        return contains(const_access(values, category), field);
     }
     else {
         return false;

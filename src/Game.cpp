@@ -70,7 +70,8 @@ class Game {
 
             current_level = world->GetLevel("start");
 
-            world->player = current_level->PlaceUnit("test_player", sf::Vector2i(12, 5));
+            world->player = current_level->PlaceUnit("test_player", "default");
+            current_level->PlaceUnit("sun_sentry", sf::Vector2i(15, 15));
 
             light = new LightField();
             light->SetRadius(12);
@@ -266,6 +267,7 @@ class Game {
             TileSprite current_sprite;
 
             camera_pos = world->player->GetPosition();
+            current_level = world->player->GetCurrentLevel();
             camera_pos.x -= window.getView().getSize().x / resman->GetTileSize().x / 2;
             camera_pos.y -= window.getView().getSize().y / resman->GetTileSize().y / 2;
 
@@ -438,6 +440,14 @@ class Game {
                     }
                     else if (event.key.code == sf::Keyboard::Right) {
                         world->player->Move(sf::Vector2i(1, 0));
+                    }
+                    //World swap!
+                    else if (event.key.code == sf::Keyboard::S) {
+                        std::string loc = world->player->GetLocation();
+                        if (loc == "nowhere")
+                            world->player->SetLocation("start", "default");
+                        else
+                            world->player->SetLocation("nowhere", "default");
                     }
                 }
             }

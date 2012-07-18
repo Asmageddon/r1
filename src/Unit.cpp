@@ -64,6 +64,9 @@ Unit::~Unit() {
 }
 
 void Unit::Move(const sf::Vector2i& vec) {
+    //TODO: Make this cleaner
+    //TODO: This should DESTROY unit at the destination, add Unit::Swap for swapping
+    //TODO: Move this code to SetPosition
     if (location == NULL) return;
 
     sf::Vector2i new_pos = pos + vec;
@@ -105,29 +108,29 @@ void Unit::Move(const sf::Vector2i& vec) {
 void Unit::SetPosition(const sf::Vector2i& new_pos) {
     Move(new_pos - pos);
 }
+
+void Unit::SetPosition(const std::string& landmark) {
+    if (location == NULL) return;
+    SetPosition(location->GetLandmark(landmark));
+}
+
 const sf::Vector2i& Unit::GetPosition() const {
     return pos;
 }
 
-//void Unit::SetLocation(Level *new_location) {
-    //std::set<LightField*>::iterator it = lights.begin();
-
-    //for (; it != lights.end(); it++) {
-        //if (this->location != NULL) {
-            //this->location->DetachLight(*it);
-        //}
-        //new_location->AttachLight(*it);
-    //}
-
-    //this->location = new_location;
-
-    //fov->Calculate(new_location, pos);
-//}
-
-
-//void Unit::SetLocation(Level *new_location) {
-void Unit::SetLocation(const std::string& loc_id) {
+void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i pos) {
     Level *new_location = world->GetLevel(loc_id);
+
+    if (location != NULL) {
+        int width = location->GetSize().x;
+        long i = this->pos.x + width * this->pos.y;
+        location->data[i].unit = NULL;
+    }
+
+    this->location = new_location;
+    int width = location->GetSize().x;
+    location->data[this->pos.x + width * this->pos.y].unit = this; //INVESTIGATE: If this is necessary or not
+    SetPosition(pos);
 
     std::set<LightField*>::iterator it = lights.begin();
 
@@ -138,10 +141,12 @@ void Unit::SetLocation(const std::string& loc_id) {
         new_location->AttachLight(*it);
     }
 
-    this->location = new_location;
-    this->pos = sf::Vector2i(0,0);
-
     fov->Calculate(new_location, pos);
+}
+
+void Unit::SetLocation(const std::string& loc_id, const std::string landmark) {
+    Vector2i pos = world->GetLevel(loc_id)->GetLandmark(landmark);
+    SetLocation(loc_id, pos);
 }
 
 std::string Unit::GetLocation() const {
@@ -149,6 +154,10 @@ std::string Unit::GetLocation() const {
         return location->id;
     else
         return "";
+}
+
+Level* Unit::GetCurrentLevel() {
+    return location;
 }
 
 void Unit::AttachLight(LightField *light) {

@@ -13,10 +13,13 @@
 
 #include "LightField.hpp"
 
+#include "World.hpp"
+
 #include "Data.hpp"
 
-Level::Level(const ResourceManager *resman, Data data) {
-    this->resman = resman;
+Level::Level(World *world, Data data) {
+    this->world = world;
+    this->resman = world->GetResman();
 
     id = data.as_string("", "id");
     ambient = data.as_Color("atmosphere", "ambient");
@@ -32,6 +35,15 @@ Level::Level(const ResourceManager *resman, Data data) {
     if (seed == -1) {
         srand(time(NULL));
         seed = rand();
+    }
+
+    //TODO: Automatic landmarks - center, random, etc.
+    std::set<std::string> s = data.GetKeys("landmarks", "");
+
+    std::set<std::string>::iterator it;
+
+    for(it = s.begin(); it != s.end(); it++) {
+        landmarks[*it] = data.as_Vector2i("landmarks", *it);
     }
 
     ready = false;
@@ -126,6 +138,26 @@ void Level::Generate() {
     }
 }
 
+void Level::AddLandmark(const std::string& id, const sf::Vector2i& pos) {
+    //TODO: Ensure the landmark is within bounds
+    landmarks[id] = pos;
+}
+void Level::RemoveLandmark(const std::string& id) {
+    landmarks.erase(id);
+}
+sf::Vector2i Level::GetLandmark(const std::string& id) const {
+    std::string _id = id;
+    if (id == "") _id = "default";
+
+    if (!contains(landmarks, _id))
+        return const_access(landmarks, "default");
+
+    //TODO: Make GetLandmark find closest free tile
+    //TODO: An enum/bitmask for types of acceptale tiles(type, visibility, unit, etc.), a function to check it and make GetLandmark and BlocksVision use it
+
+    return const_access(landmarks, _id);
+}
+
 Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos) {
     if (!InBounds(pos)) return NULL;
     if (GetTile(pos).unit != NULL) {
@@ -140,6 +172,10 @@ Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos) {
     u->SetPosition(pos);
 
     return u;
+}
+
+Unit* Level::PlaceUnit(const std::string& unit_type, const std::string& landmark) {
+    return PlaceUnit(unit_type, GetLandmark(landmark));
 }
 
 void Level::AttachLight(LightField *light) {

@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include <string>
+#include <set>
 #include <map>
 #include <vector>
 #include <sstream>
@@ -34,8 +35,10 @@ class Data {
         std::vector<int>         as_int_vector (const std::string& category, const std::string& field);
         std::vector<float>       as_float_vector(const std::string& category, const std::string& field);
 
-        bool HasCategory(const std::string& category);
-        bool HasField(const std::string& category, const std::string& field);
+        std::set<std::string> GetKeys(const std::string& category, const std::string& field_pattern) const;
+
+        bool HasCategory(const std::string& category) const;
+        bool HasField(const std::string& category, const std::string& field) const;
 
         void Print();
 };

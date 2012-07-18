@@ -29,12 +29,13 @@ class Level{
         std::string id;
         int seed;
         bool ready;
+        std::map<std::string, sf::Vector2i> landmarks;
     public:
         std::set<Unit*> units;
         std::set<LightField*> lights;
         sf::Color ambient;
     public:
-        Level(const ResourceManager *resman, Data data);
+        Level(World *resman, Data data);
 
         void Create();
         bool IsReady() const;
@@ -60,8 +61,15 @@ class Level{
         void Generate();
 
         //TODO: GetUnitAt
+        //WIP: Landmarks
+
+
+        void AddLandmark(const std::string& id, const sf::Vector2i& pos);
+        void RemoveLandmark(const std::string& id);
+        sf::Vector2i GetLandmark(const std::string& id) const;
 
         Unit* PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos);
+        Unit* PlaceUnit(const std::string& unit_type, const std::string& landmark);
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);

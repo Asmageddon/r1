@@ -1,7 +1,7 @@
 id = nowhere
 
 [atmosphere]
-    ambient = 20 20 20
+    ambient = 50 0 35
 
 [terrain]
     size = 12 12
@@ -11,3 +11,6 @@ id = nowhere
 
 [terrain.empty]
     tile = generic_floor generic_stone
+
+[landmarks]
+    default = 6 6

@@ -86,12 +86,18 @@ void ResourceManager::AddTileType(Data data) {
         tiletypes[t.id] = t;
         std::cout << " * Loaded tiletype: " << t.id << " " << std::endl;
     }
+    else {
+        std::cout << "ERROR: Redefinition of tile type: " << t.id << std::endl;
+    }
 }
 void ResourceManager::AddMaterial(Data data) {
     Material m(data);
     if (!contains(materials, m.id)) {
         materials[m.id] = m;
         std::cout << " * Loaded material: " << m.id << std::endl;
+    }
+    else {
+        std::cout << "ERROR: Redefinition of material: " << m.id << std::endl;
     }
 }
 void ResourceManager::AddUnitType(Data data) {
@@ -100,7 +106,9 @@ void ResourceManager::AddUnitType(Data data) {
         unittypes[u.id] = u;
         std::cout << " * Loaded unit type: " << u.id << std::endl;
     }
-    std::cout << "unittypes.size(): " << unittypes.size() << std::endl;
+    else {
+        std::cout << "ERROR: Redefinition of unit type: " << u.id << std::endl;
+    }
 }
 
 ResourceManager::ResourceManager() {}
@@ -128,7 +136,6 @@ void ResourceManager::Load() {
 }
 
 const UnitType& ResourceManager::GetUnitType(const std::string& id) const {
-    std::cout << "unittypes.size(): " << unittypes.size() << std::endl;
     if (contains(unittypes, id)) {
         return const_access(unittypes, id);
     }

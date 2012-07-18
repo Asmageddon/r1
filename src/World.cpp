@@ -8,8 +8,7 @@
 #include "Unit.hpp"
 #include "Level.hpp"
 
-World::World(const ResourceManager *resman, const std::string& base_path) : base_path(base_path) {
-    this->resman = resman;
+World::World(const ResourceManager *resman, const std::string& base_path) : base_path(base_path), resman(resman) {
     save_path = "";
 }
 
@@ -27,7 +26,7 @@ Level* World::GetLevel(const std::string& name) {
 }
 
 void World::AddLevel(Data data) {
-    Level *l = new Level(resman, data);
+    Level *l = new Level(this, data);
     if (!contains(maps, l->id)) {
         maps[l->id] = l;
         std::cout << " * Loaded map: " << l->id << std::endl;

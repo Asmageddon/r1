@@ -13,3 +13,7 @@ id = start
     floor = generic_floor generic_stone
     wall  = generic_wall generic_stone
     #border
+
+[landmarks]
+    #Used as default entry point
+    default = 12 6
