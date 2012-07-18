@@ -7,5 +7,7 @@ Displayable::Displayable(Data data) {
     image = data.as_int("appearance", "image");
     variants = data.as_int_vector("appearance", "variants");
 
+    blocks_sight = data.as_bool("appearance", "blocks_sight");
+
     border = data.as_string("appearance", "border");
 }

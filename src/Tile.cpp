@@ -9,7 +9,7 @@
 class TileType;
 class Material;
 
-Tile::Tile(ResourceManager *resman, const std::string& type_id, const std::string& material_id) {
+Tile::Tile(const ResourceManager *resman, const std::string& type_id, const std::string& material_id) {
     type = &(resman->GetTileType(type_id));
     material = &(resman->GetMaterial(material_id));
 

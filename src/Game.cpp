@@ -265,7 +265,7 @@ class Game {
             const TileType *current_tiletype = NULL;
             TileSprite current_sprite;
 
-            camera_pos = world->player->pos;
+            camera_pos = world->player->GetPosition();
             camera_pos.x -= window.getView().getSize().x / resman->GetTileSize().x / 2;
             camera_pos.y -= window.getView().getSize().y / resman->GetTileSize().y / 2;
 

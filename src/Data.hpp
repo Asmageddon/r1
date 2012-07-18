@@ -23,6 +23,7 @@ class Data {
         Data(std::string file_path);
 
         std::string              as_string     (const std::string& category, const std::string& field);
+        bool                     as_bool       (const std::string& category, const std::string& field);
         int                      as_int        (const std::string& category, const std::string& field);
         float                    as_float      (const std::string& category, const std::string& field);
         sf::Color                as_Color      (const std::string& category, const std::string& field);

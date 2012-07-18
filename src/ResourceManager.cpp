@@ -100,6 +100,7 @@ void ResourceManager::AddUnitType(Data data) {
         unittypes[u.id] = u;
         std::cout << " * Loaded unit type: " << u.id << std::endl;
     }
+    std::cout << "unittypes.size(): " << unittypes.size() << std::endl;
 }
 
 ResourceManager::ResourceManager() {}
@@ -126,26 +127,26 @@ void ResourceManager::Load() {
     std::cout << "Shadow sprite loaded" << std::endl;
 }
 
-const UnitType& ResourceManager::GetUnitType(const std::string& id) {
-    //FIXME: Make maps directly store types rather than go around
+const UnitType& ResourceManager::GetUnitType(const std::string& id) const {
+    std::cout << "unittypes.size(): " << unittypes.size() << std::endl;
     if (contains(unittypes, id)) {
-        return unittypes[id];
+        return const_access(unittypes, id);
     }
-    return unittypes["missingno"];
+    return const_access(unittypes, "missingno");
 }
 
-const TileType& ResourceManager::GetTileType(const std::string& id) {
+const TileType& ResourceManager::GetTileType(const std::string& id) const {
     if (contains(tiletypes, id)) {
-        return tiletypes[id];
+        return const_access(tiletypes, id);
     }
-    return tiletypes["void"];
+    return const_access(tiletypes, "void");
 }
 
-const Material& ResourceManager::GetMaterial(const std::string& id) {
+const Material& ResourceManager::GetMaterial(const std::string& id) const {
     if (contains(materials, id)) {
-        return materials[id];
+        return const_access(materials, id);
     }
-    return materials["void"];
+    return const_access(materials, "void");
 }
 
 TileSprite ResourceManager::GetSprite(const std::string& tileset, const int& n) {

@@ -66,6 +66,23 @@ std::string Data::as_string(const std::string& category, const std::string& fiel
     return values[_category][field];
 }
 
+bool Data::as_bool(const std::string& category, const std::string& field) {
+    std::string _category = category;
+    if (category == "") _category = "default";
+
+    if (! HasField(_category, field) )
+        return false;
+
+    std::string v = values[_category][field];
+    if (v == "true") return true;
+    if (v == "yes") return true; //Oh well, why not?
+    if (v == "on") return true;
+    if (v == "enabled") return true;
+    if (v == "1") return true;
+
+    return false;
+}
+
 int Data::as_int(const std::string& category, const std::string& field) {
     std::string _category = category;
     if (category == "") _category = "default";

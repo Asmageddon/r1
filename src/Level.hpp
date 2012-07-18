@@ -22,7 +22,7 @@ class Level{
     friend class World;
     private:
         World *world;
-        ResourceManager *resman;
+        const ResourceManager *resman;
         Tile *data;
         Tile default_tile;
         sf::Vector2u size;
@@ -34,7 +34,7 @@ class Level{
         std::set<LightField*> lights;
         sf::Color ambient;
     public:
-        Level(ResourceManager* resman, Data data);
+        Level(const ResourceManager *resman, Data data);
 
         void Create();
         bool IsReady() const;
@@ -54,6 +54,8 @@ class Level{
         bool IsFloor(const sf::Vector2i& pos) const;
 
         bool IsKnown(const sf::Vector2i& pos) const;
+
+        bool BlocksSight(const sf::Vector2i& pos) const;
 
         void Generate();
 

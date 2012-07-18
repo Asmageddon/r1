@@ -16,6 +16,8 @@ class Displayable {
         int image;
         std::vector<int> variants;
 
+        bool blocks_sight;
+
         TileSprite sprite;
         //TODO: Make Displayable constructor take a ResourceManager as an argument and store the ref
 

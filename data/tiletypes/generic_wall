@@ -7,5 +7,4 @@ materials = stone wood metal
 [appearance]
     tileset = tiles1.png
     image = 2
-    opacity = 100
-    reflectivity = 5
+    blocks_sight = true

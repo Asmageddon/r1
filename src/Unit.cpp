@@ -6,11 +6,15 @@
 #include "SightField.hpp"
 #include "LightField.hpp"
 
+#include "World.hpp"
+
 #include "ResourceManager.hpp"
 
-Unit::Unit(ResourceManager *resman, const std::string& type_id) {
-    type = &(resman->GetUnitType(type_id));
-    material = &(resman->GetMaterial(type->material));
+Unit::Unit(World *world, const std::string& type_id) {
+    this->world = world;
+
+    type = &(world->GetResman()->GetUnitType(type_id));
+    material = &(world->GetResman()->GetMaterial(type->material));
 
     pos = sf::Vector2i(0,0);
 
@@ -105,7 +109,26 @@ const sf::Vector2i& Unit::GetPosition() const {
     return pos;
 }
 
-void Unit::SetLocation(Level *new_location) {
+//void Unit::SetLocation(Level *new_location) {
+    //std::set<LightField*>::iterator it = lights.begin();
+
+    //for (; it != lights.end(); it++) {
+        //if (this->location != NULL) {
+            //this->location->DetachLight(*it);
+        //}
+        //new_location->AttachLight(*it);
+    //}
+
+    //this->location = new_location;
+
+    //fov->Calculate(new_location, pos);
+//}
+
+
+//void Unit::SetLocation(Level *new_location) {
+void Unit::SetLocation(const std::string& loc_id) {
+    Level *new_location = world->GetLevel(loc_id);
+
     std::set<LightField*>::iterator it = lights.begin();
 
     for (; it != lights.end(); it++) {
@@ -116,13 +139,17 @@ void Unit::SetLocation(Level *new_location) {
     }
 
     this->location = new_location;
+    this->pos = sf::Vector2i(0,0);
 
     fov->Calculate(new_location, pos);
 }
-//void Unit::SetLocation(const std::string& loc) {
 
-//}
-//const std::string& Unit::GetLocation() const;
+std::string Unit::GetLocation() const {
+    if (location != NULL)
+        return location->id;
+    else
+        return "";
+}
 
 void Unit::AttachLight(LightField *light) {
     this->lights.insert(light);

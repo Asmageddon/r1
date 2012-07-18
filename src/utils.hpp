@@ -28,10 +28,24 @@ namespace std {
 }
 
 template<class K, class V>
-bool contains(std::map<K, V> m, K key) {
-    typename std::map<K, V>::iterator it = m.find(key);
+bool contains(const std::map<K, V>& m, const K& key) {
+    typename std::map<K, V>::const_iterator it = m.find(key);
     return it != m.end();
 }
+
+template<class K, class V, class K2>
+const V& const_access(const std::map<K, V>& m, const K2& key) {
+    static V v;
+    typename std::map<K, V>::const_iterator it;
+
+    it = m.find(key);
+
+    if(it != m.end()) {
+        return it->second;
+    }
+    return v;
+}
+
 std::vector<std::string> split(const std::string& str, const char& chr);
 
 std::vector<std::string> list_dir(std::string dir);

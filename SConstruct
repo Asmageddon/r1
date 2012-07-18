@@ -12,7 +12,8 @@ env.Append(LIBS = ["noise"] )
 
 env.Append(CXXFLAGS =[
     "-Wall",
-    "-pedantic"
+    "-pedantic",
+    "-g"
 ])
 
 env.Program("r1", Glob("./build/*.cpp"))

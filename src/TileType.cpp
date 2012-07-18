@@ -19,5 +19,11 @@ TileType::TileType(ResourceManager *resman, Data data) : Object(data) , Displaya
 
     type = get_tile_class(data.as_string("", "type"));
 
+    //If it's not set in the data file, set it basing on type
+    if (!data.HasField("appearance", "blocks_sight")) {
+        if (type == TILE_WALL)
+            blocks_sight = true;
+    }
+
     sprite = resman->GetSprite(tileset, image);
 }

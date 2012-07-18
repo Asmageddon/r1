@@ -16,17 +16,19 @@ class World {
         std::map<std::string, Level*> maps;
         std::string base_path;
         std::string save_path;
-        ResourceManager *resman;
+        const ResourceManager *resman;
     public:
         Unit *player;
     private:
         void AddLevel(Data data);
         void LoadMaps(const std::string& module_name);
     public:
-        World(ResourceManager *resman, const std::string& base_path);
+        World(const ResourceManager *resman, const std::string& base_path);
         Level *GetLevel(const std::string& name);
 
         void Load();
+
+        const ResourceManager *GetResman() const;
 
         ////TODO: Saving and loading savegames
         //void LoadSavegame(const std::string& save_path);

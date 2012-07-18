@@ -7,5 +7,3 @@ materials = stone wood metal
 [appearance]
     tileset = tiles1.png
     image = 1
-    opacity = 100
-    reflectivity = 0

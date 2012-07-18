@@ -43,9 +43,9 @@ class ResourceManager {
         ResourceManager(std::string base_path);
         void Load();
 
-        const UnitType& GetUnitType(const std::string& id);
-        const TileType& GetTileType(const std::string& id);
-        const Material& GetMaterial(const std::string& id);
+        const UnitType& GetUnitType(const std::string& id) const;
+        const TileType& GetTileType(const std::string& id) const;
+        const Material& GetMaterial(const std::string& id) const;
 
         TileSprite GetSprite(const std::string& tileset, const int& n);
 

@@ -16,7 +16,7 @@ class Tile {
         u_int8_t integrity;
         u_int8_t temperature;
 
-        ResourceManager *resman;
+        const ResourceManager *resman;
 
         //TODO: Known tiles should be saved as type/material instead of just known/unknown as they might be changed
         bool known;
@@ -24,7 +24,7 @@ class Tile {
         Unit *unit;
     public:
         Tile() { /* WARNING: This doesn't initialize anything */ };
-        Tile(ResourceManager *resman, const std::string& type_id, const std::string& material_id);
+        Tile(const ResourceManager *resman, const std::string& type_id, const std::string& material_id);
 
         //TODO: Setting and getting material and tiletype
 };

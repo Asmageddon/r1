@@ -83,7 +83,7 @@ void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
 
             sf::Vector2i map_pos = pos + caster_pos - center;
 
-            if (level->IsWall(map_pos))
+            if (level->BlocksSight(map_pos))
                 break;
         }
     }

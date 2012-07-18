@@ -15,7 +15,7 @@
 
 #include "Data.hpp"
 
-Level::Level(ResourceManager *resman, Data data) {
+Level::Level(const ResourceManager *resman, Data data) {
     this->resman = resman;
 
     id = data.as_string("", "id");
@@ -95,6 +95,16 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
     return t.known;
 }
 
+bool Level::BlocksSight(const sf::Vector2i& pos) const {
+    const Tile& t = GetTile(pos);
+    if (t.type->blocks_sight)
+        return true;
+    if (t.unit != NULL)
+        return t.unit->type->blocks_sight;
+
+    return false;
+}
+
 void Level::Generate() {
     noise::module::Perlin perlin;
     perlin.SetOctaveCount (2);
@@ -124,8 +134,9 @@ Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos) {
         units.erase(tmp);
         delete tmp;
     }
-    Unit *u = new Unit(resman, unit_type);
-    u->SetLocation(this);
+
+    Unit *u = new Unit(this->world, unit_type);
+    u->SetLocation(this->id);
     u->SetPosition(pos);
 
     return u;

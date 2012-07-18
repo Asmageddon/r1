@@ -8,7 +8,7 @@
 #include "Unit.hpp"
 #include "Level.hpp"
 
-World::World(ResourceManager *resman, const std::string& base_path) : base_path(base_path) {
+World::World(const ResourceManager *resman, const std::string& base_path) : base_path(base_path) {
     this->resman = resman;
     save_path = "";
 }
@@ -51,4 +51,8 @@ void World::LoadMaps(const std::string& module_name) {
 void World::Load() {
     LoadMaps("");
     std::cout << "Loaded " << maps.size() << " maps" << std::endl;
+}
+
+const ResourceManager* World::GetResman() const {
+    return resman;
 }
