@@ -81,9 +81,24 @@ bool Level::InBounds(const sf::Vector2i& pos) const {
     return true;
 }
 
-void Level::SetKnown(const sf::Vector2i& pos, const bool& state) {
+void Level::SetKnown(const sf::Vector2i& pos) {
     if (InBounds(pos))
-        data[pos.x + size.x * pos.y].known = state;
+        data[pos.x + size.x * pos.y].SetKnown();
+}
+const TileMemory* Level::GetKnown(const sf::Vector2i& pos) const {
+    static TileMemory empty_memory = { default_tile.type, default_tile.material };
+
+    if (InBounds(pos))
+        return data[pos.x + size.x * pos.y].last_known;
+
+    return &empty_memory;
+}
+
+bool Level::IsKnown(const sf::Vector2i& pos) const {
+    if (!InBounds(pos))
+        return false;
+
+    return data[pos.x + size.x * pos.y].last_known != NULL;
 }
 
 const Tile& Level::GetTile(const sf::Vector2i& pos) const {
@@ -94,27 +109,17 @@ const Tile& Level::GetTile(const sf::Vector2i& pos) const {
 
 bool Level::IsWall(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return (t.type->type == TILE_WALL);
+    return t.MatchAny(IS_WALL);
 }
 
 bool Level::IsFloor(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return (t.type->type == TILE_FLOOR);
-}
-
-bool Level::IsKnown(const sf::Vector2i& pos) const {
-    const Tile& t = GetTile(pos);
-    return t.known;
+    return t.MatchAny(IS_FLOOR);
 }
 
 bool Level::BlocksSight(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    if (t.type->blocks_sight)
-        return true;
-    if (t.unit != NULL)
-        return t.unit->type->blocks_sight;
-
-    return false;
+    return t.MatchAny(OPAQUE | UNIT_OPAQUE);
 }
 
 void Level::Generate() {

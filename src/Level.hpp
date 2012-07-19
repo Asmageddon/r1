@@ -44,23 +44,21 @@ class Level{
 
         bool InBounds(const sf::Vector2i& pos) const;
 
-        void SetKnown(const sf::Vector2i& pos, const bool& state);
+        void SetKnown(const sf::Vector2i& pos);
+        const TileMemory *GetKnown(const sf::Vector2i& pos) const;
+        bool IsKnown(const sf::Vector2i& pos) const;
 
         const Tile& GetTile(const sf::Vector2i& pos) const;
 
         //TODO: Add functions for manipulating the map
 
         bool IsWall(const sf::Vector2i& pos) const;
-
         bool IsFloor(const sf::Vector2i& pos) const;
-
-        bool IsKnown(const sf::Vector2i& pos) const;
-
         bool BlocksSight(const sf::Vector2i& pos) const;
 
         void Generate();
 
-        //TODO: GetUnitAt
+        //TODO: GetUnitAt, defriend Unit
         //WIP: Landmarks
 
 

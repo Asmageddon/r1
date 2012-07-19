@@ -309,19 +309,25 @@ class Game {
 
                 //Handle revealing and hiding tiles behind Fog of War
                 if (tile_visible) {
-                    //if (i >= fow_brightness) {
-                        current_level->SetKnown(map_pos, true);
-                    //}
+                    current_level->SetKnown(map_pos);
                 }
 
+                //TODO: Get rid of caching here, it's (probably) not needed
                 const Tile& tile = current_level->GetTile(map_pos);
 
-                if (current_tiletype != tile.type) {
+                sf::Color tile_color;
+
+                if (tile_visible) {
                     current_tiletype = tile.type;
-                    current_sprite = current_tiletype->sprite;
+                    tile_color = tile.material->color;
+                }
+                else {
+                    current_tiletype = tile.last_known->type;
+                    tile_color = tile.last_known->material->color;
                 }
 
-                sf::Color tile_color = tile.material->color;
+                current_sprite = current_tiletype->sprite;
+
                 if (shade) {
                     sf::Color vt = world->player->type->vision_tint;
                     int c = (tile_color.r + tile_color.g + tile_color.b) / 3 * fow_brightness;
