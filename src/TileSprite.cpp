@@ -1,20 +1,20 @@
 #include "TileSprite.hpp"
 
-TileSprite::TileSprite() : Sprite() { }
+TileSprite::TileSprite() : sf::Sprite() { }
 
-TileSprite::TileSprite(const Texture& tex, const Vector2i& tile_size, const int& sprite) : Sprite(tex) {
+TileSprite::TileSprite(const sf::Texture& tex, const sf::Vector2i& tile_size, const int& sprite) : Sprite(tex) {
     m_tile_size = tile_size;
     setTexture(tex);
     setSprite(sprite);
 }
 
-const Vector2i& TileSprite::getTileSize() {
+const sf::Vector2i& TileSprite::getTileSize() {
     return m_tile_size;
 }
 
 void TileSprite::setSprite(const unsigned int& pos) {
-    IntRect rect;
-    Vector2u size = this->getTexture()->getSize();
+    sf::IntRect rect;
+    sf::Vector2u size = this->getTexture()->getSize();
 
     if (size.x == 0) return;
 
@@ -28,7 +28,7 @@ void TileSprite::setSprite(const unsigned int& pos) {
         x = y = 0;
     }
 
-    rect = IntRect(
+    rect = sf::IntRect(
         x * m_tile_size.x,
         y * m_tile_size.y,
         m_tile_size.x,

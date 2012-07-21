@@ -33,7 +33,7 @@ Level::Level(World *world, Data data) {
 
     seed = data.as_int("terrain", "seed");
     if (seed == -1) {
-        srand(time(NULL));
+        //srand(time(NULL));
         seed = rand();
     }
 
@@ -101,6 +101,7 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
     return data[pos.x + size.x * pos.y].last_known != NULL;
 }
 
+//TODO: Make this return a non-const pointer (after sanitizing Tile api ofc)
 const Tile& Level::GetTile(const sf::Vector2i& pos) const {
     if (!InBounds(pos))
         return default_tile;
@@ -119,7 +120,56 @@ bool Level::IsFloor(const sf::Vector2i& pos) const {
 
 bool Level::BlocksSight(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return t.MatchAny(OPAQUE | UNIT_OPAQUE);
+    return t.MatchAny(OPAQUE | UNIT_OPAQUE | OBJECT_OPAQUE);
+}
+
+sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) const {
+    //Searches in rhomboid shape
+    if (GetTile(pos).MatchAll(tile_state)) return pos;
+
+    sf::Vector2i _pos;
+    int x = pos.x;
+    int y = pos.y;
+
+    int dist = 1;
+    int step = 0;
+    enum { UP, RIGHT, DOWN, LEFT } direction = UP;
+    while (true) {
+        switch(direction) {
+            case UP:
+                y = pos.y - dist + step;
+                x = pos.x + step;
+                _pos = sf::Vector2i(x, y);
+                step++;
+                if (step == dist) { direction = RIGHT; step = 0; }
+                break;
+            case RIGHT:
+                y = pos.y + step;
+                x = pos.x + dist - step;
+                _pos = sf::Vector2i(x, y);
+                step++;
+                if (step == dist) { direction = DOWN; step = 0; }
+                break;
+            case DOWN:
+                y = pos.y + dist - step;
+                x = pos.x - step;
+                _pos = sf::Vector2i(x, y);
+                step++;
+                if (step == dist) { direction = LEFT; step = 0; }
+                break;
+            case LEFT:
+                y = pos.y - step;
+                x = pos.x - dist + step;
+                _pos = sf::Vector2i(x, y);
+                step++;
+                if (step == dist) { direction = UP; step = 0; dist++; }
+                break;
+        }
+        if (GetTile(_pos).MatchAll(tile_state)) return _pos;
+
+        //If we can't find a free spot, just return whatever
+        if (dist > 16) return _pos;
+    }
 }
 
 void Level::Generate() {
@@ -127,6 +177,8 @@ void Level::Generate() {
     perlin.SetOctaveCount (2);
     perlin.SetFrequency (1.0);
 
+    //TODO: Get materials from data files
+    //TODO: Separate classes for generator(s)
     Tile stone_wall  = Tile(resman, "generic_wall", "generic_stone");
     Tile stone_floor = Tile(resman, "generic_floor", "generic_stone");
 
@@ -144,8 +196,13 @@ void Level::Generate() {
 }
 
 void Level::AddLandmark(const std::string& id, const sf::Vector2i& pos) {
-    //TODO: Ensure the landmark is within bounds
-    landmarks[id] = pos;
+    sf::Vector2i _pos = pos;
+    if      (_pos.x < 0) _pos.x = 0;
+    else if (_pos.x >= (int)size.x) _pos.x = size.x;
+    else if (_pos.y < 0) _pos.y = 0;
+    else if (_pos.y >= (int)size.y) _pos.y = size.y;
+
+    landmarks[id] = _pos;
 }
 void Level::RemoveLandmark(const std::string& id) {
     landmarks.erase(id);
@@ -154,38 +211,49 @@ sf::Vector2i Level::GetLandmark(const std::string& id) const {
     std::string _id = id;
     if (id == "") _id = "default";
 
-    if (!contains(landmarks, _id))
-        return const_access(landmarks, "default");
+    sf::Vector2i pos;
 
-    //TODO: Make GetLandmark find closest free tile
-    //TODO: An enum/bitmask for types of acceptale tiles(type, visibility, unit, etc.), a function to check it and make GetLandmark and BlocksVision use it
+    //TODO: Make this return raw pos, find free in PlaceUnit, etc.
+    if (id == "random") {
+        //TODO: Replace this with perlin-noise based pseudorandom numbers
+        int x = rand() % size.x;
+        int y = rand() % size.y;
+        return sf::Vector2i(x, y);
+    }
+    if (contains(landmarks, _id))
+        return const_access(landmarks, _id);
 
-    return const_access(landmarks, _id);
+    return const_access(landmarks, "default");
 }
 
-Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos) {
-    if (!InBounds(pos)) return NULL;
-    if (GetTile(pos).unit != NULL) {
-        Unit *tmp = GetTile(pos).unit;
-        data[pos.x + size.x * pos.y].unit = NULL;
+Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos, bool ignore_terrain) {
+    sf::Vector2i _pos;
+    if (ignore_terrain)
+        _pos = pos;
+    else
+        _pos = FindTile(pos, IS_FLOOR | NO_UNIT);
+
+    if (GetTile(_pos).unit != NULL) {
+        Unit *tmp = GetTile(_pos).unit;
+        data[_pos.x + size.x * _pos.y].unit = NULL;
         units.erase(tmp);
         delete tmp;
     }
 
     Unit *u = new Unit(this->world, unit_type);
     u->SetLocation(this->id);
-    u->SetPosition(pos);
+    u->SetPosition(_pos);
 
     return u;
 }
 
-Unit* Level::PlaceUnit(const std::string& unit_type, const std::string& landmark) {
-    return PlaceUnit(unit_type, GetLandmark(landmark));
+Unit* Level::PlaceUnit(const std::string& unit_type, const std::string& landmark, bool ignore_terrain) {
+    return PlaceUnit(unit_type, GetLandmark(landmark), ignore_terrain);
 }
 
 void Level::AttachLight(LightField *light) {
     lights.insert(light);
-    light->Calculate(this, light->GetPosition());
+    //light->Calculate(this, light->GetPosition());
 }
 
 void Level::DetachLight(LightField *light) {

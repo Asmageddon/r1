@@ -56,6 +56,9 @@ class Level{
         bool IsFloor(const sf::Vector2i& pos) const;
         bool BlocksSight(const sf::Vector2i& pos) const;
 
+        //tile_state is a bitmask of Tile.hpp :: TILE_STATE
+        sf::Vector2i FindTile(const sf::Vector2i& pos, unsigned int tile_state) const;
+
         void Generate();
 
         //TODO: GetUnitAt, defriend Unit
@@ -66,8 +69,8 @@ class Level{
         void RemoveLandmark(const std::string& id);
         sf::Vector2i GetLandmark(const std::string& id) const;
 
-        Unit* PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos);
-        Unit* PlaceUnit(const std::string& unit_type, const std::string& landmark);
+        Unit* PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos, bool ignore_terrain = false);
+        Unit* PlaceUnit(const std::string& unit_type, const std::string& landmark, bool ignore_terrain = false);
 
         void AttachLight(LightField *light);
         void DetachLight(LightField *light);

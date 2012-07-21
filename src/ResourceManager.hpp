@@ -13,7 +13,6 @@
 #include "UnitType.hpp"
 
 #include "TileSprite.hpp"
-#include "ShadowSprite.hpp"
 
 class ResourceManager {
     private:
@@ -27,7 +26,7 @@ class ResourceManager {
         std::string base_path;
     public:
         std::map<std::string, sf::Texture> tilesets;
-        ShadowSprite shadow;
+        TileSprite shadow;
     private:
         void LoadConfiguration(std::string dir);
         void LoadTilesets(std::string dir);

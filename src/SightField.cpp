@@ -29,7 +29,7 @@ bool SightField::GetVisibilityAt(const sf::Vector2i& pos) const {
         if (visible) {
             sf::Color light = current_level->GetLightColorAt(pos);
 
-            float i = max(light.r, max(light.g, light.b)) / 255.0;
+            float i = std::max(light.r, std::max(light.g, light.b)) / 255.0;
 
             return (i > light_threshold);
         }

@@ -36,7 +36,7 @@ const FALLOFF& Field::GetFalloff() const {
     return this->falloff;
 }
 
-void Field::Calculate(const Level* level, const sf::Vector2i& caster_pos) {
+void Field::Calculate(Level* level, const sf::Vector2i& caster_pos) {
     /*
      * Simple raycasting
      */

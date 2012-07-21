@@ -105,20 +105,26 @@ void Unit::Move(const sf::Vector2i& vec) {
 }
 
 
-void Unit::SetPosition(const sf::Vector2i& new_pos) {
-    Move(new_pos - pos);
+void Unit::SetPosition(const sf::Vector2i& new_pos, bool ignore_terrain) {
+    sf::Vector2i _new_pos;
+    if (ignore_terrain)
+        _new_pos = new_pos;
+    else
+        //TODO: Per-unittype movement restrictions and using them here and in other places
+        _new_pos = location->FindTile(new_pos, IS_FLOOR | NO_UNIT | NO_OBJECT);
+    Move(_new_pos - pos);
 }
 
-void Unit::SetPosition(const std::string& landmark) {
+void Unit::SetPosition(const std::string& landmark, bool ignore_terrain) {
     if (location == NULL) return;
-    SetPosition(location->GetLandmark(landmark));
+    SetPosition(location->GetLandmark(landmark), ignore_terrain);
 }
 
 const sf::Vector2i& Unit::GetPosition() const {
     return pos;
 }
 
-void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i pos) {
+void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i pos, bool ignore_terrain) {
     Level *new_location = world->GetLevel(loc_id);
 
     if (location != NULL) {
@@ -130,23 +136,20 @@ void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i pos) {
     this->location = new_location;
     int width = location->GetSize().x;
     location->data[this->pos.x + width * this->pos.y].unit = this; //INVESTIGATE: If this is necessary or not
-    SetPosition(pos);
+    SetPosition(pos, ignore_terrain);
 
     std::set<LightField*>::iterator it = lights.begin();
 
     for (; it != lights.end(); it++) {
-        if (this->location != NULL) {
-            this->location->DetachLight(*it);
-        }
-        new_location->AttachLight(*it);
+        (*it)->Calculate(location, this->pos);
     }
 
-    fov->Calculate(new_location, pos);
+    fov->Calculate(location, this->pos);
 }
 
-void Unit::SetLocation(const std::string& loc_id, const std::string landmark) {
-    Vector2i pos = world->GetLevel(loc_id)->GetLandmark(landmark);
-    SetLocation(loc_id, pos);
+void Unit::SetLocation(const std::string& loc_id, const std::string landmark, bool ignore_terrain) {
+    sf::Vector2i pos = world->GetLevel(loc_id)->GetLandmark(landmark);
+    SetLocation(loc_id, pos, ignore_terrain);
 }
 
 std::string Unit::GetLocation() const {

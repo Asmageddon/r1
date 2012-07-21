@@ -16,13 +16,16 @@ enum TILE_STATE {
     TRANSPARENT = 8,
     OPAQUE = 16,
     HAS_UNIT = 32,
-    UNIT_TRANSPARENT = 64,
-    UNIT_OPAQUE = 128,
+    NO_UNIT = 64,
+    UNIT_TRANSPARENT = 128,
+    UNIT_OPAQUE = 256,
     //Still unused: v
-    HAS_ITEMS = 256,
-    HAS_OBJECT = 512,
-    OBJECT_TRANSPARENT = 1024,
-    OBJECT_OPAQUE = 2048
+    HAS_ITEMS = 512,
+    NO_ITEMS = 1024,
+    HAS_OBJECT = 2048,
+    NO_OBJECT = 4096,
+    OBJECT_TRANSPARENT = 8192,
+    OBJECT_OPAQUE = 16384
 };
 
 //TODO: Redo the vision system to work on what-is-visible-where basis (which will allow for portals and other neat stuff)

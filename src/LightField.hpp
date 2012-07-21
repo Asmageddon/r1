@@ -13,6 +13,8 @@ class LightField: public Field {
         void SetColor(const sf::Color& col);
         const sf::Color& GetColor() const;
         sf::Color GetColorAt(const sf::Vector2i& pos) const;
+
+        void Calculate(Level* level, const sf::Vector2i& caster_pos);
 };
 
 #endif

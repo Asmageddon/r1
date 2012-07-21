@@ -10,7 +10,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
 #include "utils.hpp"
 
 #include "ConfigManager.hpp"
@@ -59,7 +58,7 @@ class Game {
             confman = new ConfigManager(base_path);
             confman->Load();
 
-            window.create(VideoMode(confman->resolution.x, confman->resolution.y), "r1");
+            window.create(sf::VideoMode(confman->resolution.x, confman->resolution.y), "r1");
             window.setFramerateLimit(confman->max_fps);
 
             resman = new ResourceManager(base_path);
@@ -72,12 +71,16 @@ class Game {
 
             world->player = current_level->PlaceUnit("test_player", "default");
             current_level->PlaceUnit("sun_sentry", sf::Vector2i(15, 15));
+            current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
 
             light = new LightField();
             light->SetRadius(12);
             light->SetFalloff(FALLOFF_LINEAR_SMOOTH);
             light->SetColor(sf::Color(255, 200, 170));
-            current_level->AttachLight(light);
             light->Calculate(current_level, sf::Vector2i(6, 17));
 
             camera_pos = sf::Vector2i(5,5);
@@ -89,7 +92,7 @@ class Game {
 
         }
 
-        void render_shadow(const sf::Vector2i& map_pos, ShadowSprite* shadow) {
+        void render_border(const sf::Vector2i& map_pos, TileSprite* border_sprite) {
 
             sf::Vector2f screen_pos;
             screen_pos.x = map_pos.x - camera_pos.x;
@@ -101,31 +104,31 @@ class Game {
             int x = map_pos.x;
             int y = map_pos.y;
 
-            shadow->setPosition(screen_pos);
+            border_sprite->setPosition(screen_pos);
             if (current_level->IsFloor(sf::Vector2i(x, y))) {
                 if (current_level->IsWall(sf::Vector2i(x - 1, y))) {
                     if (current_level->IsWall(sf::Vector2i(x, y - 1))) {
                         if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_ALL);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_ALL);
+                                window.draw(*border_sprite);
                             }
                             else {
-                                shadow->setSprite(SHADOW_ALL_BUT_RIGHT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_ALL_BUT_RIGHT);
+                                window.draw(*border_sprite);
                             }
                         }
                         else {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_ALL_BUT_BOTTOM);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_ALL_BUT_BOTTOM);
+                                window.draw(*border_sprite);
                             }
                             else {
-                                shadow->setSprite(SHADOW_TOP_LEFT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_TOP_LEFT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
@@ -133,33 +136,33 @@ class Game {
                     else {
                         if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_ALL_BUT_TOP);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_ALL_BUT_TOP);
+                                window.draw(*border_sprite);
                             }
                             else {
-                                shadow->setSprite(SHADOW_BOTTOM_LEFT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_BOTTOM_LEFT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
                         else {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_SIDES_HORIZ);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_SIDES_HORIZ);
+                                window.draw(*border_sprite);
                             }
                             else {
-                                shadow->setSprite(SHADOW_LEFT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_LEFT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
@@ -169,33 +172,33 @@ class Game {
                     if (current_level->IsWall(sf::Vector2i(x, y - 1))) {
                         if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_ALL_BUT_LEFT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_ALL_BUT_LEFT);
+                                window.draw(*border_sprite);
                             }
                             else {
-                                shadow->setSprite(SHADOW_SIDES_VERT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_SIDES_VERT);
+                                window.draw(*border_sprite);
                             }
                         }
                         else {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_TOP_RIGHT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_TOP_RIGHT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                             else {
-                                shadow->setSprite(SHADOW_TOP);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_TOP);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
@@ -203,55 +206,55 @@ class Game {
                     else {
                         if (current_level->IsWall(sf::Vector2i(x, y + 1))) {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_BOTTOM_RIGHT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_BOTTOM_RIGHT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                             else {
-                                shadow->setSprite(SHADOW_BOTTOM);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_BOTTOM);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
                         else {
                             if (current_level->IsWall(sf::Vector2i(x + 1, y))) {
-                                shadow->setSprite(SHADOW_RIGHT);
-                                window.draw(*shadow);
+                                border_sprite->setSprite(BORDER_RIGHT);
+                                window.draw(*border_sprite);
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                             else {
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y - 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_TOP_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_TOP_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x - 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_LEFT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_LEFT);
+                                    window.draw(*border_sprite);
                                 }
                                 if (current_level->IsWall(sf::Vector2i(x + 1, y + 1))) {
-                                    shadow->setSprite(SHADOW_CORNER_BOTTOM_RIGHT);
-                                    window.draw(*shadow);
+                                    border_sprite->setSprite(BORDER_CORNER_BOTTOM_RIGHT);
+                                    window.draw(*border_sprite);
                                 }
                             }
                         }
@@ -271,10 +274,10 @@ class Game {
             camera_pos.x -= window.getView().getSize().x / resman->GetTileSize().x / 2;
             camera_pos.y -= window.getView().getSize().y / resman->GetTileSize().y / 2;
 
-            int start_x = max(camera_pos.x, 0);
-            int start_y = max(camera_pos.y, 0);
-            int end_x = min((float)current_level->GetSize().x, camera_pos.x + window.getView().getSize().x / resman->GetTileSize().x);
-            int end_y = min((float)current_level->GetSize().y, camera_pos.y + window.getView().getSize().y / resman->GetTileSize().y);
+            int start_x = std::max(camera_pos.x, 0);
+            int start_y = std::max(camera_pos.y, 0);
+            int end_x = std::min((float)current_level->GetSize().x, camera_pos.x + window.getView().getSize().x / resman->GetTileSize().x);
+            int end_y = std::min((float)current_level->GetSize().y, camera_pos.y + window.getView().getSize().y / resman->GetTileSize().y);
 
             for (int x=start_x; x < end_x; x++)
             for (int y=start_y; y < end_y; y++) {
@@ -342,7 +345,7 @@ class Game {
                 current_sprite.setPosition(screen_pos);
                 window.draw(current_sprite);
 
-                render_shadow(map_pos, &resman->shadow);
+                render_border(map_pos, &resman->shadow);
 
                 if (!shade && (tile.unit != NULL)) {
                     TileSprite unit_sprite = tile.unit->type->sprite;
@@ -401,8 +404,8 @@ class Game {
                         std::string fname = out.str();
                         fname.insert(fname.begin(), 5 - fname.size(), '0');
                         fname = (std::string)"screenshot" + fname + ".png";
-                        Image Screen = window.capture();
-                        Screen.saveToFile(dir + fname);
+                        sf::Image screenshot = window.capture();
+                        screenshot.saveToFile(dir + fname);
 
                         std::cout << "Saved screenshot to user/screenshots/" + fname << std::endl;
                     }
@@ -471,6 +474,8 @@ class Game {
 };
 
 int main(int argc, char** argv) {
+    srand(time(NULL));
+
     base_path = get_base_path(argv[0]);
     std::cout << base_path << std::endl;
     Game g;

@@ -19,7 +19,7 @@ class Field {
         FALLOFF falloff;
     protected:
         sf::Vector2i origin;
-        const Level *current_level;
+        Level *current_level;
         float *intensity;
     public:
         Field();
@@ -30,7 +30,7 @@ class Field {
         void SetFalloff(const FALLOFF& falloff);
         const FALLOFF& GetFalloff() const;
 
-        void Calculate(const Level* level, const sf::Vector2i& caster_pos);
+        void Calculate(Level* level, const sf::Vector2i& caster_pos);
         void Recalculate();
 
         float GetIntensityAt(const sf::Vector2i& pos) const;

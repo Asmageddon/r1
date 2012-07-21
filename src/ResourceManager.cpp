@@ -14,7 +14,6 @@
 #include "UnitType.hpp"
 
 #include "TileSprite.hpp"
-#include "ShadowSprite.hpp"
 
 #include "utils.hpp"
 
@@ -131,7 +130,7 @@ void ResourceManager::Load() {
 
     sf::Texture tex;
     shadow_texture.loadFromFile(base_path + "data/images/shadows.png");
-    shadow = ShadowSprite(shadow_texture, tile_size);
+    shadow = TileSprite(shadow_texture, tile_size);
     std::cout << "Shadow sprite loaded" << std::endl;
 }
 

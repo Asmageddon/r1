@@ -3,15 +3,14 @@
 
 #include <string>
 #include <vector>
-using namespace std;
 
 #include "Data.hpp"
 
 class Object {
     public:
-        string id;
-        string name;
-        string desc;
+        std::string id;
+        std::string name;
+        std::string desc;
     public:
         Object() {}
         Object(Data data);

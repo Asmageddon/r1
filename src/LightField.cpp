@@ -27,3 +27,13 @@ sf::Color LightField::GetColorAt(const sf::Vector2i& pos) const {
     result.b *= i;
     return result;
 }
+
+
+void LightField::Calculate(Level* level, const sf::Vector2i& caster_pos) {
+    if ((current_level != NULL) && (current_level != level)) {
+        //TODO: Only do this here and not in Unit, etc...
+        current_level->DetachLight(this);
+    }
+    level->AttachLight(this);
+    Field::Calculate(level, caster_pos);
+}
