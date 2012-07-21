@@ -5,7 +5,6 @@
 
 class Data;
 
-//WIP: Move glowing to a separate class
 class Glowable {
     public:
         sf::Color glow_color;

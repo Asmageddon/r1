@@ -22,6 +22,11 @@
 
 static std::string base_path = ".";
 
+template<class T1, class T2>
+sf::Vector2<T2> convert_vec2 (sf::Vector2<T1> vec) {
+    return sf::Vector2<T2>(vec.x, vec.y);
+}
+
 sf::Color blend(const sf::Color& col1, const sf::Color& col2, float dist) {
     sf::Color result = col1;
     result.r = result.r * (1.0f - dist) + col2.r * dist;
@@ -41,6 +46,7 @@ std::string get_base_path(char* argv0) {
     return argv0;
 }
 
+//TODO: Simple GUI - screen/popup/dialog system that will allow me to create inventory, action choice, etc.
 class Game {
     private:
         sf::RenderWindow window;
@@ -53,6 +59,20 @@ class Game {
 
         sf::Vector2i camera_pos;
     private:
+        sf::Vector2i screen_to_map(int x, int y) {
+            sf::Vector2i map_pos = sf::Vector2i(x, y);
+            //Screen space to view space
+            map_pos.x *= window.getView().getSize().x * 1.0 / window.getSize().x;
+            map_pos.y *= window.getView().getSize().y * 1.0 / window.getSize().y;
+
+            //View space to map space
+            map_pos.x /= resman->GetTileSize().x;
+            map_pos.y /= resman->GetTileSize().y;
+            map_pos.x += camera_pos.x;
+            map_pos.y += camera_pos.y;
+
+            return map_pos;
+        }
 
         void start() {
             confman = new ConfigManager(base_path);
@@ -89,7 +109,10 @@ class Game {
         }
 
         void end() {
-
+            delete this->light;
+            delete this->world;
+            delete this->resman;
+            delete this->confman;
         }
 
         void render_border(const sf::Vector2i& map_pos, TileSprite* border_sprite) {
@@ -266,9 +289,6 @@ class Game {
         void render() {
             window.clear();
 
-            const TileType *current_tiletype = NULL;
-            TileSprite current_sprite;
-
             camera_pos = world->player->GetPosition();
             current_level = world->player->GetCurrentLevel();
             camera_pos.x -= window.getView().getSize().x / resman->GetTileSize().x / 2;
@@ -301,6 +321,8 @@ class Game {
                 bool shade = false;
                 bool known = current_level->IsKnown(map_pos);
 
+                bool is_player_pos = !tile_visible & (map_pos == world->player->GetPosition());
+
                 if ( !tile_visible ) {
                     if ( !known )
                         continue; //Tile is unknown, not visible, skip rendering
@@ -315,23 +337,23 @@ class Game {
                     current_level->SetKnown(map_pos);
                 }
 
-                //TODO: Get rid of caching here, it's (probably) not needed
                 const Tile& tile = current_level->GetTile(map_pos);
-
+                const TileType *tiletype;
+                TileSprite tile_sprite;
                 sf::Color tile_color;
 
                 if (tile_visible) {
-                    current_tiletype = tile.type;
+                    tiletype = tile.type;
                     tile_color = tile.material->color;
                 }
                 else {
-                    current_tiletype = tile.last_known->type;
+                    tiletype = tile.last_known->type;
                     tile_color = tile.last_known->material->color;
                 }
 
-                current_sprite = current_tiletype->sprite;
+                tile_sprite = tiletype->sprite;
 
-                if (shade) {
+                if ((shade | is_player_pos)) {
                     sf::Color vt = world->player->type->vision_tint;
                     int c = (tile_color.r + tile_color.g + tile_color.b) / 3 * fow_brightness;
                     c += (vt.r + vt.g + vt.b) / 3;
@@ -341,17 +363,29 @@ class Game {
                     tile_color = tile_color * light_color;
                 }
 
-                current_sprite.setColor(tile_color);
-                current_sprite.setPosition(screen_pos);
-                window.draw(current_sprite);
+                tile_sprite.setColor(tile_color);
+                tile_sprite.setPosition(screen_pos);
+                window.draw(tile_sprite);
 
-                render_border(map_pos, &resman->shadow);
+                if (!shade)
+                    render_border(map_pos, &resman->shadow);
+
+                //TODO: Make tile borders work. Prerequisite: MapMemory
+                //if (tiletype->border_sprite != NULL) {
+                    //for(int x = map_pos.x - 1; x <= map_pos.x + 1; x++)
+                    //for(int y = map_pos.y - 1; y <= map_pos.y + 1; y++) {
+                        //sf::Vector2i border_pos = sf::Vector2i(x, y);
+                        //tiletype->border_sprite->setColor(tile_color);
+                        //render_border(border_pos, tiletype->border_sprite);
+                    //}
+                //}
 
                 if (!shade && (tile.unit != NULL)) {
                     TileSprite unit_sprite = tile.unit->type->sprite;
                     sf::Color color = tile.unit->material->color;
 
-                    color = blend(color, color * light_color, 0.75);
+                    if (!is_player_pos)
+                        color = blend(color, color * light_color, 0.75);
 
                     unit_sprite.setColor(color);
                     unit_sprite.setPosition(screen_pos);
@@ -359,6 +393,16 @@ class Game {
                 }
 
             }
+
+            sf::Vector2i mpos_i = sf::Mouse::getPosition(window);
+            sf::Vector2f mpos;
+            mpos.x = mpos_i.x - mpos_i.x % resman->GetTileSize().x;
+            mpos.y = mpos_i.y - mpos_i.y % resman->GetTileSize().y;
+
+            TileSprite cursor = resman->GetSprite("cursor.png", 1);
+            cursor.setColor(confman->cursor_color);
+            cursor.setPosition(mpos);
+            window.draw(cursor);
 
             window.display();
         }
@@ -371,29 +415,17 @@ class Game {
                 }
                 else if (event.type == sf::Event::MouseButtonPressed) {
                     //event.button
-                    sf::Vector2i map_pos = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
-
-                    //Screen space to view space
-                    map_pos.x *= window.getView().getSize().x * 1.0 / window.getSize().x;
-                    map_pos.y *= window.getView().getSize().y * 1.0 / window.getSize().y;
-
-                    //View space to map space
-                    map_pos.x /= resman->GetTileSize().x;
-                    map_pos.y /= resman->GetTileSize().y;
-                    map_pos.x += camera_pos.x;
-                    map_pos.y += camera_pos.y;
+                    sf::Vector2i map_pos = screen_to_map(event.mouseButton.x, event.mouseButton.y);
 
                     if (event.mouseButton.button == sf::Mouse::Right) {
                         light->Calculate(current_level, map_pos);
                     }
-                    //else if (event.mouseButton.button == sf::Mouse::Left) {
-                        //Tile t = Tile();
-                        //t.type = 2;
-                        //t.material = 1;
-                        //current_level->SetTile(map_pos, t);
-                        //if (light->InBounds(map_pos) && (light->GetIntensityAt(map_pos) > 0.0f))
-                            //light->Calculate(current_level);
-                    //}
+                    else if (event.mouseButton.button == sf::Mouse::Left) {
+                        current_level->SetTile(map_pos, "generic_wall", "generic_metal");
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Middle) {
+                        current_level->SetTile(map_pos, "generic_floor", "generic_metal");
+                    }
                 }
                 else if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::F12) {

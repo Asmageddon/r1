@@ -46,6 +46,10 @@ class ResourceManager {
         const TileType& GetTileType(const std::string& id) const;
         const Material& GetMaterial(const std::string& id) const;
 
+        const std::map<std::string, TileType>& GetTileTypeMap() const;
+        const std::map<std::string, UnitType>& GetUnitTypeMap() const;
+        const std::map<std::string, Material>& GetMaterialMap() const;
+
         TileSprite GetSprite(const std::string& tileset, const int& n);
 
         const sf::Vector2i& GetTileSize() const;

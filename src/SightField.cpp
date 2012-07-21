@@ -21,9 +21,6 @@ bool SightField::GetVisibilityAt(const sf::Vector2i& pos) const {
     if (!InBounds(pos)) {
         return false;
     }
-    else if (pos == origin) {
-        return true;
-    }
     else {
         bool visible = GetIntensityAt(pos) >= 0.1;
         if (visible) {

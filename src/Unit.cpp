@@ -63,28 +63,23 @@ Unit::~Unit() {
     delete fov;
 }
 
-void Unit::Move(const sf::Vector2i& vec) {
-    //TODO: Make this cleaner
-    //TODO: This should DESTROY unit at the destination, add Unit::Swap for swapping
-    //TODO: Move this code to SetPosition
+void Unit::Swap(Unit *other_unit) {
     if (location == NULL) return;
 
-    sf::Vector2i new_pos = pos + vec;
+    sf::Vector2i pos2 = other_unit->pos;
 
-    int width = location->GetSize().x;
-    long new_i = new_pos.x + width * new_pos.y;
-    long old_i = pos.x + width * pos.y;
+    //FIXME: Fix this up so I can make Level not have to friend Unit
+    int width1 = location->GetSize().x;
+    int width2 = other_unit->location->GetSize().x;
 
-    if (!location->InBounds(new_pos)) return;
+    long i1 = pos.x + width1 * pos.y;
+    long i2 = pos2.x + width2 * pos2.y;
 
-    Unit* tmp = location->data[new_i].unit;
+    other_unit->location->data[i2].unit = this;
+    this->location->data[i1].unit = other_unit;
 
-    if (tmp != NULL)
-        tmp->pos = this->pos;
-
-    this->pos = new_pos;
-    location->data[new_i].unit = this;
-    location->data[old_i].unit = tmp;
+    other_unit->pos = this->pos;
+    this->pos = pos2;
 
     //Recalculate light fields
     std::set<LightField*>::iterator it = lights.begin();
@@ -94,13 +89,31 @@ void Unit::Move(const sf::Vector2i& vec) {
     fov->Calculate(location, pos);
 
     //Do the same for the other unit
-    if (tmp != NULL) {
-        it = tmp->lights.begin();
-        for (; it != tmp->lights.end(); it++) {
-            (*it)->Calculate(location, tmp->pos);
-        }
+    it = other_unit->lights.begin();
+    for (; it != other_unit->lights.end(); it++) {
+        (*it)->Calculate(location, other_unit->pos);
+    }
 
-        tmp->fov->Calculate(location, tmp->pos);
+    other_unit->fov->Calculate(location, other_unit->pos);
+}
+
+void Unit::Move(const sf::Vector2i& vec) {
+    //TODO: Make this cleaner
+    if (location == NULL) return;
+
+    sf::Vector2i new_pos = pos + vec;
+    if (!location->InBounds(new_pos)) return;
+
+    long i = new_pos.x + location->GetSize().x * new_pos.y;
+
+    Unit* tmp = location->data[i].unit;
+
+    //FIXME: Implement and use Level::GetUnitAt instead
+    if (tmp != NULL) {
+        Swap(tmp);
+    }
+    else {
+        SetPosition(new_pos, true);
     }
 }
 
@@ -112,7 +125,20 @@ void Unit::SetPosition(const sf::Vector2i& new_pos, bool ignore_terrain) {
     else
         //TODO: Per-unittype movement restrictions and using them here and in other places
         _new_pos = location->FindTile(new_pos, IS_FLOOR | NO_UNIT | NO_OBJECT);
-    Move(_new_pos - pos);
+
+    long old_i = pos.x + location->GetSize().x * pos.y;
+
+    location->data[old_i].unit = NULL;
+    this->pos = _new_pos;
+    long new_i = _new_pos.x + location->GetSize().x * _new_pos.y;
+    location->data[new_i].unit = this;
+
+    //Recalculate the light fields and FoV
+    std::set<LightField*>::iterator it = lights.begin();
+    for (; it != lights.end(); it++) {
+        (*it)->Calculate(location, pos);
+    }
+    fov->Calculate(location, pos);
 }
 
 void Unit::SetPosition(const std::string& landmark, bool ignore_terrain) {
@@ -184,7 +210,17 @@ bool Unit::CanSee(const sf::Vector2i& pos) {
     return fov->GetVisibilityAt(pos);
 }
 
-//TODO: Expose entirety of fov, perhaps as a const ref
+bool Unit::CanSee(const Unit* const unit) {
+    if (location != unit->location) return false;
+
+    return CanSee(unit->pos);
+}
+
+//TODO: Expose entirety of fov, perhaps as a const ref (why?)
 float Unit::GetLightThreshold() const {
     return fov->GetLightThreshold();
+}
+
+void Unit::RecalculateFOV() {
+    fov->Recalculate();
 }

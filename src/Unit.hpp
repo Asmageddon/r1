@@ -13,7 +13,6 @@ class Material;
 
 class World;
 
-//TODO: Pass World* to Unit::Unit and use it for setting location
 class Unit {
     private:
         std::set<LightField*> lights;
@@ -34,6 +33,8 @@ class Unit {
         //TODO: Setting and getting material and type
         //TODO: Setting and getting rest of stuff
 
+        void Swap(Unit *other_unit);
+
         void Move(const sf::Vector2i& vec);
 
         void SetPosition(const sf::Vector2i& pos, bool ignore_terrain = false);
@@ -50,6 +51,9 @@ class Unit {
         void DetachLight(LightField *light);
 
         bool CanSee(const sf::Vector2i& pos);
+        bool CanSee(const Unit* const unit);
         float GetLightThreshold() const;
+
+        void RecalculateFOV();
 };
 #endif

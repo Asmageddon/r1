@@ -8,6 +8,10 @@ LightField::LightField() : Field() {
     SetFalloff(FALLOFF_LINEAR_SMOOTH);
 }
 
+LightField::~LightField() {
+    current_level->DetachLight(this);
+}
+
 void LightField::SetColor(const sf::Color& col) {
     this->color = col;
     //We don't want to dye our sprites transparent

@@ -1,11 +1,11 @@
-id = generic_wall
+id = ground_wall
 name = %m wall
-desc = plain wall made of %m
+desc = rough wall made of %m
 type = wall
-materials = stone wood metal
+materials = sand ground stone
 
 [appearance]
     tileset = tiles1.png
-    image = 2
+    image = 7
     blocks_sight = true
     border = generic_wall_border.png

@@ -155,6 +155,16 @@ const Material& ResourceManager::GetMaterial(const std::string& id) const {
     return const_access(materials, "void");
 }
 
+const std::map<std::string, TileType>& ResourceManager::GetTileTypeMap() const {
+    return tiletypes;
+}
+const std::map<std::string, UnitType>& ResourceManager::GetUnitTypeMap() const {
+    return unittypes;
+}
+const std::map<std::string, Material>& ResourceManager::GetMaterialMap() const {
+    return materials;
+}
+
 TileSprite ResourceManager::GetSprite(const std::string& tileset, const int& n) {
     TileSprite result = TileSprite(tilesets[tileset], tile_size, n);
     return result;

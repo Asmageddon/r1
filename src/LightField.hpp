@@ -10,6 +10,7 @@ class LightField: public Field {
         sf::Color color;
     public:
         LightField();
+        ~LightField();
         void SetColor(const sf::Color& col);
         const sf::Color& GetColor() const;
         sf::Color GetColorAt(const sf::Vector2i& pos) const;

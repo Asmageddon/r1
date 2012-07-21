@@ -12,6 +12,7 @@
 #include "Unit.hpp"
 
 #include "LightField.hpp"
+#include "SightField.hpp"
 
 #include "World.hpp"
 
@@ -33,17 +34,21 @@ Level::Level(World *world, Data data) {
 
     seed = data.as_int("terrain", "seed");
     if (seed == -1) {
-        //srand(time(NULL));
         seed = rand();
     }
 
-    //TODO: Automatic landmarks - center, random, etc.
     std::set<std::string> s = data.GetKeys("landmarks", "");
-
     std::set<std::string>::iterator it;
-
     for(it = s.begin(); it != s.end(); it++) {
         landmarks[*it] = data.as_Vector2i("landmarks", *it);
+    }
+    landmarks["center"] = sf::Vector2i(size.x / 2, size.y / 2);
+
+    s = data.GetKeys("terrain.tiles", "");
+    for(it = s.begin(); it != s.end(); it++) {
+        std::vector<std::string> sv = data.as_str_vector("terrain.tiles", *it);
+        Tile t = Tile(resman, sv[0], sv[1]);
+        tiles[*it] = t;
     }
 
     ready = false;
@@ -101,11 +106,34 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
     return data[pos.x + size.x * pos.y].last_known != NULL;
 }
 
-//TODO: Make this return a non-const pointer (after sanitizing Tile api ofc)
 const Tile& Level::GetTile(const sf::Vector2i& pos) const {
     if (!InBounds(pos))
         return default_tile;
     return data[pos.x + size.x * pos.y];
+}
+
+void Level::SetTile(const sf::Vector2i& pos, const std::string& type_id, const std::string& material_id) {
+    if (!InBounds(pos)) return;
+
+    Tile new_tile  = Tile(resman, type_id, material_id);
+    Tile prev_tile = data[pos.x + size.x * pos.y];
+
+    new_tile.unit = prev_tile.unit;
+    new_tile.last_known = prev_tile.last_known;
+
+    data[pos.x + size.x * pos.y] = new_tile;
+
+    std::set<LightField*>::iterator lit = lights.begin();
+    for(; lit != lights.end(); lit++) {
+        if ((*lit)->GetIntensityAt(pos) > 0.0f)
+            (*lit)->Recalculate();
+    }
+    std::set<Unit*>::iterator uit = units.begin();
+    for(; uit != units.end(); uit++) {
+        if ((*uit)->CanSee(pos)) {
+            (*uit)->RecalculateFOV();
+        }
+    }
 }
 
 bool Level::IsWall(const sf::Vector2i& pos) const {
@@ -177,10 +205,9 @@ void Level::Generate() {
     perlin.SetOctaveCount (2);
     perlin.SetFrequency (1.0);
 
-    //TODO: Get materials from data files
     //TODO: Separate classes for generator(s)
-    Tile stone_wall  = Tile(resman, "generic_wall", "generic_stone");
-    Tile stone_floor = Tile(resman, "generic_floor", "generic_stone");
+    Tile stone_wall  = tiles["wall"];
+    Tile stone_floor = tiles["floor"];
 
     for(int x=0; x < (int)size.x; x++)
     for(int y=0; y < (int)size.y; y++) {
@@ -213,7 +240,6 @@ sf::Vector2i Level::GetLandmark(const std::string& id) const {
 
     sf::Vector2i pos;
 
-    //TODO: Make this return raw pos, find free in PlaceUnit, etc.
     if (id == "random") {
         //TODO: Replace this with perlin-noise based pseudorandom numbers
         int x = rand() % size.x;

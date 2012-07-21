@@ -9,10 +9,9 @@ id = start
     seed = -1
     default_tile = generic_floor generic_stone
 
-[terrain.default]
-    floor = generic_floor generic_stone
-    wall  = generic_wall generic_stone
-    #border
+[terrain.tiles]
+    floor = ground generic_stone
+    wall  = ground_wall generic_stone
 
 [landmarks]
     #Used as default entry point

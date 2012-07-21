@@ -1,0 +1,9 @@
+id = ground
+name = %m floor
+desc = rough floor made of %m
+type = floor
+materials = sand ground stone
+
+[appearance]
+    tileset = tiles1.png
+    image = 6

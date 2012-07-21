@@ -4,13 +4,14 @@ id = nowhere
     ambient = 50 0 35
 
 [terrain]
-    size = 12 12
+    size = 13 13
     generator = flat
     seed = -1
     default_tile = void void
 
-[terrain.empty]
-    tile = generic_floor generic_stone
+[terrain.tiles]
+    floor = generic_floor generic_metal
+    wall  = generic_wall generic_flesh
 
 [landmarks]
     default = 6 6

@@ -6,3 +6,4 @@ type = metal
 
 [appearance]
     color = 170 210 230
+    #color = 140 225 175

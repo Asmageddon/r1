@@ -3,3 +3,7 @@ resolution = 640 480
 fullscreen = false
 #Shouldn't impact performance. 0 to disable limit.
 max_fps = 60
+
+[interface]
+#cursor.color = 255 127 0
+cursor.color = 0 127 255

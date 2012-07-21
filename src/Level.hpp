@@ -30,6 +30,7 @@ class Level{
         int seed;
         bool ready;
         std::map<std::string, sf::Vector2i> landmarks;
+        std::map<std::string, Tile> tiles;
     public:
         std::set<Unit*> units;
         std::set<LightField*> lights;
@@ -49,21 +50,19 @@ class Level{
         bool IsKnown(const sf::Vector2i& pos) const;
 
         const Tile& GetTile(const sf::Vector2i& pos) const;
-
-        //TODO: Add functions for manipulating the map
+        //TODO: Add drawing functions
+        void SetTile(const sf::Vector2i& pos, const std::string& type_id, const std::string& material_id);
 
         bool IsWall(const sf::Vector2i& pos) const;
         bool IsFloor(const sf::Vector2i& pos) const;
         bool BlocksSight(const sf::Vector2i& pos) const;
 
-        //tile_state is a bitmask of Tile.hpp :: TILE_STATE
+        //tile_state is a bitmask of Tile.hpp => TILE_STATE
         sf::Vector2i FindTile(const sf::Vector2i& pos, unsigned int tile_state) const;
 
         void Generate();
 
         //TODO: GetUnitAt, defriend Unit
-        //WIP: Landmarks
-
 
         void AddLandmark(const std::string& id, const sf::Vector2i& pos);
         void RemoveLandmark(const std::string& id);

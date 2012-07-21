@@ -13,6 +13,7 @@ class ConfigManager {
     public:
         sf::Vector2i resolution;
         int max_fps;
+        sf::Color cursor_color;
     public:
         ConfigManager() : base_path(".") {}
         ConfigManager(std::string base_path) : base_path(base_path) {}

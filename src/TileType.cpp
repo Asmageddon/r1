@@ -25,5 +25,14 @@ TileType::TileType(ResourceManager *resman, Data data) : Object(data) , Displaya
             blocks_sight = true;
     }
 
+    //TODO: Add borders for different kinds of neighbouring tiles
+    border_tileset = data.as_string("appearance", "border");
+    if (border_tileset == "")
+        border_sprite = NULL;
+    else {
+        border_sprite = new TileSprite;
+        (*border_sprite) = resman->GetSprite(border_tileset, 0);
+    }
+
     sprite = resman->GetSprite(tileset, image);
 }
