@@ -138,22 +138,22 @@ void Level::SetTile(const sf::Vector2i& pos, const std::string& type_id, const s
 
 bool Level::IsWall(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return t.MatchAny(IS_WALL);
+    return t.SatisfyAny(IS_WALL);
 }
 
 bool Level::IsFloor(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return t.MatchAny(IS_FLOOR);
+    return t.SatisfyAny(IS_FLOOR);
 }
 
 bool Level::BlocksSight(const sf::Vector2i& pos) const {
     const Tile& t = GetTile(pos);
-    return t.MatchAny(OPAQUE | UNIT_OPAQUE | OBJECT_OPAQUE);
+    return t.SatisfyAny(OPAQUE | UNIT_OPAQUE | OBJECT_OPAQUE);
 }
 
 sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) const {
     //Searches in rhomboid shape
-    if (GetTile(pos).MatchAll(tile_state)) return pos;
+    if (GetTile(pos).SatisfyAll(tile_state)) return pos;
 
     sf::Vector2i _pos;
     int x = pos.x;
@@ -193,7 +193,7 @@ sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) c
                 if (step == dist) { direction = UP; step = 0; dist++; }
                 break;
         }
-        if (GetTile(_pos).MatchAll(tile_state)) return _pos;
+        if (GetTile(_pos).SatisfyAll(tile_state)) return _pos;
 
         //If we can't find a free spot, just return whatever
         if (dist > 16) return _pos;
@@ -293,6 +293,14 @@ void Level::UpdateLightFields() {
     }
 }
 
+void Level::RegisterUnit(Unit *unit) {
+    units.insert(unit);
+}
+
+void Level::DeregisterUnit(Unit *unit) {
+    units.erase(unit);
+}
+
 sf::Color Level::GetLightColorAt(const sf::Vector2i& pos) const {
     sf::Color result = ambient;
 
@@ -302,4 +310,16 @@ sf::Color Level::GetLightColorAt(const sf::Vector2i& pos) const {
     }
 
     return result;
+}
+
+void Level::Simulate(Unit *reference_unit) {
+    //TODO: Limit number of steps in one call so the player can see what is happening around him while waiting or something
+    if (reference_unit->GetCurrentLevel() != this) return;
+
+    while (reference_unit->GetNextAction() != NULL) {
+        std::set<Unit*>::iterator it = units.begin();
+        for(; it != units.end(); it++) {
+            (*it)->Simulate();
+        }
+    }
 }

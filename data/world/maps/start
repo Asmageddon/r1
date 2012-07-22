@@ -16,3 +16,8 @@ id = start
 [landmarks]
     #Used as default entry point
     default = 12 6
+
+[spawn]
+    #unit name = landmark count group_size
+    sun_sentry = random 7 1
+    moon_sentry = random 3 1

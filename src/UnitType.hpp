@@ -14,8 +14,11 @@ class ResourceManager;
 class Data;
 
 //TODO: Write getters for all these properties. I don't want unit types mutable unless under special circumstances
+//TODO: ...make most of this stuff private
 
 class UnitType : public Object, public Displayable, public Glowable {
+    private:
+        ResourceManager *resman;
     public:
         std::string type;
         std::vector<std::string> categories;
@@ -25,7 +28,10 @@ class UnitType : public Object, public Displayable, public Glowable {
         float sight_threshold;
         sf::Color vision_tint;
 
-        ResourceManager *resman;
+        bool travel_walls;
+        bool travel_floor;
+        unsigned int travel_conditions;
+
     public:
         UnitType() { /* WARNING: This does not initialize anything */ };
         UnitType(ResourceManager *resman, Data data);

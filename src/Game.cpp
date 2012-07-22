@@ -2,9 +2,6 @@
 
 #include <string>
 
-#include <vector>
-#include <map>
-
 #include <cstring>
 #include <iostream>
 
@@ -15,10 +12,13 @@
 #include "ConfigManager.hpp"
 #include "ResourceManager.hpp"
 
+#include "LightField.hpp"
 #include "World.hpp"
 #include "Level.hpp"
-#include "Field.hpp"
-#include "LightField.hpp"
+
+#include "MovementAction.hpp"
+
+//TODO: Organize source files into a basic directory hierarchy
 
 static std::string base_path = ".";
 
@@ -90,12 +90,17 @@ class Game {
             current_level = world->GetLevel("start");
 
             world->player = current_level->PlaceUnit("test_player", "default");
-            current_level->PlaceUnit("sun_sentry", sf::Vector2i(15, 15));
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
+            current_level->PlaceUnit("sun_sentry", "random");
+
+            current_level->PlaceUnit("moon_sentry", "random");
+            current_level->PlaceUnit("moon_sentry", "random");
+            current_level->PlaceUnit("moon_sentry", "random");
 
             light = new LightField();
             light->SetRadius(12);
@@ -428,6 +433,7 @@ class Game {
                     }
                 }
                 else if (event.type == sf::Event::KeyPressed) {
+                    Action *a = NULL;
                     if (event.key.code == sf::Keyboard::F12) {
                         std::string dir = base_path + "user/screenshots/";
                         int n = list_dir(dir).size() + 1;
@@ -443,53 +449,58 @@ class Game {
                     }
                     //Movement with numpad
                     else if (event.key.code == sf::Keyboard::Numpad7) {
-                        world->player->Move(sf::Vector2i(-1, -1));
+                        a = new MovementAction(10,  sf::Vector2i(-1, -1));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad8) {
-                        world->player->Move(sf::Vector2i(0, -1));
+                        a = new MovementAction(10,  sf::Vector2i(0, -1));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad9) {
-                        world->player->Move(sf::Vector2i(1, -1));
+                        a = new MovementAction(10,  sf::Vector2i(1, -1));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad4) {
-                        world->player->Move(sf::Vector2i(-1, 0));
+                        a = new MovementAction(10,  sf::Vector2i(-1, 0));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad5) {
-                        world->player->Move(sf::Vector2i(0, 0));
+                        //TODO: Replace this with wait action
+                        a = new MovementAction(10,  sf::Vector2i(0, 0));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad6) {
-                        world->player->Move(sf::Vector2i(1, 0));
+                        a = new MovementAction(10,  sf::Vector2i(1, 0));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad1) {
-                        world->player->Move(sf::Vector2i(-1, 1));
+                        a = new MovementAction(10,  sf::Vector2i(-1, 1));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad2) {
-                        world->player->Move(sf::Vector2i(0, 1));
+                        a = new MovementAction(10,  sf::Vector2i(0, 1));
                     }
                     else if (event.key.code == sf::Keyboard::Numpad3) {
-                        world->player->Move(sf::Vector2i(1, 1));
+                        a = new MovementAction(10,  sf::Vector2i(1, 1));
                     }
                     //Movement with arrows
                     else if (event.key.code == sf::Keyboard::Up) {
-                        world->player->Move(sf::Vector2i(0, -1));
+                        a = new MovementAction(10,  sf::Vector2i(0, -1));
                     }
                     else if (event.key.code == sf::Keyboard::Down) {
-                        world->player->Move(sf::Vector2i(0, 1));
+                        a = new MovementAction(10,  sf::Vector2i(0, 1));
                     }
                     else if (event.key.code == sf::Keyboard::Left) {
-                        world->player->Move(sf::Vector2i(-1, 0));
+                        a = new MovementAction(10,  sf::Vector2i(-1, 0));
                     }
                     else if (event.key.code == sf::Keyboard::Right) {
-                        world->player->Move(sf::Vector2i(1, 0));
+                        a = new MovementAction(10,  sf::Vector2i(1, 0));
                     }
                     //World swap!
                     else if (event.key.code == sf::Keyboard::S) {
+                        //TODO: Replace with warp action
                         std::string loc = world->player->GetLocation();
                         if (loc == "nowhere")
                             world->player->SetLocation("start", "default");
                         else
                             world->player->SetLocation("nowhere", "default");
                     }
+
+                    if (a != NULL)
+                        world->player->SetNextAction(a, false);
                 }
             }
         }
@@ -499,6 +510,7 @@ class Game {
             start();
             while (window.isOpen()) {
                 handle_input();
+                current_level->Simulate(world->player);
                 render();
             }
             end();

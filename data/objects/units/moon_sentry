@@ -1,0 +1,16 @@
+id = moon_sentry
+name = moon sentry
+desc = A magical sentry made of the mystical moonstone
+categories = magical primitive
+
+[appearance]
+    tileset = creatures1.png
+    image = 3
+
+[body]
+    material = moonstone
+
+[stats]
+    sight.radius = 9
+    sight.threshold = 0.20
+    sight.vision_tint = 10 30 60

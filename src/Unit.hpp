@@ -13,6 +13,9 @@ class Material;
 
 class World;
 
+class AI;
+class Action;
+
 class Unit {
     private:
         std::set<LightField*> lights;
@@ -20,6 +23,8 @@ class Unit {
         sf::Vector2i pos;
         World *world;
         Level *location;
+        AI *ai;
+        Action *next_action;
     public:
         const UnitType *type;
         const Material *material;
@@ -55,5 +60,10 @@ class Unit {
         float GetLightThreshold() const;
 
         void RecalculateFOV();
+
+        void SetNextAction(Action *action, bool interrupt=true);
+        const Action* GetNextAction() const;
+
+        void Simulate(); //Don't call this directly
 };
 #endif

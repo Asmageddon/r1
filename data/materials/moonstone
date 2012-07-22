@@ -1,0 +1,10 @@
+id = moonstone
+name = moonstone
+desc = mystically shining stone
+
+type = stone
+
+[appearance]
+    color = 195 230 245
+    glow.color = 150 200 240
+    glow.radius = 6

@@ -13,6 +13,13 @@ categories = unnatural
     material = generic_flesh
 
 [stats]
-    sight.radius = 12
+    sight.radius = 13
     sight.threshold = 0.25
     sight.vision_tint = 3 7 20
+    #default = false
+    travel.walls = false
+    #default = true
+    travel.floor = true
+    #Unused - no liquids yet
+    travel.shallow = true
+    travel.depth   = false

@@ -33,10 +33,12 @@ void Tile::SetUnknown() {
 }
 
 
-bool Tile::MatchAny(unsigned int tile_state) const {
+bool Tile::SatisfyAny(unsigned int tile_state) const {
     if ((tile_state & IS_WALL) && (type->type == TILE_WALL)) return true;
     if ((tile_state & IS_FLOOR) && (type->type == TILE_FLOOR)) return true;
-    if ((tile_state & IS_VOID) && (type->type == TILE_VOID)) return true;
+
+    if ((tile_state & NOT_WALL) && (type->type != TILE_WALL)) return true;
+    if ((tile_state & NOT_FLOOR) && (type->type != TILE_FLOOR)) return true;
 
     if ((tile_state & TRANSPARENT) && (!type->blocks_sight)) return true;
     if ((tile_state & OPAQUE) && (type->blocks_sight)) return true;
@@ -54,10 +56,12 @@ bool Tile::MatchAny(unsigned int tile_state) const {
     return false;
 }
 
-bool Tile::MatchAll(unsigned int tile_state) const {
+bool Tile::SatisfyAll(unsigned int tile_state) const {
     if ((tile_state & IS_WALL) && (type->type != TILE_WALL)) return false;
     if ((tile_state & IS_FLOOR) && (type->type != TILE_FLOOR)) return false;
-    if ((tile_state & IS_VOID) && (type->type != TILE_VOID)) return false;
+
+    if ((tile_state & NOT_WALL) && (type->type == TILE_WALL)) return false;
+    if ((tile_state & NOT_FLOOR) && (type->type == TILE_FLOOR)) return false;
 
     if ((tile_state & TRANSPARENT) && (type->blocks_sight)) return false;
     if ((tile_state & OPAQUE) && (!type->blocks_sight)) return false;

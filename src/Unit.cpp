@@ -10,6 +10,9 @@
 
 #include "ResourceManager.hpp"
 
+#include "AI.hpp"
+#include "Action.hpp"
+
 Unit::Unit(World *world, const std::string& type_id) {
     this->world = world;
 
@@ -47,6 +50,8 @@ Unit::Unit(World *world, const std::string& type_id) {
 
         AttachLight(field);
     }
+
+    next_action = NULL;
 }
 
 Unit::~Unit() {
@@ -150,27 +155,29 @@ const sf::Vector2i& Unit::GetPosition() const {
     return pos;
 }
 
-void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i pos, bool ignore_terrain) {
+void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i new_pos, bool ignore_terrain) {
     Level *new_location = world->GetLevel(loc_id);
 
     if (location != NULL) {
+        location->DeregisterUnit(this);
         int width = location->GetSize().x;
-        long i = this->pos.x + width * this->pos.y;
+        long i = pos.x + width * pos.y;
         location->data[i].unit = NULL;
     }
 
-    this->location = new_location;
+    location = new_location;
+    location->RegisterUnit(this);
     int width = location->GetSize().x;
-    location->data[this->pos.x + width * this->pos.y].unit = this; //INVESTIGATE: If this is necessary or not
-    SetPosition(pos, ignore_terrain);
+    location->data[pos.x + width * pos.y].unit = this;
+    SetPosition(new_pos, ignore_terrain);
 
     std::set<LightField*>::iterator it = lights.begin();
 
     for (; it != lights.end(); it++) {
-        (*it)->Calculate(location, this->pos);
+        (*it)->Calculate(location, pos);
     }
 
-    fov->Calculate(location, this->pos);
+    fov->Calculate(location, pos);
 }
 
 void Unit::SetLocation(const std::string& loc_id, const std::string landmark, bool ignore_terrain) {
@@ -223,4 +230,33 @@ float Unit::GetLightThreshold() const {
 
 void Unit::RecalculateFOV() {
     fov->Recalculate();
+}
+
+void Unit::SetNextAction(Action *action, bool interrupt) {
+    if (next_action != NULL) {
+        if (!interrupt) {
+            return;
+        }
+        else {
+            delete next_action;
+        }
+    }
+
+    next_action = action;
+    next_action->AttachToUnit(this);
+}
+const Action* Unit::GetNextAction() const {
+    return next_action;
+}
+
+void Unit::Simulate() {
+    if (this->next_action == NULL) return;
+
+    if (!next_action->IsDone()) {
+        next_action->Tick();
+    }
+    else {
+        delete next_action;
+        next_action = NULL;
+    }
 }

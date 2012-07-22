@@ -17,7 +17,10 @@ class World;
 
 class LightField;
 
-class Level{
+//TODO: Split Level into Level and MapType to allow for multiple instances of the same map definition
+//TODO: Urguent, multiple generators
+
+class Level {
     friend class Unit;
     friend class World;
     private:
@@ -36,7 +39,7 @@ class Level{
         std::set<LightField*> lights;
         sf::Color ambient;
     public:
-        Level(World *resman, Data data);
+        Level(World *world, Data data);
 
         void Create();
         bool IsReady() const;
@@ -57,7 +60,7 @@ class Level{
         bool IsFloor(const sf::Vector2i& pos) const;
         bool BlocksSight(const sf::Vector2i& pos) const;
 
-        //tile_state is a bitmask of Tile.hpp => TILE_STATE
+        //tile_state is a bitmask of TILE_STATE enum members (defined in Tile.hpp)
         sf::Vector2i FindTile(const sf::Vector2i& pos, unsigned int tile_state) const;
 
         void Generate();
@@ -75,6 +78,11 @@ class Level{
         void DetachLight(LightField *light);
         void UpdateLightFields();
 
+        void RegisterUnit(Unit *unit);
+        void DeregisterUnit(Unit *unit);
+
         sf::Color GetLightColorAt(const sf::Vector2i& pos) const;
+
+        void Simulate(Unit *reference_unit); //Please don't call this manually; TODO: Make this private ^^
 };
 #endif
