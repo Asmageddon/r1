@@ -2,9 +2,8 @@
 #define TILETYPE_HPP_
 
 #include <string>
-#include <iostream>
 
-#include "Object.hpp"
+#include "Resource.hpp"
 #include "Displayable.hpp"
 
 class Data;
@@ -18,7 +17,7 @@ enum TILE_CLASS {
     TILE_VOID
 };
 
-class TileType: public Object, public Displayable {
+class TileType: public Resource, public Displayable {
     public:
         ResourceManager *resman;
         TILE_CLASS type;

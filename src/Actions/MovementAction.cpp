@@ -5,7 +5,7 @@
 #include "../Level.hpp"
 #include "../Tile.hpp"
 #include "../Unit.hpp"
-#include "../UnitType.hpp"
+#include "../Resources/UnitType.hpp"
 
 MovementAction::MovementAction(unsigned int time, const sf::Vector2i& direction) : Action(time) {
     vector = direction;

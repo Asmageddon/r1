@@ -18,6 +18,7 @@ env.Append(CXXFLAGS =[
 
 files = Glob("./build/*.cpp")
 files+= Glob("./build/Actions/*.cpp")
+files+= Glob("./build/Resources/*.cpp")
 
 env.Program("r1", files)
 

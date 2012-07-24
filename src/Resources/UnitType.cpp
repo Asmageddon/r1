@@ -3,17 +3,16 @@
 #include <string>
 #include <vector>
 
-#include "Object.hpp"
+#include "Resource.hpp"
 #include "Displayable.hpp"
 #include "Glowable.hpp"
 
-#include "Tile.hpp"
-
-#include "TileSprite.hpp"
+#include "../TileSprite.hpp"
 
 #include "ResourceManager.hpp"
+#include "../Tile.hpp" //We need NOT_FLOOR and NOT_WALL. TODO: Investigate if this can't be done another way
 
-UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayable(data), Glowable(data) {
+UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Displayable(data), Glowable(data) {
     this->resman = resman;
 
     categories = data.as_str_vector("", "categories");

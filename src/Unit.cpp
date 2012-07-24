@@ -8,7 +8,7 @@
 
 #include "World.hpp"
 
-#include "ResourceManager.hpp"
+#include "Resources.hpp"
 
 #include "AI.hpp"
 #include "Actions.hpp"

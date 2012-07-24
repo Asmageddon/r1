@@ -10,7 +10,7 @@
 #include "utils.hpp"
 
 #include "ConfigManager.hpp"
-#include "ResourceManager.hpp"
+#include "Resources.hpp"
 
 #include "LightField.hpp"
 #include "World.hpp"

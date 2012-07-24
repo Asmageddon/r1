@@ -8,7 +8,7 @@
 
 class Data;
 
-#include "TileSprite.hpp"
+#include "../TileSprite.hpp"
 
 class Displayable {
     public:

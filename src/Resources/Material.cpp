@@ -1,9 +1,9 @@
 #include "Material.hpp"
 
-#include "Object.hpp"
+#include "Resource.hpp"
 #include "Glowable.hpp"
 
-Material::Material(Data data) : Object(data), Glowable(data) {
+Material::Material(Data data) : Resource(data), Glowable(data) {
     type = data.as_string("", "type");
 
     color = data.as_Color("appearance", "color");

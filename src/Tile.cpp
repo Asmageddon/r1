@@ -4,10 +4,10 @@
 
 #include <string>
 
-#include "ResourceManager.hpp"
+#include "Resources.hpp"
 
-class TileType;
-class Material;
+//class TileType;
+//class Material;
 
 Tile::Tile(const ResourceManager *resman, const std::string& type_id, const std::string& material_id) {
     type = &(resman->GetTileType(type_id));

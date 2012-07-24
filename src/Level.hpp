@@ -6,9 +6,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Object.hpp"
+#include "Resources.hpp"
 
-class ResourceManager;
+//class ResourceManager;
 #include "Tile.hpp"
 class Unit;
 class Data;

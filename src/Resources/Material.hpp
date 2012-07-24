@@ -5,11 +5,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Object.hpp"
+#include "../Data.hpp"
+#include "Resource.hpp"
 #include "Glowable.hpp"
-#include "Data.hpp"
 
-class Material : public Object, public Glowable {
+class Material : public Resource, public Glowable {
     public:
         std::string type;
         sf::Color color;

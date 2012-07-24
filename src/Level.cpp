@@ -7,7 +7,7 @@
 
 #include <noise/noise.h>
 
-#include "ResourceManager.hpp"
+#include "Resources.hpp"
 #include "Tile.hpp"
 #include "Unit.hpp"
 

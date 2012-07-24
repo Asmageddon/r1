@@ -7,7 +7,7 @@
 
 #include "../Level.hpp"
 #include "../Tile.hpp"
-#include "../UnitType.hpp"
+#include "../Resources/UnitType.hpp"
 
 GoAction::GoAction(unsigned int time, const sf::Vector2i& direction) : MovementAction(time, direction) { }
 

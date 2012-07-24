@@ -6,17 +6,14 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Object.hpp"
+#include "Resource.hpp"
 #include "Displayable.hpp"
 #include "Glowable.hpp"
 
 class ResourceManager;
 class Data;
 
-//TODO: Write getters for all these properties. I don't want unit types mutable unless under special circumstances
-//TODO: ...make most of this stuff private
-
-class UnitType : public Object, public Displayable, public Glowable {
+class UnitType : public Resource, public Displayable, public Glowable {
     private:
         ResourceManager *resman;
     public:

@@ -1,6 +1,6 @@
 #include "Displayable.hpp"
 
-#include "Data.hpp"
+#include "../Data.hpp"
 
 Displayable::Displayable(Data data) {
     tileset = data.as_string("appearance", "tileset");

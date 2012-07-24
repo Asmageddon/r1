@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../Unit.hpp"
-#include "../UnitType.hpp"
+#include "../Resources/UnitType.hpp"
 #include "../Level.hpp"
 #include "../Tile.hpp"
 

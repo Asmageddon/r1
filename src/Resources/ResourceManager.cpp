@@ -8,14 +8,14 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Data.hpp"
+#include "../Data.hpp"
 #include "Material.hpp"
 #include "TileType.hpp"
 #include "UnitType.hpp"
 
-#include "TileSprite.hpp"
+#include "../TileSprite.hpp"
 
-#include "utils.hpp"
+#include "../utils.hpp"
 
 //TODO: Make dir argument const correct
 //TODO: Replace data dir with module name

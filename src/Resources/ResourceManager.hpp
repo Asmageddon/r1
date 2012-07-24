@@ -3,16 +3,16 @@
 
 #include <string>
 #include <map>
-#include <vector>
 
 #include <SFML/Graphics.hpp>
 
-#include "Data.hpp"
+#include "../Data.hpp"
+
 #include "Material.hpp"
 #include "TileType.hpp"
 #include "UnitType.hpp"
 
-#include "TileSprite.hpp"
+#include "../TileSprite.hpp"
 
 class ResourceManager {
     private:
