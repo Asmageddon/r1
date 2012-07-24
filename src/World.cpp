@@ -12,6 +12,24 @@ World::World(const ResourceManager *resman, const std::string& base_path) : base
     save_path = "";
 }
 
+Level* World::AddLevel(const std::string& name, const std::string& type_id) {
+    if (contains(maps, name)) return NULL;
+    //Previous map should be deleted beforehand
+
+    Level *new_level = new Level(this, name, type_id);
+    maps[name] = new_level;
+
+    return GetLevel(name); //Tee-hee
+}
+
+void World::DeleteLevel(const std::string& name) {
+    if (contains(maps, name)) {
+        delete maps[name];
+        maps.erase(name);
+        //TODO: At the very least check if the player isn't there.
+    }
+}
+
 Level* World::GetLevel(const std::string& name) {
     if (contains(maps, name)) {
         if (!maps[name]->IsReady()) {
@@ -25,31 +43,8 @@ Level* World::GetLevel(const std::string& name) {
     return maps["nowhere"];
 }
 
-void World::AddLevel(Data data) {
-    Level *l = new Level(this, data);
-    if (!contains(maps, l->id)) {
-        maps[l->id] = l;
-        std::cout << " * Loaded map: " << l->id << std::endl;
-    }
-}
-
-void World::LoadMaps(const std::string& module_name) {
-    //TODO: Actually care about module_name
-
-    std::string dir = base_path + "data/world/maps/";
-
-    std::vector<std::string> files = list_dir(dir);
-
-    for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        Data d(dir + filename);
-        this->AddLevel(d);
-    }
-}
-
 void World::Load() {
-    LoadMaps("");
-    std::cout << "Loaded " << maps.size() << " maps" << std::endl;
+    //TODO
 }
 
 const ResourceManager* World::GetResman() const {

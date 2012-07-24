@@ -1,4 +1,6 @@
 id = start
+name = start map
+desc = starting map for testing purposes
 
 [atmosphere]
     ambient = 20 20 20
@@ -15,10 +17,15 @@ id = start
 
 [landmarks]
     #Used as default entry point
+    #random - random point
+    #center - center of the map, (0, 0) for infinite maps (not implemented yet)
     default = 12 6
     p.alpha = 14 9
 
-[spawn]
-    #unit name = landmark count group_size
-    sun_sentry = random 7 1
-    moon_sentry = random 3 1
+[spawn.random]
+    #unit name = count
+    sun_sentry = 5 8
+    moon_sentry = 2 4
+
+[spawn.default]
+    test_player = 1 1

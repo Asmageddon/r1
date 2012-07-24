@@ -17,7 +17,7 @@ class World;
 
 class LightField;
 
-//TODO: Split Level into Level and MapType to allow for multiple instances of the same map definition
+//WIP: Split Level into Level and MapType to allow for multiple instances of the same map definition
 //TODO: Urguent, multiple generators
 
 class Level {
@@ -26,19 +26,23 @@ class Level {
     private:
         World *world;
         const ResourceManager *resman;
+
+        const MapType *type;
+        sf::Color ambient;
+
         Tile *data;
-        Tile default_tile;
-        sf::Vector2u size;
         std::string id;
         int seed;
+
         bool ready;
+
         std::map<std::string, sf::Vector2i> landmarks;
-        std::map<std::string, Tile> tiles;
+
         std::set<Unit*> units;
         std::set<LightField*> lights;
-        sf::Color ambient;
     public:
-        Level(World *world, Data data);
+        Level(World *world, const std::string& maptype_id);
+        Level(World *world, const std::string& name, const std::string& maptype_id);
 
         void Create();
         bool IsReady() const;

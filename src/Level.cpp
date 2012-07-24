@@ -18,38 +18,31 @@
 
 #include "Data.hpp"
 
-Level::Level(World *world, Data data) {
-    this->world = world;
-    this->resman = world->GetResman();
+//TODO: Generator(s)
 
-    id = data.as_string("", "id");
-    ambient = data.as_Color("atmosphere", "ambient");
+Level::Level(World *world, const std::string& maptype_id) : world(world) {
+    resman = world->GetResman();
 
-    size = data.as_Vector2u("terrain", "size");
+    type = &(resman->GetMapType(maptype_id));
+    id = maptype_id + "_instance"; //TODO: Get a random (or non-random) ID from ResourceManager; Implement IDs for resource instances
+    landmarks = type->landmarks;
+    ambient = type->ambient;
 
-    //TODO: Generator class, different types, seed, default_tile
-    //generator = data.as_Vector2u("terrain", "generator");
+    seed = type->generator_seed;
+    if (seed == -1) { seed = rand(); }
 
-    default_tile = Tile(resman, "void", "void");
+    ready = false;
 
-    seed = data.as_int("terrain", "seed");
-    if (seed == -1) {
-        seed = rand();
-    }
+    //TODO: NEXT TASK - spawn units as defined in data files
+}
 
-    std::set<std::string> s = data.GetKeys("landmarks", "");
-    std::set<std::string>::iterator it;
-    for(it = s.begin(); it != s.end(); it++) {
-        landmarks[*it] = data.as_Vector2i("landmarks", *it);
-    }
-    landmarks["center"] = sf::Vector2i(size.x / 2, size.y / 2);
+Level::Level(World *world, const std::string& name, const std::string& maptype_id) : world(world) {
+    resman = world->GetResman();
 
-    s = data.GetKeys("terrain.tiles", "");
-    for(it = s.begin(); it != s.end(); it++) {
-        std::vector<std::string> sv = data.as_str_vector("terrain.tiles", *it);
-        Tile t = Tile(resman, sv[0], sv[1]);
-        tiles[*it] = t;
-    }
+    type = &(resman->GetMapType(maptype_id));
+    id = name;
+    landmarks = type->landmarks;
+    ambient = type->ambient;
 
     ready = false;
 }
@@ -59,11 +52,13 @@ void Level::Create() {
         delete[] data;
     }
 
+    const sf::Vector2u& size = type->size;
+
     data = new Tile[size.x * size.y];
 
     for(unsigned int x=0; x < size.x; x++)
     for(unsigned int y=0; y < size.y; y++) {
-        data[x + size.x*y] = default_tile;
+        data[x + size.x*y] = type->default_tile;
         data[x + size.x*y].integrity = 255;
         data[x + size.x*y].temperature = 127;
     }
@@ -75,26 +70,26 @@ bool Level::IsReady() const {
 }
 
 const sf::Vector2u& Level::GetSize() const {
-    return size;
+    return type->size;
 }
 
 bool Level::InBounds(const sf::Vector2i& pos) const {
     if      (pos.x < 0) return false;
-    else if (pos.x >= (int)size.x) return false;
+    else if (pos.x >= (int)type->size.x) return false;
     else if (pos.y < 0) return false;
-    else if (pos.y >= (int)size.y) return false;
+    else if (pos.y >= (int)type->size.y) return false;
     return true;
 }
 
 void Level::SetKnown(const sf::Vector2i& pos) {
     if (InBounds(pos))
-        data[pos.x + size.x * pos.y].SetKnown();
+        data[pos.x + type->size.x * pos.y].SetKnown();
 }
 const TileMemory* Level::GetKnown(const sf::Vector2i& pos) const {
-    static TileMemory empty_memory = { default_tile.type, default_tile.material };
+    static TileMemory empty_memory = { type->default_tile.type, type->default_tile.material };
 
     if (InBounds(pos))
-        return data[pos.x + size.x * pos.y].last_known;
+        return data[pos.x + type->size.x * pos.y].last_known;
 
     return &empty_memory;
 }
@@ -103,25 +98,25 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
     if (!InBounds(pos))
         return false;
 
-    return data[pos.x + size.x * pos.y].last_known != NULL;
+    return data[pos.x + type->size.x * pos.y].last_known != NULL;
 }
 
 const Tile& Level::GetTile(const sf::Vector2i& pos) const {
     if (!InBounds(pos))
-        return default_tile;
-    return data[pos.x + size.x * pos.y];
+        return type->default_tile;
+    return data[pos.x + type->size.x * pos.y];
 }
 
 void Level::SetTile(const sf::Vector2i& pos, const std::string& type_id, const std::string& material_id) {
     if (!InBounds(pos)) return;
 
     Tile new_tile  = Tile(resman, type_id, material_id);
-    Tile prev_tile = data[pos.x + size.x * pos.y];
+    Tile prev_tile = data[pos.x + type->size.x * pos.y];
 
     new_tile.unit = prev_tile.unit;
     new_tile.last_known = prev_tile.last_known;
 
-    data[pos.x + size.x * pos.y] = new_tile;
+    data[pos.x + type->size.x * pos.y] = new_tile;
 
     std::set<LightField*>::iterator lit = lights.begin();
     for(; lit != lights.end(); lit++) {
@@ -205,9 +200,11 @@ void Level::Generate() {
     perlin.SetOctaveCount (2);
     perlin.SetFrequency (1.0);
 
+    const sf::Vector2u& size = type->size;
+
     //TODO: Separate classes for generator(s)
-    Tile stone_wall  = tiles["wall"];
-    Tile stone_floor = tiles["floor"];
+    Tile stone_wall  = const_access(type->generator_tiles, "wall");
+    Tile stone_floor = const_access(type->generator_tiles, "floor");
 
     for(int x=0; x < (int)size.x; x++)
     for(int y=0; y < (int)size.y; y++) {
@@ -224,6 +221,8 @@ void Level::Generate() {
 
 void Level::AddLandmark(const std::string& id, const sf::Vector2i& pos) {
     sf::Vector2i _pos = pos;
+    const sf::Vector2u& size = type->size;
+
     if      (_pos.x < 0) _pos.x = 0;
     else if (_pos.x >= (int)size.x) _pos.x = size.x;
     else if (_pos.y < 0) _pos.y = 0;
@@ -237,6 +236,8 @@ void Level::RemoveLandmark(const std::string& id) {
 sf::Vector2i Level::GetLandmark(const std::string& id) const {
     std::string _id = id;
     if (id == "") _id = "default";
+
+    const sf::Vector2u& size = type->size;
 
     sf::Vector2i pos;
 
@@ -261,7 +262,7 @@ Unit* Level::PlaceUnit(const std::string& unit_type, const sf::Vector2i& pos, bo
 
     if (GetTile(_pos).unit != NULL) {
         Unit *tmp = GetTile(_pos).unit;
-        data[_pos.x + size.x * _pos.y].unit = NULL;
+        data[_pos.x + type->size.x * _pos.y].unit = NULL;
         units.erase(tmp);
         delete tmp;
     }

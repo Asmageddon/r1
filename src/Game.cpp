@@ -91,12 +91,13 @@ class Game {
             world = new World(resman, base_path);
             world->Load();
 
-            current_level = world->GetLevel("start");
+            current_level = world->AddLevel("start", "start");
+            world->AddLevel("nowhere", "nowhere");
 
             world->player = current_level->PlaceUnit("test_player", "default");
 
             Unit *u = current_level->PlaceUnit("sun_sentry", "p.alpha");
-            u->AttachAI(new WandererAI()); //FIXME: This
+            u->AttachAI(new WandererAI());
 
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");

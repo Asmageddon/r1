@@ -12,6 +12,7 @@
 #include "Material.hpp"
 #include "TileType.hpp"
 #include "UnitType.hpp"
+#include "MapType.hpp"
 
 #include "../TileSprite.hpp"
 
@@ -27,6 +28,8 @@ void ResourceManager::LoadConfiguration(std::string dir) {
     std::stringstream( s[0] ) >> tile_size.x;
     std::stringstream( s[1] ) >> tile_size.y;
 }
+
+
 void ResourceManager::LoadTilesets(std::string dir) {
     if (dir == "")
         dir = base_path + "data/images/tilesets/";
@@ -39,6 +42,7 @@ void ResourceManager::LoadTilesets(std::string dir) {
         std::cout << " * Loaded tileset: " << filename << std::endl;
     }
 }
+
 void ResourceManager::LoadTiletypes(std::string dir) {
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
@@ -65,7 +69,7 @@ void ResourceManager::LoadMaterials(std::string dir) {
         this->AddMaterial(d);
     }
 }
-void ResourceManager::LoadUnits(std::string dir) {
+void ResourceManager::LoadUnitTypes(std::string dir) {
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
     if (dir == "")
@@ -79,6 +83,22 @@ void ResourceManager::LoadUnits(std::string dir) {
         this->AddUnitType(d);
     }
 }
+void ResourceManager::LoadMapTypes(std::string dir) {
+    //If no specific path given, use default one
+    // (I should probably so it differently but meh)
+    if (dir == "")
+        dir = base_path + "data/world/maps/";
+
+    std::vector<std::string> files = list_dir(dir);
+
+    for ( unsigned int i = 0; i < files.size(); i++ ) {
+        std::string filename = files[i];
+        Data d(dir + filename);
+        this->AddMapType(d);
+    }
+}
+
+
 void ResourceManager::AddTileType(Data data) {
     TileType t(this, data);
     if (!contains(tiletypes, t.id)) {
@@ -109,6 +129,16 @@ void ResourceManager::AddUnitType(Data data) {
         std::cout << "ERROR: Redefinition of unit type: " << u.id << std::endl;
     }
 }
+void ResourceManager::AddMapType(Data data) {
+    MapType m(this, data);
+    if (!contains(maptypes, m.id)) {
+        maptypes[m.id] = m;
+        std::cout << " * Loaded map type: " << m.id << std::endl;
+    }
+    else {
+        std::cout << "ERROR: Redefinition of map type: " << m.id << std::endl;
+    }
+}
 
 ResourceManager::ResourceManager() {}
 ResourceManager::ResourceManager(std::string base_path) : base_path(base_path) {}
@@ -125,8 +155,11 @@ void ResourceManager::Load() {
     LoadMaterials("");
     std::cout << "Loaded " << materials.size() << " material definitions" << std::endl;
 
-    LoadUnits("");
+    LoadUnitTypes("");
     std::cout << "Loaded " << unittypes.size() << " unit definitions" << std::endl;
+
+    LoadMapTypes("");
+    std::cout << "Loaded " << maptypes.size() << " map definitions" << std::endl;
 
     sf::Texture tex;
     shadow_texture.loadFromFile(base_path + "data/images/shadows.png");
@@ -155,6 +188,13 @@ const Material& ResourceManager::GetMaterial(const std::string& id) const {
     return const_access(materials, "void");
 }
 
+const MapType& ResourceManager::GetMapType(const std::string& id) const {
+    if (contains(maptypes, id)) {
+        return const_access(maptypes, id);
+    }
+    return const_access(maptypes, "nowhere");
+}
+
 const std::map<std::string, TileType>& ResourceManager::GetTileTypeMap() const {
     return tiletypes;
 }
@@ -163,6 +203,9 @@ const std::map<std::string, UnitType>& ResourceManager::GetUnitTypeMap() const {
 }
 const std::map<std::string, Material>& ResourceManager::GetMaterialMap() const {
     return materials;
+}
+const std::map<std::string, MapType>& ResourceManager::GetMapTypeMap() const {
+    return maptypes;
 }
 
 TileSprite ResourceManager::GetSprite(const std::string& tileset, const int& n) {

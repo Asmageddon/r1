@@ -19,13 +19,14 @@ class World {
         const ResourceManager *resman;
     public:
         Unit *player;
-    private:
-        void AddLevel(Data data);
-        void LoadMaps(const std::string& module_name);
     public:
         World(const ResourceManager *resman, const std::string& base_path);
+        Level *AddLevel(const std::string& name, const std::string& type_id);
+        void DeleteLevel(const std::string& name);
         Level *GetLevel(const std::string& name);
 
+        //TODO: Loading list of maps and locations from a data file
+        //TODO: For multiple modules and/or worlds, allow player to choose one
         void Load();
 
         const ResourceManager *GetResman() const;
