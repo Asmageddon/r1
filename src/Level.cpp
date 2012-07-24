@@ -195,8 +195,8 @@ sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) c
         }
         if (GetTile(_pos).SatisfyAll(tile_state)) return _pos;
 
-        //If we can't find a free spot, just return whatever
-        if (dist > 16) return _pos;
+        //If we can't find a free spot, just return initial position
+        if (dist > 16) return pos;
     }
 }
 
@@ -316,10 +316,22 @@ void Level::Simulate(Unit *reference_unit) {
     //TODO: Limit number of steps in one call so the player can see what is happening around him while waiting or something
     if (reference_unit->GetCurrentLevel() != this) return;
 
+    unsigned int i = 0;
+
     while (reference_unit->GetNextAction() != NULL) {
+        if (++i > 10) break; //TODO: Make this into a variable and/or a parameter
+
         std::set<Unit*>::iterator it = units.begin();
         for(; it != units.end(); it++) {
             (*it)->Simulate();
         }
     }
+}
+
+
+const sf::Color& Level::GetAmbientColor() const {
+    return ambient;
+}
+void Level::SetAmbientColor(const sf::Color& color) {
+    ambient = color;
 }

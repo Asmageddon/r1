@@ -16,9 +16,13 @@
 #include "World.hpp"
 #include "Level.hpp"
 
-#include "MovementAction.hpp"
+#include "Actions.hpp"
 
-//TODO: Organize source files into a basic directory hierarchy
+#include "AI.hpp"
+#include "WandererAI.hpp"
+
+//WIP: Organize source files into a basic directory hierarchy
+//TODO: Put utils in different files and/or organize them better
 
 static std::string base_path = ".";
 
@@ -90,7 +94,10 @@ class Game {
             current_level = world->GetLevel("start");
 
             world->player = current_level->PlaceUnit("test_player", "default");
-            current_level->PlaceUnit("sun_sentry", "random");
+
+            Unit *u = current_level->PlaceUnit("sun_sentry", "p.alpha");
+            u->AttachAI(new WandererAI()); //FIXME: This
+
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");
@@ -110,7 +117,7 @@ class Game {
 
             camera_pos = sf::Vector2i(5,5);
 
-            current_level->ambient = sf::Color(15, 5, 20);
+            //current_level->SetAmbientColor( sf::Color(15, 5, 20) );
         }
 
         void end() {
@@ -434,6 +441,8 @@ class Game {
                 }
                 else if (event.type == sf::Event::KeyPressed) {
                     Action *a = NULL;
+                    sf::Vector2i movement_vector = sf::Vector2i(0,0);
+
                     if (event.key.code == sf::Keyboard::F12) {
                         std::string dir = base_path + "user/screenshots/";
                         int n = list_dir(dir).size() + 1;
@@ -449,45 +458,44 @@ class Game {
                     }
                     //Movement with numpad
                     else if (event.key.code == sf::Keyboard::Numpad7) {
-                        a = new MovementAction(10,  sf::Vector2i(-1, -1));
+                        movement_vector = sf::Vector2i(-1, -1);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad8) {
-                        a = new MovementAction(10,  sf::Vector2i(0, -1));
+                        movement_vector = sf::Vector2i( 0, -1);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad9) {
-                        a = new MovementAction(10,  sf::Vector2i(1, -1));
+                        movement_vector = sf::Vector2i( 1, -1);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad4) {
-                        a = new MovementAction(10,  sf::Vector2i(-1, 0));
+                        movement_vector = sf::Vector2i(-1,  0);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad5) {
-                        //TODO: Replace this with wait action
-                        a = new MovementAction(10,  sf::Vector2i(0, 0));
+                        a = new WaitAction(10, event.key.alt);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad6) {
-                        a = new MovementAction(10,  sf::Vector2i(1, 0));
+                        movement_vector = sf::Vector2i( 1,  0);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad1) {
-                        a = new MovementAction(10,  sf::Vector2i(-1, 1));
+                        movement_vector = sf::Vector2i(-1,  1);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad2) {
-                        a = new MovementAction(10,  sf::Vector2i(0, 1));
+                        movement_vector = sf::Vector2i( 0,  1);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad3) {
-                        a = new MovementAction(10,  sf::Vector2i(1, 1));
+                        movement_vector = sf::Vector2i( 1,  1);
                     }
                     //Movement with arrows
                     else if (event.key.code == sf::Keyboard::Up) {
-                        a = new MovementAction(10,  sf::Vector2i(0, -1));
+                        movement_vector = sf::Vector2i( 0, -1);
                     }
                     else if (event.key.code == sf::Keyboard::Down) {
-                        a = new MovementAction(10,  sf::Vector2i(0, 1));
+                        movement_vector = sf::Vector2i( 0,  1);
                     }
                     else if (event.key.code == sf::Keyboard::Left) {
-                        a = new MovementAction(10,  sf::Vector2i(-1, 0));
+                        movement_vector = sf::Vector2i(-1,  0);
                     }
                     else if (event.key.code == sf::Keyboard::Right) {
-                        a = new MovementAction(10,  sf::Vector2i(1, 0));
+                        movement_vector = sf::Vector2i( 1,  0);
                     }
                     //World swap!
                     else if (event.key.code == sf::Keyboard::S) {
@@ -498,9 +506,18 @@ class Game {
                         else
                             world->player->SetLocation("nowhere", "default");
                     }
+                    // if(keypressed(insert) && keypressed(LShift))
 
+                    if (movement_vector != sf::Vector2i(0,0)) {
+                        if (event.key.alt) {
+                            a = new GoAction(10,  movement_vector);
+                        }
+                        else {
+                            a = new MovementAction(10,  movement_vector);
+                        }
+                    }
                     if (a != NULL)
-                        world->player->SetNextAction(a, false);
+                        world->player->SetNextAction(a, true);
                 }
             }
         }

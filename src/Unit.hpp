@@ -38,9 +38,10 @@ class Unit {
         //TODO: Setting and getting material and type
         //TODO: Setting and getting rest of stuff
 
-        void Swap(Unit *other_unit);
+        //These are actions, they should return success or failure
+        bool Swap(Unit *other_unit);
 
-        void Move(const sf::Vector2i& vec);
+        bool Move(const sf::Vector2i& vec);
 
         void SetPosition(const sf::Vector2i& pos, bool ignore_terrain = false);
         void SetPosition(const std::string& landmark, bool ignore_terrain = false);
@@ -63,6 +64,10 @@ class Unit {
 
         void SetNextAction(Action *action, bool interrupt=true);
         const Action* GetNextAction() const;
+
+        void AttachAI(AI *ai);
+        void DetachAI();
+        AI *GetAI();
 
         void Simulate(); //Don't call this directly
 };

@@ -33,19 +33,18 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Object(data), Displayab
 
     travel_conditions = 0;
 
-    if (data.HasField("stats", "travel.walls")) {
-        travel_walls = data.as_bool("stats", "travel.walls");
-        if (!travel_walls)
-            travel_conditions |= NOT_WALL;
+    if (data.HasField("stats", "travel.floor")) {
+        travel_floor = data.as_bool("stats", "travel.floor");
+        if (!travel_floor)
+            travel_conditions |= NOT_FLOOR;
     }
     else {
-        travel_walls = false;
-        travel_conditions |= NOT_WALL;
+        travel_floor = true;
     }
 
-    travel_floor = data.as_bool("stats", "travel.floor"); //Default is false so ok
-    if (!travel_floor)
-        travel_conditions |= NOT_FLOOR;
+    travel_walls = data.as_bool("stats", "travel.walls"); //Default is false so ok
+    if (!travel_walls)
+        travel_conditions |= NOT_WALL;
 
     vision_tint = data.as_Color("stats", "sight.vision_tint");
 }

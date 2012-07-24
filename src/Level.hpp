@@ -34,7 +34,6 @@ class Level {
         bool ready;
         std::map<std::string, sf::Vector2i> landmarks;
         std::map<std::string, Tile> tiles;
-    public:
         std::set<Unit*> units;
         std::set<LightField*> lights;
         sf::Color ambient;
@@ -84,5 +83,8 @@ class Level {
         sf::Color GetLightColorAt(const sf::Vector2i& pos) const;
 
         void Simulate(Unit *reference_unit); //Please don't call this manually; TODO: Make this private ^^
+
+        const sf::Color& GetAmbientColor() const;
+        void SetAmbientColor(const sf::Color& color);
 };
 #endif

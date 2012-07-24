@@ -16,6 +16,9 @@ env.Append(CXXFLAGS =[
     "-g"
 ])
 
-env.Program("r1", Glob("./build/*.cpp"))
+files = Glob("./build/*.cpp")
+files+= Glob("./build/Actions/*.cpp")
+
+env.Program("r1", files)
 
 # EOF #

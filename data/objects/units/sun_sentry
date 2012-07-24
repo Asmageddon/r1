@@ -14,3 +14,4 @@ categories = magical primitive
     sight.radius = 7
     sight.threshold = 0.3
     sight.vision_tint = 60 60 10
+    #travel.floor = true

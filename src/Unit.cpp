@@ -11,7 +11,7 @@
 #include "ResourceManager.hpp"
 
 #include "AI.hpp"
-#include "Action.hpp"
+#include "Actions.hpp"
 
 Unit::Unit(World *world, const std::string& type_id) {
     this->world = world;
@@ -52,6 +52,7 @@ Unit::Unit(World *world, const std::string& type_id) {
     }
 
     next_action = NULL;
+    ai = NULL;
 }
 
 Unit::~Unit() {
@@ -68,8 +69,15 @@ Unit::~Unit() {
     delete fov;
 }
 
-void Unit::Swap(Unit *other_unit) {
-    if (location == NULL) return;
+bool Unit::Swap(Unit *other_unit) {
+    if (location == NULL) return false;
+    if (other_unit == this) return false;
+
+    if (!other_unit->ai) return false;
+    else {
+        if (!other_unit->GetAI()->RequestSwap(this))
+            return false;
+    }
 
     sf::Vector2i pos2 = other_unit->pos;
 
@@ -100,14 +108,16 @@ void Unit::Swap(Unit *other_unit) {
     }
 
     other_unit->fov->Calculate(location, other_unit->pos);
+
+    return true;
 }
 
-void Unit::Move(const sf::Vector2i& vec) {
+bool Unit::Move(const sf::Vector2i& vec) {
     //TODO: Make this cleaner
-    if (location == NULL) return;
+    if (location == NULL) return false;
 
     sf::Vector2i new_pos = pos + vec;
-    if (!location->InBounds(new_pos)) return;
+    if (!location->InBounds(new_pos)) return false;
 
     long i = new_pos.x + location->GetSize().x * new_pos.y;
 
@@ -115,11 +125,13 @@ void Unit::Move(const sf::Vector2i& vec) {
 
     //FIXME: Implement and use Level::GetUnitAt instead
     if (tmp != NULL) {
-        Swap(tmp);
+        return Swap(tmp);
     }
     else {
         SetPosition(new_pos, true);
     }
+
+    return true;
 }
 
 
@@ -201,14 +213,16 @@ void Unit::AttachLight(LightField *light) {
     if (this->location == NULL) return;
 
     light->Calculate(location, pos);
-    location->lights.insert(light);
+    //location->lights.insert(light);
+    //location->AttachLight(light);
 }
 
 void Unit::DetachLight(LightField *light) {
     this->lights.erase(light);
 
     if (this->location == NULL) return;
-    location->lights.erase(light);
+    //location->lights.erase(light);
+    location->DetachLight(light);
 }
 
 bool Unit::CanSee(const sf::Vector2i& pos) {
@@ -243,14 +257,37 @@ void Unit::SetNextAction(Action *action, bool interrupt) {
     }
 
     next_action = action;
-    next_action->AttachToUnit(this);
+    if (action != NULL)
+        next_action->AttachToUnit(this);
 }
 const Action* Unit::GetNextAction() const {
     return next_action;
 }
 
+void Unit::AttachAI(AI *ai) {
+    if (this->ai != NULL) {
+        delete this->ai;
+    }
+    this->ai = ai;
+    ai->AttachToUnit(this);
+}
+void Unit::DetachAI() {
+    if (this->ai != NULL) {
+        delete this->ai;
+    }
+    this->ai = NULL;
+}
+
+AI *Unit::GetAI() {
+    return this->ai;
+}
+
 void Unit::Simulate() {
-    if (this->next_action == NULL) return;
+    if ( (next_action == NULL) & (ai == NULL) ) return;
+
+    if (ai != NULL) ai->Tick();
+
+    if (next_action == NULL) return;
 
     if (!next_action->IsDone()) {
         next_action->Tick();
