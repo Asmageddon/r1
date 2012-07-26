@@ -1,7 +1,7 @@
 #ifndef MATERIAL_HPP_
 #define MATERIAL_HPP_
 
-#include <string>
+#include "../AString.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -11,7 +11,7 @@
 
 class Material : public Resource, public Glowable {
     public:
-        std::string type;
+        AString type;
         sf::Color color;
     public:
         Material() { /* WARNING: This does not initialize anything */};

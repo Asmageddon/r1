@@ -1,6 +1,6 @@
 #include "ResourceManager.hpp"
 
-#include <string>
+#include "../AString.hpp"
 #include <map>
 #include <vector>
 
@@ -21,79 +21,84 @@
 //TODO: Make dir argument const correct
 //TODO: Replace data dir with module name
 
-void ResourceManager::LoadConfiguration(std::string dir) {
+void ResourceManager::LoadConfiguration(const std::string& dir) {
     Data d(base_path + "data/config");
 
-    std::vector<std::string> s = d.as_str_vector("data", "tile_size");
-    std::stringstream( s[0] ) >> tile_size.x;
-    std::stringstream( s[1] ) >> tile_size.y;
+    std::vector<int> s = d.as_string("data", "tile_size").as_int_vector();
+    tile_size.x = s[0];
+    tile_size.y = s[1];
 }
 
 
-void ResourceManager::LoadTilesets(std::string dir) {
-    if (dir == "")
-        dir = base_path + "data/images/tilesets/";
+void ResourceManager::LoadTilesets(const std::string& dir) {
+    AString _dir = dir;
+    if (_dir == "")
+        _dir = base_path + "data/images/tilesets/";
 
-    std::vector<std::string> files = list_dir(dir);
+    std::vector<AString> files = list_dir(_dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        tilesets[filename].loadFromFile(dir + filename);
+        AString filename = files[i];
+        tilesets[filename].loadFromFile(_dir + filename);
         std::cout << " * Loaded tileset: " << filename << std::endl;
     }
 }
 
-void ResourceManager::LoadTiletypes(std::string dir) {
+void ResourceManager::LoadTiletypes(const std::string& dir) {
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
-    if (dir == "")
-        dir = base_path + "data/tiletypes/";
+    AString _dir = dir;
+    if (_dir == "")
+        _dir = base_path + "data/tiletypes/";
 
-    std::vector<std::string> files = list_dir(dir);
+    std::vector<AString> files = list_dir(_dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        Data d(dir + filename);
+        AString filename = files[i];
+        Data d(_dir + filename);
         this->AddTileType(d);
     }
 }
-void ResourceManager::LoadMaterials(std::string dir) {
-    if (dir == "")
-        dir = base_path + "data/materials/";
+void ResourceManager::LoadMaterials(const std::string& dir) {
+    AString _dir = dir;
+    if (_dir == "")
+        _dir = base_path + "data/materials/";
 
-    std::vector<std::string> files = list_dir(dir);
+    std::vector<AString> files = list_dir(_dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        Data d(dir + filename);
+        AString filename = files[i];
+        Data d(_dir + filename);
         this->AddMaterial(d);
     }
 }
-void ResourceManager::LoadUnitTypes(std::string dir) {
+void ResourceManager::LoadUnitTypes(const std::string& dir) {
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
-    if (dir == "")
-        dir = base_path + "data/objects/units/";
+    AString _dir = dir;
+    if (_dir == "")
+        _dir = base_path + "data/objects/units/";
 
-    std::vector<std::string> files = list_dir(dir);
+    std::vector<AString> files = list_dir(_dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        Data d(dir + filename);
+        AString filename = files[i];
+        Data d(_dir + filename);
         this->AddUnitType(d);
     }
 }
-void ResourceManager::LoadMapTypes(std::string dir) {
+void ResourceManager::LoadMapTypes(const std::string& dir) {
     //If no specific path given, use default one
     // (I should probably so it differently but meh)
-    if (dir == "")
-        dir = base_path + "data/world/maps/";
+    AString _dir = dir;
+    if (_dir == "")
+        _dir = base_path + "data/world/maps/";
 
-    std::vector<std::string> files = list_dir(dir);
+    std::vector<AString> files = list_dir(_dir);
 
     for ( unsigned int i = 0; i < files.size(); i++ ) {
-        std::string filename = files[i];
-        Data d(dir + filename);
+        AString filename = files[i];
+        Data d(_dir + filename);
         this->AddMapType(d);
     }
 }
@@ -141,10 +146,10 @@ void ResourceManager::AddMapType(Data data) {
 }
 
 ResourceManager::ResourceManager() {}
-ResourceManager::ResourceManager(std::string base_path) : base_path(base_path) {}
+ResourceManager::ResourceManager(AString base_path) : base_path(base_path) {}
 void ResourceManager::Load() {
     LoadConfiguration("");
-    std::cout << "Loaded data configuration configuration" << std::endl;
+    std::cout << "Loaded data configuration" << std::endl;
 
     LoadTilesets("");
     std::cout << "Loaded " << tilesets.size() << " tilesets" << std::endl;
@@ -195,16 +200,16 @@ const MapType& ResourceManager::GetMapType(const std::string& id) const {
     return const_access(maptypes, "nowhere");
 }
 
-const std::map<std::string, TileType>& ResourceManager::GetTileTypeMap() const {
+const std::map<AString, TileType>& ResourceManager::GetTileTypeMap() const {
     return tiletypes;
 }
-const std::map<std::string, UnitType>& ResourceManager::GetUnitTypeMap() const {
+const std::map<AString, UnitType>& ResourceManager::GetUnitTypeMap() const {
     return unittypes;
 }
-const std::map<std::string, Material>& ResourceManager::GetMaterialMap() const {
+const std::map<AString, Material>& ResourceManager::GetMaterialMap() const {
     return materials;
 }
-const std::map<std::string, MapType>& ResourceManager::GetMapTypeMap() const {
+const std::map<AString, MapType>& ResourceManager::GetMapTypeMap() const {
     return maptypes;
 }
 

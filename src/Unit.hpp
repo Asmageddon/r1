@@ -2,6 +2,7 @@
 #define UNIT_HPP_
 
 #include <set>
+#include "AString.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -48,8 +49,8 @@ class Unit {
         const sf::Vector2i& GetPosition() const;
 
         void SetLocation(const std::string& loc_id, const sf::Vector2i pos = sf::Vector2i(0,0), bool ignore_terrain = false);
-        void SetLocation(const std::string& loc_id, const std::string landmark, bool ignore_terrain = false);
-        std::string GetLocation() const;
+        void SetLocation(const std::string& loc_id, const std::string& landmark, bool ignore_terrain = false);
+        AString GetLocation() const;
 
         Level *GetCurrentLevel();
 

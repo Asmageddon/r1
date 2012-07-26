@@ -1,7 +1,7 @@
 #include "World.hpp"
 
 #include <map>
-#include <string>
+#include "AString.hpp"
 
 #include "Data.hpp"
 
@@ -40,7 +40,7 @@ Level* World::GetLevel(const std::string& name) {
         }
         return maps[name];
     }
-    return maps["nowhere"];
+    return maps[AString("nowhere")];
 }
 
 void World::Load() {

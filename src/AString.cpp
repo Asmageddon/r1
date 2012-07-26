@@ -32,6 +32,12 @@ AString::AString(const std::string& str) {
 }
 
 //Operators
+AString& AString::operator=(const std::string& rhs) {
+    (*this) = AString(rhs.c_str());
+
+    return *this;
+}
+
 void AString::operator*=(float num) {
     if (num <= 0) {
         (*this) = AString();

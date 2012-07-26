@@ -1,7 +1,7 @@
 #ifndef TILETYPE_HPP_
 #define TILETYPE_HPP_
 
-#include <string>
+#include "../AString.hpp"
 
 #include "Resource.hpp"
 #include "Displayable.hpp"
@@ -21,7 +21,7 @@ class TileType: public Resource, public Displayable {
     public:
         ResourceManager *resman;
         TILE_CLASS type;
-        std::string border_tileset;
+        AString border_tileset;
         TileSprite *border_sprite;
     public:
         static TILE_CLASS get_tile_class(const std::string& type);

@@ -14,16 +14,16 @@ MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
 
     generator_seed = data.as_int("terrain", "seed");
 
-    std::set<std::string> s = data.GetKeys("landmarks", "");
-    std::set<std::string>::iterator it;
+    std::set<AString> s = data.GetKeys("landmarks", "");
+    std::set<AString>::iterator it;
     for(it = s.begin(); it != s.end(); it++) {
         landmarks[*it] = data.as_Vector2i("landmarks", *it);
     }
-    landmarks["center"] = sf::Vector2i(size.x / 2, size.y / 2);
+    landmarks[AString("center")] = sf::Vector2i(size.x / 2, size.y / 2);
 
     s = data.GetKeys("terrain.tiles", "");
     for(it = s.begin(); it != s.end(); it++) {
-        std::vector<std::string> sv = data.as_str_vector("terrain.tiles", *it);
+        std::vector<AString> sv = data.as_str_vector("terrain.tiles", *it);
         Tile t = Tile(resman, sv[0], sv[1]);
         generator_tiles[*it] = t;
     }

@@ -9,15 +9,15 @@ std::ostream& std::operator<<(std::ostream& cout, sf::IntRect rect) {
     return cout;
 }
 
-std::vector<std::string> split(const std::string& str, const char& chr) {
-    std::vector<std::string> result;
-    std::string current = "";
+std::vector<AString> split(const std::string& str, const char& chr) {
+    std::vector<AString> result;
+    AString current = AString("");
     for(unsigned int i = 0; i < str.size(); i++) {
         char c = str[i];
         if (c == chr){
             if (current.size() > 0) {
                 result.push_back(current);
-                current = "";
+                current = AString("");
             }
         }
         else
@@ -25,13 +25,13 @@ std::vector<std::string> split(const std::string& str, const char& chr) {
     }
     if (current.size() > 0) {
         result.push_back(current);
-        current = "";
+        current = AString("");
     }
     return result;
 }
 
-std::vector<std::string> list_dir(std::string dir) {
-    std::vector<std::string> result;
+std::vector<AString> list_dir(AString dir) {
+    std::vector<AString> result;
     if (!fs::exists(dir)) {
         return result;
     }
@@ -41,7 +41,7 @@ std::vector<std::string> list_dir(std::string dir) {
     else {
         fs::directory_iterator end_iter;
         for ( fs::directory_iterator dir_itr( dir ); dir_itr != end_iter; ++dir_itr ) {
-            std::string filename = dir_itr->path().filename().string();
+            AString filename = dir_itr->path().filename().string();
             result.push_back(filename);
         }
     }

@@ -1,7 +1,7 @@
 #ifndef RESOURCEMANAGER_HPP_
 #define RESOURCEMANAGER_HPP_
 
-#include <string>
+#include "../AString.hpp"
 #include <map>
 
 #include <SFML/Graphics.hpp>
@@ -17,25 +17,25 @@
 
 class ResourceManager {
     private:
-        std::map<std::string, TileType> tiletypes;
-        std::map<std::string, Material> materials;
-        std::map<std::string, UnitType> unittypes;
-        std::map<std::string, MapType> maptypes;
+        std::map<AString, TileType> tiletypes;
+        std::map<AString, Material> materials;
+        std::map<AString, UnitType> unittypes;
+        std::map<AString, MapType> maptypes;
 
         sf::Vector2i tile_size;
         sf::Texture shadow_texture;
 
-        std::string base_path;
+        AString base_path;
     public:
-        std::map<std::string, sf::Texture> tilesets;
+        std::map<AString, sf::Texture> tilesets;
         TileSprite shadow;
     private:
-        void LoadConfiguration(std::string dir);
-        void LoadTilesets(std::string dir);
-        void LoadTiletypes(std::string dir);
-        void LoadMaterials(std::string dir);
-        void LoadUnitTypes(std::string dir);
-        void LoadMapTypes(std::string dir);
+        void LoadConfiguration(const std::string& dir);
+        void LoadTilesets(const std::string& dir);
+        void LoadTiletypes(const std::string& dir);
+        void LoadMaterials(const std::string& dir);
+        void LoadUnitTypes(const std::string& dir);
+        void LoadMapTypes(const std::string& dir);
         void AddTileType(Data data);
         void AddMaterial(Data data);
         void AddUnitType(Data data);
@@ -43,7 +43,7 @@ class ResourceManager {
 
     public:
         ResourceManager();
-        ResourceManager(std::string base_path);
+        ResourceManager(AString base_path);
         void Load();
 
         const UnitType& GetUnitType(const std::string& id) const;
@@ -51,10 +51,10 @@ class ResourceManager {
         const Material& GetMaterial(const std::string& id) const;
         const MapType& GetMapType(const std::string& id) const;
 
-        const std::map<std::string, TileType>& GetTileTypeMap() const;
-        const std::map<std::string, UnitType>& GetUnitTypeMap() const;
-        const std::map<std::string, Material>& GetMaterialMap() const;
-        const std::map<std::string, MapType>& GetMapTypeMap() const;
+        const std::map<AString, TileType>& GetTileTypeMap() const;
+        const std::map<AString, UnitType>& GetUnitTypeMap() const;
+        const std::map<AString, Material>& GetMaterialMap() const;
+        const std::map<AString, MapType>& GetMapTypeMap() const;
 
         TileSprite GetSprite(const std::string& tileset, const int& n);
 

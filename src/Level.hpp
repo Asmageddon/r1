@@ -31,12 +31,12 @@ class Level {
         sf::Color ambient;
 
         Tile *data;
-        std::string id;
+        AString id;
         int seed;
 
         bool ready;
 
-        std::map<std::string, sf::Vector2i> landmarks;
+        std::map<AString, sf::Vector2i> landmarks;
 
         std::set<Unit*> units;
         std::set<LightField*> lights;

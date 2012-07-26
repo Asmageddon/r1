@@ -3,7 +3,7 @@
 
 #include "Unit.hpp"
 
-#include <string>
+#include "AString.hpp"
 
 class TileType;
 class Material;

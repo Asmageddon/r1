@@ -2,6 +2,8 @@
 
 #include <set>
 
+#include "AString.hpp"
+
 #include "Level.hpp"
 #include "SightField.hpp"
 #include "LightField.hpp"
@@ -192,16 +194,16 @@ void Unit::SetLocation(const std::string& loc_id, const sf::Vector2i new_pos, bo
     fov->Calculate(location, pos);
 }
 
-void Unit::SetLocation(const std::string& loc_id, const std::string landmark, bool ignore_terrain) {
+void Unit::SetLocation(const std::string& loc_id, const std::string& landmark, bool ignore_terrain) {
     sf::Vector2i pos = world->GetLevel(loc_id)->GetLandmark(landmark);
     SetLocation(loc_id, pos, ignore_terrain);
 }
 
-std::string Unit::GetLocation() const {
+AString Unit::GetLocation() const {
     if (location != NULL)
         return location->id;
     else
-        return "";
+        return AString("");
 }
 
 Level* Unit::GetCurrentLevel() {

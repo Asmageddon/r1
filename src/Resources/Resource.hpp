@@ -1,15 +1,15 @@
 #ifndef RESOURCE_HPP_
 #define RESOURCE_HPP_
 
-#include <string>
+#include "../AString.hpp"
 
 #include "../Data.hpp"
 
 class Resource {
     public:
-        std::string id;
-        std::string name;
-        std::string desc;
+        AString id;
+        AString name;
+        AString desc;
     public:
         Resource() {}
         Resource(Data data);

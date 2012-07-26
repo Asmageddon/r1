@@ -1,7 +1,7 @@
 #ifndef UTILS_HPP_
 #define UTILS_HPP_
 
-#include <string>
+#include "AString.hpp"
 #include <map>
 #include <vector>
 #include <sstream>
@@ -28,13 +28,13 @@ namespace std {
 }
 
 template<class K, class V>
-bool contains(const std::map<K, V>& m, const K& key) {
+bool contains(const std::map<K, V>& m, const std::string& key) {
     typename std::map<K, V>::const_iterator it = m.find(key);
     return it != m.end();
 }
 
-template<class K, class V, class K2>
-const V& const_access(const std::map<K, V>& m, const K2& key) {
+template<class K, class V>
+const V& const_access(const std::map<K, V>& m, const std::string& key) {
     static V v;
     typename std::map<K, V>::const_iterator it;
 
@@ -46,8 +46,8 @@ const V& const_access(const std::map<K, V>& m, const K2& key) {
     return v;
 }
 
-std::vector<std::string> split(const std::string& str, const char& chr);
+std::vector<AString> split(const std::string& str, const char& chr);
 
-std::vector<std::string> list_dir(std::string dir);
+std::vector<AString> list_dir(AString dir);
 
 #endif

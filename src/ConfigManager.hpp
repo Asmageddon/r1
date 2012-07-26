@@ -9,14 +9,14 @@
 
 class ConfigManager {
     private:
-        std::string base_path;
+        AString base_path;
     public:
         sf::Vector2i resolution;
         int max_fps;
         sf::Color cursor_color;
     public:
         ConfigManager() : base_path(".") {}
-        ConfigManager(std::string base_path) : base_path(base_path) {}
+        ConfigManager(AString base_path) : base_path(base_path) {}
         void Load();
 };
 

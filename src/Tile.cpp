@@ -2,7 +2,7 @@
 
 #include "Unit.hpp"
 
-#include <string>
+#include "AString.hpp"
 
 #include "Resources.hpp"
 

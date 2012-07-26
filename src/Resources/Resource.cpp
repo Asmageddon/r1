@@ -1,6 +1,6 @@
 #include "Resource.hpp"
 
-#include <string>
+#include "../AString.hpp"
 
 #include "../Data.hpp"
 

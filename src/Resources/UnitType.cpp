@@ -1,6 +1,6 @@
 #include "UnitType.hpp"
 
-#include <string>
+#include "../AString.hpp"
 #include <vector>
 
 #include "Resource.hpp"

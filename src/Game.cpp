@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <string>
+#include "AString.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -24,7 +24,7 @@
 //WIP: Organize source files into a basic directory hierarchy
 //TODO: Put utils in different files and/or organize them better
 
-static std::string base_path = ".";
+static AString base_path = AString(".");
 
 template<class T1, class T2>
 sf::Vector2<T2> convert_vec2 (sf::Vector2<T1> vec) {
@@ -40,15 +40,9 @@ sf::Color blend(const sf::Color& col1, const sf::Color& col2, float dist) {
     return result;
 }
 
-std::string get_base_path(char* argv0) {
-    unsigned int last_slash = 0;
-    for (unsigned int i=0; i < strlen(argv0); i++) {
-        if (argv0[i] == '/')
-            last_slash = i;
-    }
-    argv0[last_slash+1] = '\0'; //lolololol (hope gods of programming will forgive me)
-    return argv0;
-}
+//AString get_base_path(const std::string& argv0) {
+    //return AString(argv0).rpartition("/")[-1];
+//}
 
 //TODO: Simple GUI - screen/popup/dialog system that will allow me to create inventory, action choice, etc.
 class Game {
@@ -445,13 +439,13 @@ class Game {
                     sf::Vector2i movement_vector = sf::Vector2i(0,0);
 
                     if (event.key.code == sf::Keyboard::F12) {
-                        std::string dir = base_path + "user/screenshots/";
+                        AString dir = base_path + "user/screenshots/";
                         int n = list_dir(dir).size() + 1;
                         std::stringstream out;
                         out << n;
-                        std::string fname = out.str();
+                        AString fname = out.str();
                         fname.insert(fname.begin(), 5 - fname.size(), '0');
-                        fname = (std::string)"screenshot" + fname + ".png";
+                        fname = (AString)"screenshot" + fname + ".png";
                         sf::Image screenshot = window.capture();
                         screenshot.saveToFile(dir + fname);
 
@@ -501,7 +495,7 @@ class Game {
                     //World swap!
                     else if (event.key.code == sf::Keyboard::S) {
                         //TODO: Replace with warp action
-                        std::string loc = world->player->GetLocation();
+                        AString loc = world->player->GetLocation();
                         if (loc == "nowhere")
                             world->player->SetLocation("start", "default");
                         else
@@ -537,8 +531,7 @@ class Game {
 
 int main(int argc, char** argv) {
     srand(time(NULL));
-
-    base_path = get_base_path(argv[0]);
+    base_path = AString(argv[0]).rpartition("/")[0] + "/";
     std::cout << base_path << std::endl;
     Game g;
     g.run();

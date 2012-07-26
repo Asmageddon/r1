@@ -2,7 +2,7 @@
 #define DISPLAYABLE_HPP_
 
 #include <vector>
-#include <string>
+#include "../AString.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -12,7 +12,7 @@ class Data;
 
 class Displayable {
     public:
-        std::string tileset;
+        AString tileset;
         int image;
         std::vector<int> variants;
 
@@ -21,7 +21,7 @@ class Displayable {
         TileSprite sprite;
         //TODO: Make Displayable constructor take a ResourceManager as an argument and store the ref
 
-        std::string border;
+        AString border;
     public:
         Displayable() {};
         Displayable(Data data);

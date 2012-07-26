@@ -2,7 +2,7 @@
 #define WORLD_HPP_
 
 #include <map>
-#include <string>
+#include "AString.hpp"
 
 class Unit;
 class Level;
@@ -13,9 +13,9 @@ class ResourceManager;
 class World {
     private:
         int seed;
-        std::map<std::string, Level*> maps;
-        std::string base_path;
-        std::string save_path;
+        std::map<AString, Level*> maps;
+        AString base_path;
+        AString save_path;
         const ResourceManager *resman;
     public:
         Unit *player;

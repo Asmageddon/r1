@@ -29,6 +29,8 @@ class AString: public std::string {
         template<class T> AString(const typename std::set<T>& _set);
 
         //Operators
+        AString& operator=(const std::string& rhs);
+
         void operator*=(float num);
         AString operator*(float num) const;
 
@@ -37,6 +39,9 @@ class AString: public std::string {
 
         const char& operator[] ( long pos ) const;
 
+        operator std::string() const {
+            return std::string(c_str());
+        }
         //Misc. functions
 
         bool contains(const AString& substring) const;

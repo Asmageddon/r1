@@ -234,7 +234,7 @@ void Level::RemoveLandmark(const std::string& id) {
     landmarks.erase(id);
 }
 sf::Vector2i Level::GetLandmark(const std::string& id) const {
-    std::string _id = id;
+    AString _id = id;
     if (id == "") _id = "default";
 
     const sf::Vector2u& size = type->size;
