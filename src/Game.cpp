@@ -96,7 +96,7 @@ class Game {
 
             world->player = current_level->PlaceUnit("test_player", "default");
 
-            Unit *u = current_level->PlaceUnit("sun_sentry", "p.alpha");
+            Unit *u = current_level->PlaceUnit("moon_butterfly", "p.alpha");
             u->AttachAI(new WandererAI());
 
             current_level->PlaceUnit("sun_sentry", "random");

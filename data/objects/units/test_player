@@ -5,7 +5,7 @@ categories = unnatural
 
 [appearance]
     tileset = creatures1.png
-    image = 1
+    image = 5
     glow.color = 160 170 170
     glow.radius = 7
 
@@ -14,10 +14,12 @@ categories = unnatural
 
 [stats]
     sight.radius = 13
-    sight.threshold = 0.25
+    sight.threshold = 0.15
     sight.vision_tint = 3 7 20
+
     travel.walls = false
     travel.floor = true
+
     #Unused - no liquids yet
     travel.shallow = true
     travel.deep    = false

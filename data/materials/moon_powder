@@ -1,0 +1,10 @@
+id = moon_powder
+name = moon powder
+desc = mystical powder emitting a faint glow under moonlight
+
+type = powder
+
+[appearance]
+    color = 90 110 250
+    glow.color = 5 5 45
+    glow.radius = 3

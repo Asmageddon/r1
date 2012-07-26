@@ -1,0 +1,18 @@
+id = moon_butterfly
+name = moon butterfly
+desc = A mystical creature
+categories = magical mystical animal bug
+
+[appearance]
+    tileset = creatures1.png
+    image = 4
+
+[body]
+    material = moon_powder
+    #material = generic_flesh
+
+[stats]
+    sight.radius = 5
+    sight.threshold = 0.15
+    sight.vision_tint = 20 20 70
+    #travel.floor = true
