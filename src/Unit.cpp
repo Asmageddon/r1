@@ -303,3 +303,7 @@ void Unit::Simulate() {
         next_action = NULL;
     }
 }
+
+int Unit::GetMovementSpeed() {
+    return type->movement_speed;
+}

@@ -12,7 +12,7 @@ void WandererAI::OnTick() {
         int x = rand() % 3 - 1;
         int y = rand() % 3 - 1;
 
-        Action *a = new MovementAction(10, sf::Vector2i(x, y));
+        Action *a = new MovementAction(sf::Vector2i(x, y));
 
         unit->SetNextAction(a);
     }

@@ -71,5 +71,7 @@ class Unit {
         AI *GetAI();
 
         void Simulate(); //Don't call this directly
+
+        int GetMovementSpeed();
 };
 #endif

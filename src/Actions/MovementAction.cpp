@@ -7,9 +7,10 @@
 #include "../Unit.hpp"
 #include "../Resources/UnitType.hpp"
 
-MovementAction::MovementAction(unsigned int time, const sf::Vector2i& direction) : Action(time) {
+MovementAction::MovementAction(const sf::Vector2i& direction) : Action() {
     vector = direction;
 }
+
 bool MovementAction::Perform() {
     Level *level = unit->GetCurrentLevel();
     const Tile& t = level->GetTile(unit->GetPosition() + vector);
@@ -27,4 +28,8 @@ bool MovementAction::PreCondition() {
         return true;
     }
     return false;
+}
+
+void MovementAction::OnAttached() {
+    SetTimeLeft(unit->GetMovementSpeed());
 }

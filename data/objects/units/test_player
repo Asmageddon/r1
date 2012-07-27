@@ -20,9 +20,11 @@ categories = unnatural
     travel.walls = false
     travel.floor = true
 
-    #Unused - no liquids yet
-    travel.shallow = true
-    travel.deep    = false
+    #Less = faster, 10 is default ^^
+    travel.speed = 10
+
+    #Min, max, default = 5 10
+    perception = 5 20
 
 [behavior]
     ai = player

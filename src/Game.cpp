@@ -458,7 +458,7 @@ class Game {
                         movement_vector = sf::Vector2i(-1,  0);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad5) {
-                        a = new WaitAction(10, event.key.alt);
+                        a = new WaitAction(event.key.alt);
                     }
                     else if (event.key.code == sf::Keyboard::Numpad6) {
                         movement_vector = sf::Vector2i( 1,  0);
@@ -498,10 +498,10 @@ class Game {
 
                     if (movement_vector != sf::Vector2i(0,0)) {
                         if (event.key.alt) {
-                            a = new GoAction(10,  movement_vector);
+                            a = new GoAction(movement_vector);
                         }
                         else {
-                            a = new MovementAction(10,  movement_vector);
+                            a = new MovementAction(movement_vector);
                         }
                     }
                     if (a != NULL)

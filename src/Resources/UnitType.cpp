@@ -49,4 +49,19 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Display
 
     ai = data.as_string("behavior", "ai");
     ai_swap_policy = data.as_string("behavior", "ai.swap_policy");
+
+    if (data.HasField("stats", "travel.speed"))
+        movement_speed = data.as_int("stats", "travel.speed");
+    else
+        movement_speed = 10;
+
+    if (data.HasField("stats", "perception")) {
+        std::vector<int> v = data.as_int_vector("stats", "perception");
+        perception_min = v[0];
+        perception_max = v[1];
+    }
+    else {
+        perception_min = 5;
+        perception_min = 10;
+    }
 }

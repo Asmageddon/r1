@@ -9,7 +9,7 @@
 #include "../Tile.hpp"
 #include "../Resources/UnitType.hpp"
 
-GoAction::GoAction(unsigned int time, const sf::Vector2i& direction) : MovementAction(time, direction) { }
+GoAction::GoAction(const sf::Vector2i& direction) : MovementAction(direction) { }
 
 bool GoAction::Perform() {
     Level *level = unit->GetCurrentLevel();

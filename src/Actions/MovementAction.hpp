@@ -11,8 +11,10 @@ class MovementAction : public Action {
     private:
         virtual bool Perform();
         virtual bool PreCondition();
+        virtual void OnAttached();
+
     public:
-        MovementAction(unsigned int time, const sf::Vector2i& direction);
+        MovementAction(const sf::Vector2i& direction);
 };
 
 #endif

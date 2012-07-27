@@ -29,9 +29,12 @@ class UnitType : public Resource, public Displayable, public Glowable {
         bool travel_floor;
         unsigned int travel_conditions;
 
-        //WIP:
         AString ai;
         AString ai_swap_policy;
+
+        int movement_speed;
+        int perception_min;
+        int perception_max;
 
     public:
         UnitType() { /* WARNING: This does not initialize anything */ };
