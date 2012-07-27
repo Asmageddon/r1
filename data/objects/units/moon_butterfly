@@ -16,3 +16,8 @@ categories = magical mystical animal bug
     sight.threshold = 0.15
     sight.vision_tint = 20 20 70
     #travel.floor = true
+    travel.speed = 4
+
+[behavior]
+    ai = wanderer
+    swap = always

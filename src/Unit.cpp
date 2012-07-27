@@ -55,6 +55,10 @@ Unit::Unit(World *world, const std::string& type_id) {
 
     next_action = NULL;
     ai = NULL;
+
+    if (type->ai == "player") AttachAI(new PlayerAI());
+    else if (type->ai == "wanderer") AttachAI(new WandererAI());
+    else if (type->ai == "none") AttachAI(new BaseAI());
 }
 
 Unit::~Unit() {

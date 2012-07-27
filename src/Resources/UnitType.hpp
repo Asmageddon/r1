@@ -29,6 +29,10 @@ class UnitType : public Resource, public Displayable, public Glowable {
         bool travel_floor;
         unsigned int travel_conditions;
 
+        //WIP:
+        AString ai;
+        AString ai_swap_policy;
+
     public:
         UnitType() { /* WARNING: This does not initialize anything */ };
         UnitType(ResourceManager *resman, Data data);

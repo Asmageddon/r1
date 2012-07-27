@@ -1,11 +1,10 @@
 #include "AI.hpp"
 
-#include "Unit.hpp"
-
 #include <cassert>
 
+#include "../Unit.hpp"
+
 AI::AI() : unit(NULL) {}
-AI::AI(Unit *unit) : unit(unit) {}
 AI::~AI() {}
 
 void AI::AttachToUnit(Unit *unit) {
@@ -14,8 +13,8 @@ void AI::AttachToUnit(Unit *unit) {
     this->unit = unit;
 }
 
-bool AI::RequestSwap(Unit *unit) {
-    return false;
+bool AI::RequestSwap(Unit *unit, bool forced) {
+    return OnRequestSwap(unit, forced);
 }
 
 void AI::Tick() {

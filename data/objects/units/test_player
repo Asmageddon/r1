@@ -25,5 +25,4 @@ categories = unnatural
     travel.deep    = false
 
 [behavior]
-    player = true
-    ai = none
+    ai = player

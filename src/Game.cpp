@@ -17,9 +17,7 @@
 #include "Level.hpp"
 
 #include "Actions.hpp"
-
 #include "AI.hpp"
-#include "WandererAI.hpp"
 
 //WIP: Organize source files into a basic directory hierarchy
 //TODO: Put utils in different files and/or organize them better
@@ -39,10 +37,6 @@ sf::Color blend(const sf::Color& col1, const sf::Color& col2, float dist) {
 
     return result;
 }
-
-//AString get_base_path(const std::string& argv0) {
-    //return AString(argv0).rpartition("/")[-1];
-//}
 
 //TODO: Simple GUI - screen/popup/dialog system that will allow me to create inventory, action choice, etc.
 class Game {
@@ -90,8 +84,7 @@ class Game {
 
             world->player = current_level->PlaceUnit("test_player", "default");
 
-            Unit *u = current_level->PlaceUnit("moon_butterfly", "p.alpha");
-            u->AttachAI(new WandererAI());
+            current_level->PlaceUnit("moon_butterfly", "p.alpha");
 
             current_level->PlaceUnit("sun_sentry", "random");
             current_level->PlaceUnit("sun_sentry", "random");

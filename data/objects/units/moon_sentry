@@ -14,3 +14,8 @@ categories = magical primitive
     sight.radius = 9
     sight.threshold = 0.20
     sight.vision_tint = 10 30 60
+    travel.speed = 70
+
+[behavior]
+    ai = wanderer
+    swap = never

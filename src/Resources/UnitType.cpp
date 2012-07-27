@@ -46,4 +46,7 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Display
         travel_conditions |= NOT_WALL;
 
     vision_tint = data.as_Color("stats", "sight.vision_tint");
+
+    ai = data.as_string("behavior", "ai");
+    ai_swap_policy = data.as_string("behavior", "ai.swap_policy");
 }

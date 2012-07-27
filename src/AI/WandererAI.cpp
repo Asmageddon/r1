@@ -1,13 +1,11 @@
 #include "WandererAI.hpp"
 
-#include "Unit.hpp"
+#include "BaseAI.hpp"
 
-#include "AI.hpp"
-
-#include "Actions.hpp"
+#include "../Actions.hpp"
+#include "../Unit.hpp"
 
 #include <iostream>
-#include "utils.hpp"
 
 void WandererAI::OnTick() {
     if (unit->GetNextAction() == NULL) {
@@ -18,8 +16,4 @@ void WandererAI::OnTick() {
 
         unit->SetNextAction(a);
     }
-}
-
-bool WandererAI::RequestSwap(Unit *unit) {
-    return true;
 }
