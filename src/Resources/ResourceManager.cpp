@@ -24,7 +24,7 @@
 void ResourceManager::LoadConfiguration(const std::string& dir) {
     Data d(base_path + "data/config");
 
-    std::vector<int> s = d.as_string("data", "tile_size").as_int_vector();
+    std::vector<int> s = d["data"]["tile_size"].as_int_vector();
     tile_size.x = s[0];
     tile_size.y = s[1];
 }

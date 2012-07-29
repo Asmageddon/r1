@@ -46,7 +46,7 @@ template<class T> AString AString::join(const typename std::vector<T>& _vector) 
     if (!_vector.empty())
         total_length -= this->length();
 
-    char* result = new char[total_length];
+    char* result = new char[total_length + 1];
     result[total_length] = 0;
 
     typename std::vector<AString>::iterator it2 = strvec.begin();

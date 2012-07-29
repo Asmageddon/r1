@@ -3,11 +3,11 @@
 
 class Unit;
 
-#include "BaseAI.hpp"
+#include "AI.hpp"
 
 //TODO: Create an AI capable of emitting actions, intercepting events, etc. etc.
 
-class WandererAI : public BaseAI {
+class WandererAI : public AI {
     protected:
         virtual void OnTick();
 };

@@ -16,7 +16,7 @@
 
 #include "World.hpp"
 
-#include "Data.hpp"
+#include "utils.hpp"
 
 //TODO: Generator(s)
 
@@ -313,20 +313,25 @@ sf::Color Level::GetLightColorAt(const sf::Vector2i& pos) const {
     return result;
 }
 
-void Level::Simulate(Unit *reference_unit) {
+int Level::Simulate(Unit *reference_unit) {
     //TODO: Limit number of steps in one call so the player can see what is happening around him while waiting or something
-    if (reference_unit->GetCurrentLevel() != this) return;
+    if (reference_unit->GetCurrentLevel() != this) return 0;
 
     unsigned int i = 0;
 
-    while (reference_unit->GetNextAction() != NULL) {
-        if (++i > 10) break; //TODO: Make this into a variable and/or a parameter
+    unsigned int min_ticks = world->GetTicksPerFrameMin();
+    unsigned int max_ticks = world->GetTicksPerFrameMax();
+
+    while ((reference_unit->GetNextAction() != NULL) | (i < min_ticks)) {
+        if (++i > max_ticks) break; //TODO: Make this into a variable and/or a parameter
 
         std::set<Unit*>::iterator it = units.begin();
         for(; it != units.end(); it++) {
             (*it)->Simulate();
         }
     }
+
+    return i;
 }
 
 

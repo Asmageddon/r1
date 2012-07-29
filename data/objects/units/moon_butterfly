@@ -20,4 +20,4 @@ categories = magical mystical animal bug
 
 [behavior]
     ai = wanderer
-    swap = always
+    ai.swap_policy = always

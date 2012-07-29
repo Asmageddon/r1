@@ -1,11 +1,13 @@
 #include "ConfigManager.hpp"
 
+#include "utils.hpp"
+
 void ConfigManager::Load() {
     Data d(base_path + "/user/config");
-    resolution = d.as_Vector2i("display", "resolution");
-    max_fps = d.as_int("display", "max_fps");
+    resolution = make_vector2i(d["display"]["resolution"]);
+    max_fps = d["display"]["max_fps"].as_int();
 
-    cursor_color = d.as_Color("interface", "cursor.color");
+    cursor_color = make_color(d["interface"]["cursor.color"]);
 
     std::cout << "Successfully loaded user config" << std::endl;
 }

@@ -13,5 +13,8 @@ id = nowhere
     floor = generic_floor generic_metal
     wall  = generic_wall generic_flesh
 
+[generator]
+    border = 1 wall
+
 [landmarks]
     default = 6 6

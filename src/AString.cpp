@@ -437,7 +437,8 @@ std::vector<AString> AString::splitlines() const {
 AString AString::upper() const {
     if (length() == 0) return (*this);
 
-    char* result = new char[length()];
+    char* result = new char[length() + 1];
+    result[length()] = 0;
     for(unsigned int i = 0; i < length(); i++) {
         char chr = (*this)[i];
         if ( (chr >= 'a') && (chr <= 'z') ) {
@@ -464,7 +465,8 @@ bool AString::isupper() const {
 AString AString::lower() const {
     if (length() == 0) return (*this);
 
-    char* result = new char[length()];
+    char* result = new char[length() + 1];
+    result[length()] = 0;
     for(unsigned int i = 0; i < length(); i++) {
         char chr = (*this)[i];
         if ( (chr >= 'A') && (chr <= 'Z') ) {
@@ -518,7 +520,7 @@ bool AString::isnumber() const {
 
     for(; i < length(); i++) {
         char chr = (*this)[i];
-        if (chr == '-') {
+        if (chr == '.') {
             if (has_dot) return false;
             has_dot = true;
         }
@@ -653,9 +655,9 @@ long AString::as_int() const {
     return n;
 }
 double AString::as_float() const {
-    if (!isnumber()) return 0;
+    if (!isnumber()) return 0.0;
     double n;
-    std::stringstream(*this) >> n;
+    std::stringstream(*this) >> n; //TODO: Fix this up
     return n;
 }
 bool AString::as_bool() const {

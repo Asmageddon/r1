@@ -8,6 +8,8 @@
 #include "Unit.hpp"
 #include "Level.hpp"
 
+#include "utils.hpp"
+
 World::World(const ResourceManager *resman, const std::string& base_path) : base_path(base_path), resman(resman) {
     save_path = "";
 }
@@ -44,9 +46,42 @@ Level* World::GetLevel(const std::string& name) {
 }
 
 void World::Load() {
-    //TODO
+    //WIP
+    Data d(base_path + "/data/world/world");
+
+    std::set<AString> s = d["locations"].GetKeys("");
+    std::set<AString>::iterator it;
+    for(it = s.begin(); it != s.end(); it++) {
+        AString name(*it);
+        AString type = d["locations"][name];
+        AddLevel(name, type);
+        std::cout << " * Added new location: " << name << " (" << type << ")" << std::endl;
+    }
+
+    std::cout << "Loaded " << maps.size() << " locations" << std::endl;
+
+    if (!d["gameplay"].HasField("ticks_per_frame.max"))
+        ticks_per_frame_max = 10;
+    else
+        ticks_per_frame_max = d["gameplay"]["ticks_per_frame.max"].as_int();
+
+    if (!d["gameplay"].HasField("ticks_per_frame.min"))
+        ticks_per_frame_min = 0;
+    else
+        ticks_per_frame_min = d["gameplay"]["ticks_per_frame.min"].as_int();
 }
 
 const ResourceManager* World::GetResman() const {
     return resman;
+}
+
+void World::Simulate() {
+    player->GetCurrentLevel()->Simulate(player);
+}
+
+unsigned int World::GetTicksPerFrameMin() const {
+    return ticks_per_frame_min;
+}
+unsigned int World::GetTicksPerFrameMax() const {
+    return ticks_per_frame_max;
 }

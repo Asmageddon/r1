@@ -12,19 +12,21 @@
 #include "ResourceManager.hpp"
 #include "../Tile.hpp" //We need NOT_FLOOR and NOT_WALL. TODO: Investigate if this can't be done another way
 
+#include "../utils.hpp"
+
 UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Displayable(data), Glowable(data) {
     this->resman = resman;
 
-    categories = data.as_str_vector("", "categories");
+    categories = data[""]["categories"].as_string_vector();
 
-    material = data.as_string("body", "material");
+    material = data["body"]["material"];
 
     sprite = resman->GetSprite(tileset, image);
 
-    sight_radius = data.as_int("stats", "sight.radius");
+    sight_radius = data["stats"]["sight.radius"].as_int();
 
-    if (data.HasField("stats", "sight.vision_tint")) {
-        sight_threshold = data.as_float("stats", "sight.threshold");
+    if (data["stats"].HasField("sight.threshold")) {
+        sight_threshold = data["stats"]["sight.threshold"].as_float();
     }
     else {
         sight_threshold = 0.33;
@@ -32,8 +34,8 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Display
 
     travel_conditions = 0;
 
-    if (data.HasField("stats", "travel.floor")) {
-        travel_floor = data.as_bool("stats", "travel.floor");
+    if (data["stats"].HasField("travel.floor")) {
+        travel_floor = data["stats"]["travel.floor"].as_bool();
         if (!travel_floor)
             travel_conditions |= NOT_FLOOR;
     }
@@ -41,22 +43,22 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Display
         travel_floor = true;
     }
 
-    travel_walls = data.as_bool("stats", "travel.walls"); //Default is false so ok
+    travel_walls = data["stats"]["travel.walls"].as_bool(); //Default is false so ok
     if (!travel_walls)
         travel_conditions |= NOT_WALL;
 
-    vision_tint = data.as_Color("stats", "sight.vision_tint");
+    vision_tint = make_color(data["stats"]["sight.vision_tint"]);
 
-    ai = data.as_string("behavior", "ai");
-    ai_swap_policy = data.as_string("behavior", "ai.swap_policy");
+    ai = data["behavior"]["ai"];
+    ai_swap_policy = data["behavior"]["ai.swap_policy"];
 
-    if (data.HasField("stats", "travel.speed"))
-        movement_speed = data.as_int("stats", "travel.speed");
+    if (data["stats"].HasField("travel.speed"))
+        movement_speed = data["stats"]["travel.speed"].as_int();
     else
         movement_speed = 10;
 
-    if (data.HasField("stats", "perception")) {
-        std::vector<int> v = data.as_int_vector("stats", "perception");
+    if (data["stats"].HasField("perception")) {
+        std::vector<int> v = data["stats"]["perception"].as_int_vector();
         perception_min = v[0];
         perception_max = v[1];
     }

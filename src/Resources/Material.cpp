@@ -3,11 +3,13 @@
 #include "Resource.hpp"
 #include "Glowable.hpp"
 
+#include "../utils.hpp"
+
 Material::Material(Data data) : Resource(data), Glowable(data) {
-    type = data.as_string("", "type");
+    type = data[""]["type"];
 
-    color = data.as_Color("appearance", "color");
+    color = make_color(data["appearance"]["color"]);
 
-    glow_color = data.as_Color("appearance", "glow.color");
-    glow_radius = data.as_int("appearance", "glow.radius");
+    glow_color = make_color(data["appearance"]["glow.color"]);
+    glow_radius = data["appearance"]["glow.radius"].as_int();
 }

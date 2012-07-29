@@ -58,7 +58,15 @@ Unit::Unit(World *world, const std::string& type_id) {
 
     if (type->ai == "player") AttachAI(new PlayerAI());
     else if (type->ai == "wanderer") AttachAI(new WandererAI());
-    else if (type->ai == "none") AttachAI(new BaseAI());
+    else if (type->ai == "none") AttachAI(new AI());
+
+    if (ai != NULL) {
+        if (type->ai_swap_policy == "always") ai->SetSwapPolicy(SWAP_ALWAYS);
+        else if (type->ai_swap_policy == "never") ai->SetSwapPolicy(SWAP_NEVER);
+        else if (type->ai_swap_policy == "forced") ai->SetSwapPolicy(SWAP_WHEN_FORCED);
+        else if (type->ai_swap_policy == "friends") ai->SetSwapPolicy(SWAP_FRIENDS);
+        else if (type->ai_swap_policy == "team") ai->SetSwapPolicy(SWAP_TEAM);
+    }
 }
 
 Unit::~Unit() {

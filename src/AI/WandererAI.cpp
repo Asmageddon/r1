@@ -1,6 +1,6 @@
 #include "WandererAI.hpp"
 
-#include "BaseAI.hpp"
+#include "AI.hpp"
 
 #include "../Actions.hpp"
 #include "../Unit.hpp"

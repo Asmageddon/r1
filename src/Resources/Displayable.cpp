@@ -3,11 +3,11 @@
 #include "../Data.hpp"
 
 Displayable::Displayable(Data data) {
-    tileset = data.as_string("appearance", "tileset");
-    image = data.as_int("appearance", "image");
-    variants = data.as_int_vector("appearance", "variants");
+    tileset = data["appearance"]["tileset"];
+    image = data["appearance"]["image"].as_int();
+    variants = data["appearance"]["variants"].as_int_vector();
 
-    blocks_sight = data.as_bool("appearance", "blocks_sight");
+    blocks_sight = data["appearance"]["blocks_sight"].as_bool();
 
-    border = data.as_string("appearance", "border");
+    border = data["appearance"]["border"];
 }

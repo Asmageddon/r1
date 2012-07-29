@@ -18,4 +18,4 @@ categories = magical primitive
 
 [behavior]
     ai = wanderer
-    swap = never
+    ai.swap_policy = never

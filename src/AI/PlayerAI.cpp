@@ -1,7 +1,7 @@
 #include "PlayerAI.hpp"
 
-#include "BaseAI.hpp"
+#include "AI.hpp"
 
-PlayerAI::PlayerAI() : BaseAI() {
+PlayerAI::PlayerAI() : AI() {
     SetSwapPolicy(SWAP_WHEN_FORCED);
 }

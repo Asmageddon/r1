@@ -19,16 +19,18 @@ TILE_CLASS TileType::get_tile_class(const std::string& type) {
 TileType::TileType(ResourceManager *resman, Data data) : Resource(data) , Displayable(data) {
     this->resman = resman;
 
-    type = get_tile_class(data.as_string("", "type"));
+    type = get_tile_class(data[""]["type"]);
 
     //If it's not set in the data file, set it basing on type
-    if (!data.HasField("appearance", "blocks_sight")) {
+    if (!data["appearance"].HasField("blocks_sight")) {
         if (type == TILE_WALL)
             blocks_sight = true;
+        else
+            blocks_sight = false;
     }
 
     //TODO: Add borders for different kinds of neighbouring tiles
-    border_tileset = data.as_string("appearance", "border");
+    border_tileset = data["appearance"]["border"];
     if (border_tileset == "")
         border_sprite = NULL;
     else {

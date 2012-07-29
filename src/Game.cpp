@@ -79,8 +79,10 @@ class Game {
             world = new World(resman, base_path);
             world->Load();
 
-            current_level = world->AddLevel("start", "start");
-            world->AddLevel("nowhere", "nowhere");
+            //current_level = world->AddLevel("start", "start");
+            //world->AddLevel("nowhere", "nowhere");
+
+            current_level = world->GetLevel("start");
 
             world->player = current_level->PlaceUnit("test_player", "default");
 
@@ -515,7 +517,7 @@ class Game {
             start();
             while (window.isOpen()) {
                 handle_input();
-                current_level->Simulate(world->player);
+                world->Simulate();
                 render();
             }
             end();

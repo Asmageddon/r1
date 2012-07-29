@@ -3,9 +3,9 @@
 
 class Unit;
 
-#include "BaseAI.hpp"
+#include "AI.hpp"
 
-class PlayerAI : public BaseAI {
+class PlayerAI : public AI {
     public:
         PlayerAI();
 };

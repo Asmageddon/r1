@@ -86,7 +86,7 @@ class Level {
 
         sf::Color GetLightColorAt(const sf::Vector2i& pos) const;
 
-        void Simulate(Unit *reference_unit); //Please don't call this manually; TODO: Make this private ^^
+        int Simulate(Unit *reference_unit); //Please don't call this manually; TODO: Make this private and friend World ^^
 
         const sf::Color& GetAmbientColor() const;
         void SetAmbientColor(const sf::Color& color);

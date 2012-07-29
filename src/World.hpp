@@ -17,6 +17,9 @@ class World {
         AString base_path;
         AString save_path;
         const ResourceManager *resman;
+
+        unsigned int ticks_per_frame_max;
+        unsigned int ticks_per_frame_min;
     public:
         Unit *player;
     public:
@@ -35,6 +38,11 @@ class World {
         //void LoadSavegame(const std::string& save_path);
         //void SaveSavegame(const std::string& save_path);
         //void IncrementalSave();
+
+        void Simulate();
+
+        unsigned int GetTicksPerFrameMin() const;
+        unsigned int GetTicksPerFrameMax() const;
 };
 
 #endif

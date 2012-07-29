@@ -4,9 +4,11 @@
 
 #include "../Data.hpp"
 
+#include "../utils.hpp"
+
 Glowable::Glowable(Data data) {
-    glow_color = data.as_Color("appearance", "glow.color");
-    glow_radius = data.as_int("appearance", "glow.radius");
+    glow_color = make_color(data["appearance"]["glow.color"]);
+    glow_radius = data["appearance"]["glow.radius"].as_int();
     if (glow_color == sf::Color(0,0,0))
         glow_radius = 0;
 }
