@@ -84,20 +84,20 @@ class Game {
 
             current_level = world->GetLevel("start");
 
-            world->player = current_level->PlaceUnit("test_player", "default");
+            //world->player = current_level->PlaceUnit("test_player", "default");
 
-            current_level->PlaceUnit("moon_butterfly", "p.alpha");
+            //current_level->PlaceUnit("moon_butterfly", "p.alpha");
 
-            current_level->PlaceUnit("sun_sentry", "random");
-            current_level->PlaceUnit("sun_sentry", "random");
-            current_level->PlaceUnit("sun_sentry", "random");
-            current_level->PlaceUnit("sun_sentry", "random");
-            current_level->PlaceUnit("sun_sentry", "random");
-            current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
+            //current_level->PlaceUnit("sun_sentry", "random");
 
-            current_level->PlaceUnit("moon_sentry", "random");
-            current_level->PlaceUnit("moon_sentry", "random");
-            current_level->PlaceUnit("moon_sentry", "random");
+            //current_level->PlaceUnit("moon_sentry", "random");
+            //current_level->PlaceUnit("moon_sentry", "random");
+            //current_level->PlaceUnit("moon_sentry", "random");
 
             light = new LightField();
             light->SetRadius(12);

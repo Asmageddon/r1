@@ -49,48 +49,66 @@ Data::Data(AString file_path) {
 }
 
 void Data::parse_line(AString line) {
-    if (line.length() == 0) return;
+    line = line.strip(" \t");
+    if (line.startswith("#")) return;
 
-    int stage = 0;
-    AString field;
-    AString value;
-    AString category;
+    if (line.contains('=')) {
+        std::vector<AString> vec = line.split("=");
+        vec[0] = vec[0].strip(" ");
+        if (vec[1].contains('#'))
+            vec[1] = vec[1].lpartition("#")[0];
+        vec[1] = vec[1].strip(" ");
 
-    for (unsigned int i = 0; i < line.length(); i++) {
-        char c = line[i];
-        if (stage == 0) {
-            if ( (c == ' ') || (c == '\t') )
-                continue;
-            else if (c == '=')
-                stage = 1;
-            else if (c == '#')
-                return;
-            else if (c == '[')
-                stage = 3;
-            else
-                field += c;
-        }
-        else if (stage == 1) {
-            if ( (c == ' ') || (c == '\t') )
-                continue;
-            else {
-                stage = 2;
-                value += c;
-            }
-        }
-        else if (stage == 2) {
-            value += c;
-        }
-        else if (stage == 3) {
-            if ( c == ']' ) {
-                current_category = category;
-                return;
-            }
-            else
-                category += c;
+
+        values[current_category][vec[0]] = vec[1];
+    }
+    else {
+        if (line.startswith("[")) {
+            current_category = line.strip("[]");
         }
     }
-    this->values[current_category][field] = value;
+    //if (line.length() == 0) return;
+
+    //int stage = 0;
+    //AString field;
+    //AString value;
+    //AString category;
+
+    //for (unsigned int i = 0; i < line.length(); i++) {
+        //char c = line[i];
+        //if (stage == 0) {
+            //if ( (c == ' ') || (c == '\t') )
+                //continue;
+            //else if (c == '=')
+                //stage = 1;
+            //else if (c == '#')
+                //return;
+            //else if (c == '[')
+                //stage = 3;
+            //else
+                //field += c;
+        //}
+        //else if (stage == 1) {
+            //if ( (c == ' ') || (c == '\t') )
+                //continue;
+            //else {
+                //stage = 2;
+                //value += c;
+            //}
+        //}
+        //else if (stage == 2) {
+            //value += c;
+        //}
+        //else if (stage == 3) {
+            //if ( c == ']' ) {
+                //current_category = category;
+                //return;
+            //}
+            //else
+                //category += c;
+        //}
+    //}
+    //this->values[current_category][field] = value;
 }
 
 _DataProxy Data::operator[](const std::string& category) const {

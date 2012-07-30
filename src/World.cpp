@@ -69,6 +69,11 @@ void World::Load() {
         ticks_per_frame_min = 0;
     else
         ticks_per_frame_min = d["gameplay"]["ticks_per_frame.min"].as_int();
+
+    Level *l = GetLevel("start");
+
+    if (l != NULL) std::cout << "Successfully initialized start location" << std::endl;
+    if (player != NULL) std::cout << "Player unit registered correctly" << std::endl;
 }
 
 const ResourceManager* World::GetResman() const {

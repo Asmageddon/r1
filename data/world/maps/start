@@ -20,7 +20,10 @@ desc = starting map for testing purposes
     #random - random point
     #center - center of the map, (0, 0) for infinite maps (not implemented yet)
     default = 12 6
-    p.alpha = 14 9
+    point_alpha = 14 9
+
+[spawn.point_alpha]
+    moon_butterfly = 1
 
 [spawn.random]
     #unit name = count

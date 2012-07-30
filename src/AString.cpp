@@ -162,7 +162,7 @@ AString AString::rstrip(const std::string& chars) const {
     unsigned int max_i = 0;
     for(unsigned int i = -1; i > -length(); i--) {
         if (!_chars.contains((*this)[i])) {
-            max_i = i;
+            max_i = i + 1;
             break;
         }
     }
@@ -171,6 +171,7 @@ AString AString::rstrip(const std::string& chars) const {
     else
         return slice(0, max_i);
 }
+
 AString AString::strip(const std::string& chars) const {
     return this->lstrip(chars).rstrip(chars);
 }

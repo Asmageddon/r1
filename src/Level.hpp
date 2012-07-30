@@ -40,11 +40,14 @@ class Level {
 
         std::set<Unit*> units;
         std::set<LightField*> lights;
+    private:
+        void SpawnUnits();
+        void Create();
+        void Generate();
     public:
         Level(World *world, const std::string& maptype_id);
         Level(World *world, const std::string& name, const std::string& maptype_id);
 
-        void Create();
         bool IsReady() const;
 
         const sf::Vector2u& GetSize() const;
@@ -65,8 +68,6 @@ class Level {
 
         //tile_state is a bitmask of TILE_STATE enum members (defined in Tile.hpp)
         sf::Vector2i FindTile(const sf::Vector2i& pos, unsigned int tile_state) const;
-
-        void Generate();
 
         //TODO: GetUnitAt, defriend Unit
 

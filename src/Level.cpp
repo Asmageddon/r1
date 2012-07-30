@@ -32,8 +32,6 @@ Level::Level(World *world, const std::string& maptype_id) : world(world) {
     if (seed == -1) { seed = rand(); }
 
     ready = false;
-
-    //TODO: NEXT TASK - spawn units as defined in data files
 }
 
 Level::Level(World *world, const std::string& name, const std::string& maptype_id) : world(world) {
@@ -63,6 +61,32 @@ void Level::Create() {
         data[x + size.x*y].temperature = 127;
     }
     ready = true;
+}
+
+void Level::SpawnUnits() {
+    std::map<AString, std::map<AString, Spawn> >::const_iterator it = type->spawned_units.begin();
+
+    for(; it != type->spawned_units.end(); it++) {
+        const std::map<AString, Spawn>& submap = it->second;
+
+        std::map<AString, Spawn>::const_iterator it2 = submap.begin();
+
+        for(; it2 != submap.end(); it2++) {
+            Spawn s = it2->second;
+            int c;
+            if (s.max_count == s.min_count)
+                c = s.min_count;
+            else
+                c = rand() % (s.max_count - s.min_count) + s.min_count;
+
+            for(int i = 0; i < c; i++) {
+                Unit *u = PlaceUnit(it2->first, it->first);
+
+                if (u->type->ai == "player")
+                    world->player = u;
+            }
+        }
+    }
 }
 
 bool Level::IsReady() const {
@@ -217,6 +241,8 @@ void Level::Generate() {
         if (value > 0.0)
             data[x + size.x*y] = stone_wall;
     }
+
+    SpawnUnits();
 }
 
 void Level::AddLandmark(const std::string& id, const sf::Vector2i& pos) {

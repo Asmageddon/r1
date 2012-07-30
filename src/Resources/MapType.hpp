@@ -15,6 +15,7 @@ class ResourceManager;
 
 struct Spawn {
     AString unit_id;
+    AString location;
     unsigned int min_count;
     unsigned int max_count;
 };
@@ -28,7 +29,8 @@ class MapType : public Resource {
         Tile default_tile;
         std::map<AString, Tile> generator_tiles;
         std::map<AString, sf::Vector2i> landmarks;
-        std::map<AString, Spawn> spawned_units;
+        //landmark => (type => Spawn)
+        std::map<AString, std::map<AString, Spawn> > spawned_units;
     public:
         MapType() { /* WARNING: This does not initialize anything */ };
         MapType(ResourceManager *resman, Data data);

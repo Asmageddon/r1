@@ -31,10 +31,37 @@ MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
     }
 
     //WIP: Spawns
-    //s = data.GetKeys("spawn", "");
-    //for(it = s.begin(); it != s.end(); it++) {
-        //std::vector<AString> sv = data.as_str_vector("terrain.tiles", *it);
-        //Tile t = Tile(resman, sv[0], sv[1]);
-        //generator_tiles[*it] = t;
-    //}
+    s = data.GetKeys("spawn.");
+    for(it = s.begin(); it != s.end(); it++) {
+        std::set<AString> subkeys = data[*it].GetKeys();
+        std::set<AString>::const_iterator it2 = subkeys.begin();
+
+        for(; it2 != subkeys.end(); it2++) {
+            AString location = (*it).split(".")[1];
+
+            std::vector<AString> vec = data[*it][*it2].split(" ");
+
+            AString unit_type  = (*it2);
+            int unit_count_min = 1;
+            int unit_count_max = 1;
+
+            if (vec.size() == 1) {
+                unit_count_min = vec[0].as_int();
+                unit_count_max = unit_count_min;
+            }
+            else if (vec.size() == 2) {
+                unit_count_min = vec[0].as_int();
+                unit_count_max = vec[1].as_int();
+            }
+
+            Spawn s;
+            s.location = location;
+            s.unit_id = unit_type;
+            s.min_count = unit_count_min;
+            s.max_count = unit_count_max;
+
+            spawned_units[location][unit_type] = s;
+
+        }
+    }
 }
