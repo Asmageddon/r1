@@ -3,6 +3,7 @@
 
 #include "../AString.hpp"
 #include <map>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 
@@ -12,6 +13,7 @@
 
 class Data;
 class ResourceManager;
+class Generator;
 
 struct Spawn {
     AString unit_id;
@@ -26,10 +28,12 @@ class MapType : public Resource {
         sf::Vector2u size;
         AString generator;
         int generator_seed;
-        Tile default_tile;
         std::map<AString, Tile> generator_tiles;
+
+        std::vector<Generator*> generators;
+
         std::map<AString, sf::Vector2i> landmarks;
-        //landmark => (type => Spawn)
+        //landmark => (type => Spawn) (shouldn't this be a list/vector? Perhaps yes, probably doesn't really matter)
         std::map<AString, std::map<AString, Spawn> > spawned_units;
     public:
         MapType() { /* WARNING: This does not initialize anything */ };

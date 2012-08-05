@@ -107,6 +107,14 @@ Unit::~Unit() {
     }
 }
 
+
+AString Unit::FormatText(const std::string& text) const {
+    AString _text = text;
+    _text = _text.replace("%m", material->name);
+
+    return _text.capitalize();
+}
+
 bool Unit::Swap(Unit *other_unit) {
     if (location == NULL) return false;
     if (other_unit == this) return false;
@@ -493,4 +501,12 @@ void Unit::Heal(float amount) {
     health += amount;
     if (health > GetStat(STAT_MAX_HP))
         health = GetStat(STAT_MAX_HP);
+}
+
+
+AString Unit::GetName() const {
+    return FormatText(type->name);
+}
+AString Unit::GetDescription() const {
+    return FormatText(type->desc);
 }

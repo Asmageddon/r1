@@ -1,0 +1,7 @@
+id = player
+name = player
+desc = the only external force in this universe ruled by fate
+
+[relationships]
+    default = 0
+    wildlife = -25

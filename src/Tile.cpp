@@ -20,6 +20,28 @@ Tile::Tile(const ResourceManager *resman, const std::string& type_id, const std:
     last_known = NULL;
 }
 
+bool Tile::operator==(const Tile& rhs) const {
+    //This should be fine since there will never be multiple instances of the same material/tiletype
+    if (material != rhs.material) return false;
+    if (type != rhs.type) return false;
+
+    return true;
+}
+
+bool Tile::operator!=(const Tile& rhs) const {
+    return !((*this) == rhs);
+}
+
+bool Tile::operator<(const Tile& rhs) const {
+    if (material < rhs.material) return true;
+    if (material > rhs.material) return false;
+
+    if (type < rhs.type) return true;
+    if (type > rhs.type) return false;
+
+    return false;
+}
+
 void Tile::SetKnown() {
     if (last_known == NULL)
         last_known = new TileMemory();

@@ -5,8 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <noise/noise.h>
-
 #include "Resources.hpp"
 #include "Tile.hpp"
 #include "Unit.hpp"
@@ -17,6 +15,8 @@
 #include "World.hpp"
 
 #include "utils.hpp"
+
+#include "Generators.hpp"
 
 //TODO: Generator(s)
 
@@ -63,7 +63,7 @@ void Level::Create() {
 
     for(unsigned int x=0; x < size.x; x++)
     for(unsigned int y=0; y < size.y; y++) {
-        data[x + size.x*y] = type->default_tile;
+        data[x + size.x*y] = const_access(type->generator_tiles, "default");
         data[x + size.x*y].integrity = 255;
         data[x + size.x*y].temperature = 127;
     }
@@ -117,7 +117,10 @@ void Level::SetKnown(const sf::Vector2i& pos) {
         data[pos.x + type->size.x * pos.y].SetKnown();
 }
 const TileMemory* Level::GetKnown(const sf::Vector2i& pos) const {
-    static TileMemory empty_memory = { type->default_tile.type, type->default_tile.material };
+    static TileMemory empty_memory = {
+        const_access(type->generator_tiles, "default").type,
+        const_access(type->generator_tiles, "default").material
+    };
 
     if (InBounds(pos))
         return data[pos.x + type->size.x * pos.y].last_known;
@@ -134,20 +137,26 @@ bool Level::IsKnown(const sf::Vector2i& pos) const {
 
 const Tile& Level::GetTile(const sf::Vector2i& pos) const {
     if (!InBounds(pos))
-        return type->default_tile;
+        return const_access(type->generator_tiles, "default");
     return data[pos.x + type->size.x * pos.y];
 }
 
 void Level::SetTile(const sf::Vector2i& pos, const std::string& type_id, const std::string& material_id) {
+    Tile new_tile  = Tile(resman, type_id, material_id);
+
+    SetTile(pos, new_tile);
+}
+
+void Level::SetTile(const sf::Vector2i& pos, const Tile& new_tile) {
     if (!InBounds(pos)) return;
 
-    Tile new_tile  = Tile(resman, type_id, material_id);
-    Tile prev_tile = data[pos.x + type->size.x * pos.y];
+    unsigned int i = pos.x + type->size.x * pos.y;
 
-    new_tile.unit = prev_tile.unit;
-    new_tile.last_known = prev_tile.last_known;
+    Tile prev_tile = data[i];
 
-    data[pos.x + type->size.x * pos.y] = new_tile;
+    data[i] = new_tile;
+    data[i].unit = prev_tile.unit;
+    data[i].last_known = prev_tile.last_known;
 
     std::set<LightField*>::iterator lit = lights.begin();
     for(; lit != lights.end(); lit++) {
@@ -160,6 +169,7 @@ void Level::SetTile(const sf::Vector2i& pos, const std::string& type_id, const s
             (*uit)->RecalculateFOV();
         }
     }
+
 }
 
 bool Level::IsWall(const sf::Vector2i& pos) const {
@@ -227,26 +237,13 @@ sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) c
 }
 
 void Level::Generate() {
-    noise::module::Perlin perlin;
-    perlin.SetOctaveCount (2);
-    perlin.SetFrequency (1.0);
+    //WIP: Generators
+    std::vector<Generator*>::const_iterator it = type->generators.begin();
 
-    const sf::Vector2u& size = type->size;
-
-    //TODO: Separate classes for generator(s)
-    Tile stone_wall  = const_access(type->generator_tiles, "wall");
-    Tile stone_floor = const_access(type->generator_tiles, "floor");
-
-    for(int x=0; x < (int)size.x; x++)
-    for(int y=0; y < (int)size.y; y++) {
-        double value = perlin.GetValue (0.14 * x, 0.14 * y, seed * 11.973);
-
-        data[x + size.x*y] = stone_floor;
-        data[x + size.x*y].integrity = 255;
-        data[x + size.x*y].temperature = 127;
-
-        if (value > 0.0)
-            data[x + size.x*y] = stone_wall;
+    for(; it != type->generators.end(); it++) {
+        if ((*it) != NULL) {
+            (*it)->GenerateLevel(*this);
+        }
     }
 
     SpawnUnits();
@@ -373,4 +370,11 @@ const sf::Color& Level::GetAmbientColor() const {
 }
 void Level::SetAmbientColor(const sf::Color& color) {
     ambient = color;
+}
+const MapType* Level::GetMapType() const {
+    return type;
+}
+
+int Level::GetSeed() const {
+    return seed;
 }

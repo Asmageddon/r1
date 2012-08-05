@@ -396,7 +396,9 @@ class Game {
                 sf::RectangleShape rshape;
 
                 sf::Text text;
-                AString str = t.unit->type->id;
+                AString str = t.unit->GetName();
+                str += " (" + t.unit->type->id + ")";
+                str += "\n" + t.unit->GetDescription();
                 str += "\n" + AString(t.unit->GetStat(CURRENT_HP));
                 str += "/" + AString(t.unit->GetStat(STAT_MAX_HP));
                 str += "\nAgi: " + AString(t.unit->GetStat(STAT_AGILITY));

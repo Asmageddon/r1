@@ -8,11 +8,11 @@
 
 #include "../utils.hpp"
 
+#include "../Generators.hpp"
+
 MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
     ambient = make_color(data["atmosphere"]["ambient"]);
     size = make_vector2u(data["terrain"]["size"]);
-
-    default_tile = Tile(resman, "void", "void"); //<<<<<<<<
 
     generator_seed = data["terrain"]["seed"].as_int();
 
@@ -23,6 +23,11 @@ MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
     }
     landmarks[AString("center")] = sf::Vector2i(size.x / 2, size.y / 2);
 
+    generator_tiles[AString("void")] = Tile(resman, "void", "void");
+
+    //Just in case
+    generator_tiles[AString("default")] = Tile(resman, "void", "void");
+
     s = data["terrain.tiles"].GetKeys();
     for(it = s.begin(); it != s.end(); it++) {
         std::vector<AString> sv = data["terrain.tiles"][*it].as_string_vector();
@@ -30,7 +35,6 @@ MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
         generator_tiles[*it] = t;
     }
 
-    //WIP: Spawns
     s = data.GetKeys("spawn.");
     for(it = s.begin(); it != s.end(); it++) {
         std::set<AString> subkeys = data[*it].GetKeys();
@@ -62,6 +66,22 @@ MapType::MapType(ResourceManager *resman, Data data) : Resource(data) {
 
             spawned_units[location][unit_type] = s;
 
+        }
+    }
+
+    //WIP
+    s = data.GetKeys("generator");
+    generators.resize(s.size());
+    unsigned int i;
+
+    for((i = 0, it = s.begin()); it != s.end(); (it++, i++)) {
+        AString k = (*it);
+        AString type = data[k]["type"];
+        if (type == "perlin") {
+            generators[i] = new PerlinGenerator(*this, data, k);
+        }
+        else {
+            generators[i] = NULL;
         }
     }
 }

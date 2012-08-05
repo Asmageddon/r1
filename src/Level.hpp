@@ -61,6 +61,7 @@ class Level {
         const Tile& GetTile(const sf::Vector2i& pos) const;
         //TODO: Add drawing functions
         void SetTile(const sf::Vector2i& pos, const std::string& type_id, const std::string& material_id);
+        void SetTile(const sf::Vector2i& pos, const Tile& tile);
 
         bool IsWall(const sf::Vector2i& pos) const;
         bool IsFloor(const sf::Vector2i& pos) const;
@@ -85,11 +86,21 @@ class Level {
         void RegisterUnit(Unit *unit);
         void DeregisterUnit(Unit *unit);
 
+        //TODO: Make this faster than O(N) - cache the lightmap or have an array of (larger) integers from which I substract and add
         sf::Color GetLightColorAt(const sf::Vector2i& pos) const;
 
         int Simulate(Unit *reference_unit); //Please don't call this manually; TODO: Make this private and friend World ^^
 
         const sf::Color& GetAmbientColor() const;
         void SetAmbientColor(const sf::Color& color);
+
+        //To be used by generators
+        inline void FastSetTile(unsigned int x, unsigned int y, const Tile& t) {
+            data[x + type->size.x * y] = t;
+        }
+
+        const MapType* GetMapType() const;
+
+        int GetSeed() const;
 };
 #endif

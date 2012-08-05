@@ -1,0 +1,9 @@
+id = aztec
+name = aztec civilization
+desc = the ancient civilization of the azteks
+
+[relationships]
+    default = -25
+    wildlife = 25
+
+    player = -50

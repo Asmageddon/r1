@@ -51,6 +51,11 @@ class Tile {
         Tile() { /* WARNING: This doesn't initialize anything */ };
         Tile(const ResourceManager *resman, const std::string& type_id, const std::string& material_id);
 
+        bool operator==(const Tile& rhs) const;
+        bool operator!=(const Tile& rhs) const;
+        //Required by std::set
+        bool operator<(const Tile& rhs) const;
+
         //TODO: Make this per-unit instead
         void SetKnown();
         void SetUnknown();

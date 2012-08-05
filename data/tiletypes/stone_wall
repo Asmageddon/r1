@@ -1,0 +1,15 @@
+id = stone_wall
+name = %m wall
+desc = a rocky wall made of %m
+type = wall
+materials = stone
+
+[appearance]
+    tileset = tiles1.png
+    image = 5
+    blocks_sight = true
+
+[properties]
+    durability = 30.0
+    resilience = 3.0
+    density = 16.0

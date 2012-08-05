@@ -4,17 +4,26 @@ id = nowhere
     ambient = 50 0 35
 
 [terrain]
-    size = 13 13
+    size = 13 17
     generator = flat
     seed = -1
-    default_tile = void void
 
 [terrain.tiles]
+    default = void void
     floor = generic_floor generic_metal
     wall  = generic_wall generic_flesh
 
-[generator]
-    border = 1 wall
+[generator1]
+    type = border
+    width = 1
+    tile = wall
+
+[generator2]
+    type = perlin
+    octaves = 1
+    frequency = 1.0
+    levels = 0.0 2.0
+    tiles = floor wall
 
 [landmarks]
     default = 6 6

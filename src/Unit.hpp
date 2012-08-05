@@ -63,7 +63,8 @@ class Unit {
         const Material *material;
 
         //TODO: hp, integrity, temperature, etc.
-
+    private:
+        AString FormatText(const std::string& text) const;
     public:
         Unit(World *world, const std::string& type_id);
         ~Unit();
@@ -119,5 +120,8 @@ class Unit {
         //Returns true if the unit died
         bool Hurt(const std::string& damage_type, float amount);
         void Heal(float amount);
+
+        AString GetName() const;
+        AString GetDescription() const;
 };
 #endif

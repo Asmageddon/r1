@@ -20,6 +20,7 @@ files = Glob("./build/*.cpp")
 files+= Glob("./build/Actions/*.cpp")
 files+= Glob("./build/AI/*.cpp")
 files+= Glob("./build/Resources/*.cpp")
+files+= Glob("./build/Generators/*.cpp")
 
 env.Program("r1", files)
 

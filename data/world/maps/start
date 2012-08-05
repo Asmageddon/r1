@@ -9,11 +9,40 @@ desc = starting map for testing purposes
     size = 64 64
     generator = default
     seed = -1
-    default_tile = generic_floor generic_stone
 
 [terrain.tiles]
+    #void - void void; Leave this tile alone (for later generators)
+    default = generic_floor generic_stone
     floor = ground generic_stone
     wall  = ground_wall generic_stone
+    rock_wall = stone_wall generic_stone
+    metal_floor = generic_floor generic_metal
+
+[generator1]
+    type = perlin
+    octaves = 1
+    frequency = 0.5
+    levels = 0.0 0.8 2.0
+    tiles = wall floor wall
+
+[generator2]
+    mask.whitelist = wall
+    #mask.blacklist = void
+
+    type = perlin
+    octaves = 2
+    frequency = 1.5
+
+    levels = 0.5 2.0
+    tiles = void rock_wall
+
+[generator3]
+    mask.whitelist = floor
+    type = perlin
+    octaves = 1
+    frequency = 2.0
+    levels = 0.25 2.0
+    tiles = metal_floor void
 
 [landmarks]
     #Used as default entry point
