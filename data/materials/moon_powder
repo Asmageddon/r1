@@ -8,3 +8,13 @@ type = powder
     color = 90 110 250
     glow.color = 5 5 45
     glow.radius = 3
+
+
+[properties]
+    density = 0.5
+
+    durability = 1.5
+    resilience = 0.5
+
+    sharpness = 5.0
+    elasticity = 17.5

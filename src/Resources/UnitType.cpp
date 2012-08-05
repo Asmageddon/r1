@@ -14,6 +14,20 @@
 
 #include "../utils.hpp"
 
+Stat::Stat(Data data, const std::string& stat_name) {
+    value = data["stats"][stat_name].as_float();
+    if (!data["stats"].HasField(stat_name))
+        value = 10.0f;
+
+    variation = data["stats"][stat_name + ".variation"].as_float();
+    if (!data["stats"].HasField(stat_name + ".variation"))
+        variation = 0.0f;
+
+    potential = data["stats"][stat_name + ".potential"].as_float();
+    if (!data["stats"].HasField(stat_name + ".potential"))
+        potential = 0.5f;
+}
+
 UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Displayable(data), Glowable(data) {
     this->resman = resman;
 
@@ -66,4 +80,13 @@ UnitType::UnitType(ResourceManager *resman, Data data) : Resource(data), Display
         perception_min = 5;
         perception_min = 10;
     }
+
+    enemy = data["behavior"]["enemy"].as_bool();
+
+    strength = Stat(data, "strength");
+    agility = Stat(data, "agility");
+    dexterity = Stat(data, "dexterity");
+    endurance = Stat(data, "endurance");
+
+    size = data["body"]["size"].as_float();
 }

@@ -1,6 +1,7 @@
 #include "Unit.hpp"
 
 #include <set>
+#include <queue>
 
 #include "AString.hpp"
 
@@ -14,6 +15,15 @@
 
 #include "AI.hpp"
 #include "Actions.hpp"
+
+void Unit::UnitStat::operator=(const Stat& type_stat) {
+    value = type_stat.value;
+
+    potential = type_stat.potential;
+
+    value += ((float)rand() / RAND_MAX) * 2.0f * type_stat.variation;
+    value -= type_stat.variation;
+}
 
 Unit::Unit(World *world, const std::string& type_id) {
     this->world = world;
@@ -53,12 +63,12 @@ Unit::Unit(World *world, const std::string& type_id) {
         AttachLight(field);
     }
 
-    next_action = NULL;
     ai = NULL;
 
     if (type->ai == "player") AttachAI(new PlayerAI());
     else if (type->ai == "wanderer") AttachAI(new WandererAI());
     else if (type->ai == "none") AttachAI(new AI());
+    else AttachAI(new AI());
 
     if (ai != NULL) {
         if (type->ai_swap_policy == "always") ai->SetSwapPolicy(SWAP_ALWAYS);
@@ -67,6 +77,13 @@ Unit::Unit(World *world, const std::string& type_id) {
         else if (type->ai_swap_policy == "friends") ai->SetSwapPolicy(SWAP_FRIENDS);
         else if (type->ai_swap_policy == "team") ai->SetSwapPolicy(SWAP_TEAM);
     }
+
+    strength = type->strength;
+    endurance = type->endurance;
+    agility = type->agility;
+    dexterity = type->dexterity;
+
+    health = GetStat(STAT_MAX_HP);
 }
 
 Unit::~Unit() {
@@ -81,6 +98,13 @@ Unit::~Unit() {
     }
 
     delete fov;
+
+    if (location != NULL) {
+        long i = pos.x + location->GetSize().x * pos.y;
+
+        location->data[i].unit = NULL;
+        location->units.erase(this);
+    }
 }
 
 bool Unit::Swap(Unit *other_unit) {
@@ -261,21 +285,25 @@ void Unit::RecalculateFOV() {
 }
 
 void Unit::SetNextAction(Action *action, bool interrupt) {
-    if (next_action != NULL) {
-        if (!interrupt) {
-            return;
+    if (actions.empty()) {
+        actions.push(action);
+        action->AttachToUnit(this);
+    }
+    else {
+        if (interrupt) {
+            actions.front()->Cancel();
+            actions.push(action);
         }
         else {
-            delete next_action;
+            actions.push(action);
         }
     }
-
-    next_action = action;
-    if (action != NULL)
-        next_action->AttachToUnit(this);
 }
 const Action* Unit::GetNextAction() const {
-    return next_action;
+    if (actions.size() > 0)
+        return actions.front();
+    else
+        return NULL;
 }
 
 void Unit::AttachAI(AI *ai) {
@@ -297,21 +325,172 @@ AI *Unit::GetAI() {
 }
 
 void Unit::Simulate() {
-    if ( (next_action == NULL) & (ai == NULL) ) return;
-
     if (ai != NULL) ai->Tick();
 
-    if (next_action == NULL) return;
+    if (actions.empty()) return;
 
-    if (!next_action->IsDone()) {
-        next_action->Tick();
+    if (!actions.front()->IsDone()) {
+        actions.front()->Tick();
     }
     else {
-        delete next_action;
-        next_action = NULL;
+        delete actions.front();
+        actions.pop();
+        if (actions.size() > 0)
+            actions.front()->AttachToUnit(this);
     }
 }
 
-int Unit::GetMovementSpeed() {
-    return type->movement_speed;
+int Unit::GetMovementSpeed() const {
+    //Damn, just can't get this right
+    float v = 1.0 + (10.0 + agility.value) / (type->size * material->density);
+    v = 100.0 / log(v);
+    return (int)v;
+}
+
+
+void Unit::SetStat(UNIT_STAT stat, float value) {
+    switch(stat) {
+        case STAT_STRENGTH:
+            strength.value = value;
+            break;
+        case STAT_ENDURANCE:
+            endurance.value = value;
+            break;
+        case STAT_AGILITY:
+            agility.value = value;
+            break;
+        case STAT_DEXTERITY:
+            dexterity.value = value;
+            break;
+        default:
+            break;
+    }
+}
+
+float Unit::GetStat(UNIT_STAT stat) const {
+    switch(stat) {
+        case STAT_STRENGTH:
+            return strength.value;
+        case STAT_ENDURANCE:
+            return endurance.value;
+        case STAT_AGILITY:
+            return agility.value;
+        case STAT_DEXTERITY:
+            return dexterity.value;
+
+        case CURRENT_HP:
+            return health;
+
+        case STAT_MAX_HP:
+            return floor(material->durability * log(1.0 + type->size) * endurance.value + 0.5);
+        case STAT_RESILIENCE:
+            return material->resilience;
+        case STAT_SPEED:
+            return GetMovementSpeed();
+        default:
+            //TODO: Algorithms for computing product stats
+            return 0.0f;
+    }
+}
+
+void Unit::SetStatPotential(UNIT_STAT stat, float potential) {
+    switch(stat) {
+        case STAT_STRENGTH:
+            strength.potential = potential;
+            break;
+        case STAT_ENDURANCE:
+            endurance.potential = potential;
+            break;
+        case STAT_AGILITY:
+            agility.potential = potential;
+            break;
+        case STAT_DEXTERITY:
+            dexterity.potential = potential;
+            break;
+        default:
+            break;
+    }
+}
+
+float Unit::GetStatPotential(UNIT_STAT stat) const {
+    switch(stat) {
+        case STAT_STRENGTH:
+            return strength.potential;
+        case STAT_ENDURANCE:
+            return endurance.potential;
+        case STAT_AGILITY:
+            return agility.potential;
+        case STAT_DEXTERITY:
+            return dexterity.potential;
+        default:
+            return 0.0f;
+    }
+}
+
+const float TRAIN_POTENTIAL_MULT = 0.75;
+
+float Unit::TrainStat(UNIT_STAT stat, float amount) {
+    //FIXME: Rather than (0.9 + 0.5) do (0.9 + 0.1, 1.0 + 0.4)
+    int initial_value;
+    float difference = 0.0;
+    switch(stat) {
+        case STAT_STRENGTH:
+            initial_value = strength.value;
+            strength.value += amount * strength.potential;
+            difference = amount * strength.potential;
+            if ( (int)strength.value > initial_value )
+                strength.potential *= TRAIN_POTENTIAL_MULT;
+            break;
+        case STAT_ENDURANCE:
+            initial_value = endurance.value;
+            endurance.value += amount * endurance.potential;
+            difference = amount * endurance.potential;
+            if ( (int)endurance.value > initial_value )
+                endurance.potential *= TRAIN_POTENTIAL_MULT;
+            break;
+        case STAT_AGILITY:
+            initial_value = agility.value;
+            agility.value += amount * agility.potential;
+            difference = amount * agility.potential;
+            if ( (int)agility.value > initial_value )
+                agility.potential *= TRAIN_POTENTIAL_MULT;
+            break;
+        case STAT_DEXTERITY:
+            initial_value = dexterity.value;
+            dexterity.value += amount * dexterity.potential;
+            difference = amount * dexterity.potential;
+            if ( (int)dexterity.value > initial_value )
+                dexterity.potential *= TRAIN_POTENTIAL_MULT;
+            break;
+        default:
+            break;
+    }
+
+    return difference;
+}
+
+void Unit::Die() {
+    //TODO: Drop items (once they're done)
+    delete this;
+}
+
+bool Unit::Hurt(const std::string& damage_type, float amount) {
+    //TODO: Care about damage type
+    amount -= material->resilience;
+
+    if (amount < 0) return false;
+    health -= amount;
+
+    if (health < 0.0f) {
+        Die();
+        return true;
+    }
+
+    return false;
+}
+
+void Unit::Heal(float amount) {
+    health += amount;
+    if (health > GetStat(STAT_MAX_HP))
+        health = GetStat(STAT_MAX_HP);
 }

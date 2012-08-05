@@ -6,3 +6,12 @@ type = stone
 
 [appearance]
     color = 170 160 145
+
+[properties]
+    density = 4.5
+
+    durability = 9.0
+    resilience = 2.0
+
+    sharpness = 5.0
+    elasticity = 1.0

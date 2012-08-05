@@ -7,3 +7,8 @@ materials = stone wood metal
 [appearance]
     tileset = tiles1.png
     image = 1
+
+[properties]
+    durability = 12.0
+    resilience = 0.5
+    density = 6.0

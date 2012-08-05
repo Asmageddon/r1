@@ -25,9 +25,9 @@ bool MovementAction::PreCondition() {
     const Tile& t = level->GetTile(unit->GetPosition() + vector);
     //TODO: Also check if any potential unit would agree to a swap
     if ( t.SatisfyAll( unit->type->travel_conditions )) {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 void MovementAction::OnAttached() {

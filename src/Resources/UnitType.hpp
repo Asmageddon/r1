@@ -13,6 +13,15 @@
 class ResourceManager;
 class Data;
 
+struct Stat {
+    float value;
+    float variation;
+    float potential;
+
+    Stat() { /* ... */};
+    Stat(Data data, const std::string& stat_name);
+};
+
 class UnitType : public Resource, public Displayable, public Glowable {
     private:
         ResourceManager *resman;
@@ -36,6 +45,15 @@ class UnitType : public Resource, public Displayable, public Glowable {
         int perception_min;
         int perception_max;
 
+        //Placeholder until I decide to do groups/civilizations
+        bool enemy;
+
+        Stat strength;
+        Stat agility;
+        Stat dexterity;
+        Stat endurance;
+
+        float size; //Body size
     public:
         UnitType() { /* WARNING: This does not initialize anything */ };
         UnitType(ResourceManager *resman, Data data);

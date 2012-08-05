@@ -8,3 +8,12 @@ type = stone
     color = 195 230 245
     glow.color = 150 200 240
     glow.radius = 6
+
+[properties]
+    density = 4.7
+
+    durability = 9.0
+    resilience = 0.1
+
+    sharpness = 10.0
+    elasticity = 0.2

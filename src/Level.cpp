@@ -31,6 +31,8 @@ Level::Level(World *world, const std::string& maptype_id) : world(world) {
     seed = type->generator_seed;
     if (seed == -1) { seed = rand(); }
 
+    std::cout << "Seed = " << seed << std::endl;
+
     ready = false;
 }
 
@@ -41,6 +43,11 @@ Level::Level(World *world, const std::string& name, const std::string& maptype_i
     id = name;
     landmarks = type->landmarks;
     ambient = type->ambient;
+
+    seed = type->generator_seed;
+    if (seed == -1) { seed = rand(); }
+
+    std::cout << "Seed = " << seed << std::endl;
 
     ready = false;
 }

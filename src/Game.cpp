@@ -18,9 +18,11 @@
 
 #include "Actions.hpp"
 #include "AI.hpp"
+#include "Actions/SmartAction.hpp"
 
-//WIP: Organize source files into a basic directory hierarchy
+//WIP, always WIP: Organize source files into a basic directory hierarchy
 //TODO: Put utils in different files and/or organize them better
+//TODO: URGUENT - get an alternate random number generator
 
 static AString base_path = AString(".");
 
@@ -79,25 +81,7 @@ class Game {
             world = new World(resman, base_path);
             world->Load();
 
-            //current_level = world->AddLevel("start", "start");
-            //world->AddLevel("nowhere", "nowhere");
-
             current_level = world->GetLevel("start");
-
-            //world->player = current_level->PlaceUnit("test_player", "default");
-
-            //current_level->PlaceUnit("moon_butterfly", "p.alpha");
-
-            //current_level->PlaceUnit("sun_sentry", "random");
-            //current_level->PlaceUnit("sun_sentry", "random");
-            //current_level->PlaceUnit("sun_sentry", "random");
-            //current_level->PlaceUnit("sun_sentry", "random");
-            //current_level->PlaceUnit("sun_sentry", "random");
-            //current_level->PlaceUnit("sun_sentry", "random");
-
-            //current_level->PlaceUnit("moon_sentry", "random");
-            //current_level->PlaceUnit("moon_sentry", "random");
-            //current_level->PlaceUnit("moon_sentry", "random");
 
             light = new LightField();
             light->SetRadius(12);
@@ -106,8 +90,6 @@ class Game {
             light->Calculate(current_level, sf::Vector2i(6, 17));
 
             camera_pos = sf::Vector2i(5,5);
-
-            //current_level->SetAmbientColor( sf::Color(15, 5, 20) );
         }
 
         void end() {
@@ -406,6 +388,40 @@ class Game {
             cursor.setPosition(mpos);
             window.draw(cursor);
 
+            const Tile& t = current_level->GetTile(screen_to_map(mpos_i.x, mpos_i.y));
+            if (t.unit != NULL) {
+                sf::Vector2f status_pos = mpos;
+                status_pos.x += resman->GetTileSize().x + 2;
+
+                sf::RectangleShape rshape;
+
+                sf::Text text;
+                AString str = t.unit->type->id;
+                str += "\n" + AString(t.unit->GetStat(CURRENT_HP));
+                str += "/" + AString(t.unit->GetStat(STAT_MAX_HP));
+                str += "\nAgi: " + AString(t.unit->GetStat(STAT_AGILITY));
+                str += "\nDex: " + AString(t.unit->GetStat(STAT_DEXTERITY));
+                str += "\nStr: " + AString(t.unit->GetStat(STAT_STRENGTH));
+                str += "\nEnd: " + AString(t.unit->GetStat(STAT_ENDURANCE));
+                str += "\n";
+                str += "\nSpeed: " + AString(t.unit->GetMovementSpeed());
+
+                text.setString(str);
+                text.setCharacterSize(12);
+
+                sf::FloatRect text_rect = text.getLocalBounds();
+
+                rshape.setPosition(status_pos);
+                rshape.setSize(sf::Vector2f(text_rect.width, text_rect.height + 3.0f));
+                rshape.setOutlineColor(sf::Color(190, 30, 30));
+                rshape.setOutlineThickness(2);
+                rshape.setFillColor(sf::Color(190, 160, 160, 90));
+                text.setPosition(status_pos);
+
+                window.draw(rshape);
+                window.draw(text);
+            }
+
             window.display();
         }
 
@@ -503,7 +519,8 @@ class Game {
                             a = new GoAction(movement_vector);
                         }
                         else {
-                            a = new MovementAction(movement_vector);
+                            //a = new MovementAction(movement_vector);
+                            a = new SmartAction(movement_vector, false);
                         }
                     }
                     if (a != NULL)

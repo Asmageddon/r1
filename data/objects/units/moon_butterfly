@@ -9,7 +9,15 @@ categories = magical mystical animal bug
 
 [body]
     material = moon_powder
-    #material = generic_flesh
+    size = 0.55
+
+    #TODO: Attacks
+    attack.damage = piercing
+    attack.type = breath
+    attack.power = 1.0
+    attack.stats = agility strength
+    attack.speed = 0.33
+    attack.range = 2
 
 [stats]
     sight.radius = 5
@@ -17,6 +25,20 @@ categories = magical mystical animal bug
     sight.vision_tint = 20 20 70
     #travel.floor = true
     travel.speed = 4
+
+    strength = 1.25
+    strength.potential = 0.05
+
+    agility = 30.0
+    agility.variation = 5.0
+    agility.potential = 1.0
+
+    dexterity = 5.0
+    dexterity.potential = 0.1
+
+    endurance = 10.0
+    endurance.potential = 0.15
+
 
 [behavior]
     ai = wanderer

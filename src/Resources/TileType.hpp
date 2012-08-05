@@ -23,6 +23,11 @@ class TileType: public Resource, public Displayable {
         TILE_CLASS type;
         AString border_tileset;
         TileSprite *border_sprite;
+
+        float density;
+
+        float durability;
+        float resilience;
     public:
         static TILE_CLASS get_tile_class(const std::string& type);
         TileType() { /* WARNING: This does not initialize anything */ };

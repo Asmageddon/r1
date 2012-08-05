@@ -9,8 +9,21 @@ categories = artificial magical
 
 [body]
     material = generic_stone
+    size = 35.0
 
 [stats]
     sight.radius = 6
     sight.threshold = 0.3
     sight.vision_tint = 20 0 0
+
+    strength = 50.0
+    strength.potential = 0.0
+
+    agility = 15.0
+    agility.potential = 0.0
+
+    dexterity = 10.0
+    dexterity.potential = 0.0
+
+    endurance = 100.0
+    endurance.potential = 0.0

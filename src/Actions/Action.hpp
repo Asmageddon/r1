@@ -13,22 +13,25 @@ class Action {
         unsigned int original_time;
         Unit *unit;
         bool finished;
-    protected:
-        void Cancel(); //Cancel itself
-        void SetTimeLeft(unsigned int new_time);
     private:
-        virtual bool Perform() = 0; //Returns false if it's not done - for example if it wants to be ran once more(for example run action)
+        //Everything that returns bool returns true for done/cancelled and false otherwise
+        virtual bool Perform() = 0;
         virtual bool PreCondition();
         virtual void OnAttached();
-        //TODO: Add a virtual function to be executed every tick
+        virtual void OnTick();
     public:
         Action();
         Action(unsigned int time);
         virtual ~Action();
         void AttachToUnit(Unit *unit);
 
+        //These might not make much sense when used outside Action and subclasses, but in no casy is any harm done exposing them ^^
+        void Cancel();
+        void SetTimeLeft(unsigned int new_time);
+        int GetTimeLeft() const;
+
         bool Tick();
-        bool IsDone();
+        bool IsDone() const;
 };
 
 #endif

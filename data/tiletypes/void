@@ -7,3 +7,8 @@ materials = void
 [appearance]
     tileset = tiles1.png
     image = 0
+
+[properties]
+    durability = 0.1
+    resilience = 2.5
+    density = 0.05

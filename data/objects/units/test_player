@@ -11,6 +11,7 @@ categories = unnatural
 
 [body]
     material = generic_flesh
+    size = 11.0
 
 [stats]
     sight.radius = 13
@@ -23,8 +24,23 @@ categories = unnatural
     #Less = faster, 10 is default ^^
     travel.speed = 10
 
-    #Min, max, default = 5 10
+    #Min, max, default = 5 10, only relevant for player unit for now
     perception = 5 20
+
+
+    #Default value is 10.0, variation 0.0, potential 0.5
+    strength = 10.0
+    strength.variation = 1.0
+    strength.potential = 1.5
+
+    agility = 10.0
+    agility.variation = 5.0
+
+    dexterity = 10.0
+    dexterity.variation = 1.0
+
+    endurance = 10.0
+    endurance.variation = 1.0
 
 [behavior]
     ai = player

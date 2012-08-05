@@ -9,6 +9,7 @@ categories = magical primitive
 
 [body]
     material = moonstone
+    size = 20.0
 
 [stats]
     sight.radius = 9
@@ -16,6 +17,21 @@ categories = magical primitive
     sight.vision_tint = 10 30 60
     travel.speed = 70
 
+    strength = 35.0
+    strength.potential = 0.0
+
+    agility = 8.0
+    agility.potential = 0.0
+
+    dexterity = 12.5
+    dexterity.potential = 0.0
+
+    endurance = 55.0
+    endurance.potential = 0.0
+
+
 [behavior]
     ai = wanderer
     ai.swap_policy = never
+
+    enemy = true

@@ -29,6 +29,11 @@ TileType::TileType(ResourceManager *resman, Data data) : Resource(data) , Displa
             blocks_sight = false;
     }
 
+    density = data["properties"]["density"].as_float();
+
+    durability = data["properties"]["durability"].as_float();
+    resilience = data["properties"]["resilience"].as_float();
+
     //TODO: Add borders for different kinds of neighbouring tiles
     border_tileset = data["appearance"]["border"];
     if (border_tileset == "")

@@ -5,3 +5,13 @@ type = void
 
 [appearance]
     color = 255 0 255
+
+
+[properties]
+    density = 0.0
+
+    durability = 0.5
+    resilience = 5.0
+
+    sharpness = 20.0
+    elasticity = 10.0

@@ -6,3 +6,12 @@ type = flesh
 
 [appearance]
     color = 236 197 150
+
+[properties]
+    density = 1.25
+
+    durability = 2.5
+    resilience = 0.1
+
+    sharpness = 0.02
+    elasticity = 12.5

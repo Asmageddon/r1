@@ -2,11 +2,13 @@
 #define UNIT_HPP_
 
 #include <set>
+#include <queue>
 #include "AString.hpp"
 
 #include <SFML/Graphics.hpp>
 
 class UnitType;
+class Stat;
 class Level;
 class SightField;
 class LightField;
@@ -17,6 +19,23 @@ class World;
 class AI;
 class Action;
 
+enum UNIT_STAT {
+    //Base stats
+    STAT_STRENGTH,
+    STAT_AGILITY,
+    STAT_DEXTERITY,
+    STAT_ENDURANCE,
+
+    //Status
+    CURRENT_HP,
+
+    //Computed stats (not settable/trainable)
+    STAT_MAX_HP,
+    STAT_RESILIENCE,
+    STAT_SPEED
+};
+
+
 class Unit {
     private:
         std::set<LightField*> lights;
@@ -25,7 +44,20 @@ class Unit {
         World *world;
         Level *location;
         AI *ai;
-        Action *next_action;
+        std::queue<Action*> actions;
+
+        float health;
+
+        struct UnitStat {
+            float value;
+            float potential;
+            void operator=(const Stat& type_stat);
+        };
+
+        UnitStat strength;
+        UnitStat agility;
+        UnitStat dexterity;
+        UnitStat endurance;
     public:
         const UnitType *type;
         const Material *material;
@@ -63,7 +95,7 @@ class Unit {
 
         void RecalculateFOV();
 
-        void SetNextAction(Action *action, bool interrupt=true);
+        void SetNextAction(Action* action, bool interrupt=true);
         const Action* GetNextAction() const;
 
         void AttachAI(AI *ai);
@@ -72,6 +104,20 @@ class Unit {
 
         void Simulate(); //Don't call this directly
 
-        int GetMovementSpeed();
+        int GetMovementSpeed() const;
+
+        void SetStat(UNIT_STAT stat, float value);
+        float GetStat(UNIT_STAT stat) const;
+
+        void SetStatPotential(UNIT_STAT stat, float potential);
+        float GetStatPotential(UNIT_STAT stat) const;
+
+        float TrainStat(UNIT_STAT stat, float amount);
+
+        void Die();
+
+        //Returns true if the unit died
+        bool Hurt(const std::string& damage_type, float amount);
+        void Heal(float amount);
 };
 #endif

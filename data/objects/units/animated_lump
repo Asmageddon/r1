@@ -9,6 +9,19 @@ categories = magical primitive
 
 [body]
     material = generic_metal
+    size = 5.0
 
 [stats]
     sight.radius = 3
+
+    strength = 5.0
+    strength.potential = 0.0
+
+    agility = 20.0
+    agility.potential = 0.02
+
+    dexterity = 2.5
+    dexterity.potential = 0.01
+
+    endurance = 75.0
+    endurance.potential = 0.0

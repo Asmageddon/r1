@@ -4,5 +4,5 @@
     boxroom = nowhere
 
 [gameplay]
-    ticks_per_frame.max = 10
-    ticks_per_frame.min = 0
+    ticks_per_frame.max = 100
+    ticks_per_frame.min = 1

@@ -46,7 +46,6 @@ Level* World::GetLevel(const std::string& name) {
 }
 
 void World::Load() {
-    //WIP
     Data d(base_path + "/data/world/world");
 
     std::set<AString> s = d["locations"].GetKeys("");

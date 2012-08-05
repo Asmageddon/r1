@@ -7,3 +7,12 @@ type = metal
 [appearance]
     color = 170 210 230
     #color = 140 225 175
+
+[properties]
+    density = 15.0
+
+    durability = 20.0
+    resilience = 4.0
+
+    sharpness = 11.0
+    elasticity = 0.5

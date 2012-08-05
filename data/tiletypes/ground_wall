@@ -9,3 +9,8 @@ materials = sand ground stone
     image = 7
     blocks_sight = true
     border = generic_wall_border.png
+
+[properties]
+    durability = 10.0
+    resilience = 1.0
+    density = 7.5

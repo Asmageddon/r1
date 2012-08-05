@@ -8,6 +8,7 @@ categories = invalid
 
 [body]
     material = void
+    size = 7.0
 
 [stats]
     sight.radius = 7

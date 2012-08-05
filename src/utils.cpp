@@ -50,7 +50,6 @@ std::vector<AString> list_dir(AString dir) {
 
 sf::Color make_color(const std::string& str) {
     AString _str = str;
-    //if (_str.startswith("#")) TODO(maybe)
     std::vector<int> vec = _str.as_int_vector();
     if (vec.size() == 1)
         return sf::Color(vec[0], vec[0], vec[0]);
