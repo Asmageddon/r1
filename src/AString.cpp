@@ -658,7 +658,7 @@ long AString::as_int() const {
 double AString::as_float() const {
     if (!isnumber()) return 0.0;
     double n;
-    std::stringstream(*this) >> n; //TODO: Fix this up
+    std::stringstream(*this) >> n;
     return n;
 }
 bool AString::as_bool() const {

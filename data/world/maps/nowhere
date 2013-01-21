@@ -4,7 +4,7 @@ id = nowhere
     ambient = 50 0 35
 
 [terrain]
-    size = 13 17
+    size = 32 32
     generator = flat
     seed = -1
 
@@ -24,6 +24,19 @@ id = nowhere
     frequency = 1.0
     levels = 0.0 2.0
     tiles = floor wall
+
+[generator3]
+    type = simple_dungeon
+
+    wall_tile = wall
+    wall_tile.corridor = void
+    floor_tile = floor
+    fill_tile = void
+
+    room_size.min = 2 2
+    room_size.max = 5 5
+    room_count.min = 3
+    room_count.max = 7
 
 [landmarks]
     default = 6 6

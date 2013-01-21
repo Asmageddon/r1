@@ -11,7 +11,7 @@
 
 class Generator {
     protected:
-        std::set<Tile> mask_whitelist; //WIP: Current
+        std::set<Tile> mask_whitelist;
         std::set<Tile> mask_blacklist;
     protected:
         bool HasMask() const;

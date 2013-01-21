@@ -17,9 +17,6 @@ class World;
 
 class LightField;
 
-//WIP: Split Level into Level and MapType to allow for multiple instances of the same map definition
-//TODO: Urguent, multiple generators
-
 class Level {
     friend class Unit;
     friend class World;

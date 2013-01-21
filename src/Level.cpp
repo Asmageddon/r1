@@ -18,8 +18,6 @@
 
 #include "Generators.hpp"
 
-//TODO: Generator(s)
-
 Level::Level(World *world, const std::string& maptype_id) : world(world) {
     resman = world->GetResman();
 
@@ -237,7 +235,6 @@ sf::Vector2i Level::FindTile(const sf::Vector2i& pos, unsigned int tile_state) c
 }
 
 void Level::Generate() {
-    //WIP: Generators
     std::vector<Generator*>::const_iterator it = type->generators.begin();
 
     for(; it != type->generators.end(); it++) {

@@ -16,7 +16,6 @@ template<class T> bool contains(const std::set<T>& _set, const T& v) {
 }
 
 Generator::Generator(const MapType& type, const Data& data, const std::string& category) {
-    //WIP: This v (will probably need to extend Tile class or replace sets with something else)
     std::set<AString> sset;
     std::set<AString>::const_iterator it;
 

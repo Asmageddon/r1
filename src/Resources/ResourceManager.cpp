@@ -18,8 +18,7 @@
 
 #include "../utils.hpp"
 
-//TODO: Make dir argument const correct
-//TODO: Replace data dir with module name
+//TODO: Replace data dir with module name and/or subdir name
 
 void ResourceManager::LoadConfiguration(const std::string& dir) {
     Data d(base_path + "data/config");

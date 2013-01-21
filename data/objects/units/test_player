@@ -21,9 +21,6 @@ categories = unnatural
     travel.walls = false
     travel.floor = true
 
-    #Less = faster, 10 is default ^^
-    travel.speed = 10
-
     #Min, max, default = 5 10, only relevant for player unit for now
     perception = 5 20
 
